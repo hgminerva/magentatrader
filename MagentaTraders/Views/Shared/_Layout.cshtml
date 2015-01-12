@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Magenta Traders</title>
+    @Styles.Render("~/css/css")
+</head>
+
+<body>
+
+    <header>
+        <div class="top">
+            <div class="wrapper">
+                <div class="col-sm-4 col-md-4">
+                    <div class="logo">
+                        <a href="Home">
+                            <img src="/img/logo.png" />
+                        </a>
+                    </div><!--logo ends here-->
+                </div>
+                <div class="col-sm-8 col-md-8">
+                    <div class="navigation">
+                        <div class="for_desktop hidden-xs">
+                            <ul>
+                                <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
+                                <li>@Html.ActionLink("Chart", "Index", "StockChart", new { area = "" }, null)</li>
+                                <li>@Html.ActionLink("Webinars", "Index", "Webinars", new { area = "" }, null)</li>
+                                <li>@Html.ActionLink("User Groups", "Index", "UserGroups", new { area = "" }, null)</li>
+                                <li>@Html.ActionLink("Support", "Index", "Support", new { area = "" }, null)</li>
+                                <li>@Html.ActionLink("Login", "Index", "Login", new { area = "" }, null)</li>
+                            </ul>
+                        </div>
+                        <nav class="navbar navbar-static equinav visible-xs" role="navigation">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <span class="navbar-brand visible-xs">Menu</span>
+                            </div><!-- /.navbar-header -->
+                            <div class="collapse navbar-collapse">
+                                <ul>
+                                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, null)</li>
+                                    <li>@Html.ActionLink("Chart", "Index", "StockChart", new { area = "" }, null)</li>
+                                    <li>@Html.ActionLink("Webinars", "Index", "Webinars", new { area = "" }, null)</li>
+                                    <li>@Html.ActionLink("User Groups", "Index", "UserGroups", new { area = "" }, null)</li>
+                                    <li>@Html.ActionLink("Support", "Index", "Support", new { area = "" }, null)</li>
+                                    <li>@Html.ActionLink("Login", "Index", "Login", new { area = "" }, null)</li>
+                                </ul>
+                            </div><!-- /.navbar-collapse -->
+                        </nav>
+
+                    </div><!--navigation ends here-->
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    @RenderBody()
+
+
+    @Scripts.Render("~/js/js")
+
+</body>
+</html>

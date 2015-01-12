@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="MagentaTradersDB">
+  <DataContextMoniker Name="/MagentaTradersDBDataContext" />
+  <nestedChildShapes>
+    <classShape Id="813bfa72-2eea-44a1-ad43-231a4ad91459" absoluteBounds="0.75, 1.375, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/MagentaTradersDBDataContext/MstSymbol" />
+      <nestedChildShapes>
+        <elementListCompartment Id="da13c56c-a1c9-4614-8166-e7d41f1b7b20" absoluteBounds="0.765, 1.835, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d8ba6c67-9e00-4ed5-ad84-25b87cfed071" absoluteBounds="3.5, 1, 2, 2.5401025390625005">
+      <DataClassMoniker Name="/MagentaTradersDBDataContext/TrnStockPrice" />
+      <nestedChildShapes>
+        <elementListCompartment Id="15fe091c-f5db-4168-ae87-1787e93d1b98" absoluteBounds="3.515, 1.46, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="8899fcf1-50f8-4cbf-bd63-f39ce1e34a8e" absoluteBounds="0.75, 4.75, 2, 1.9631982421875005">
+      <DataClassMoniker Name="/MagentaTradersDBDataContext/MstUser" />
+      <nestedChildShapes>
+        <elementListCompartment Id="398ed6e7-a155-43e0-a304-5a539f460a44" absoluteBounds="0.765, 5.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 2.16429768880208); (3.5 : 2.16429768880208)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/MagentaTradersDBDataContext/MstSymbol/MstSymbol_TrnStockPrice" />
+      <nodes>
+        <classShapeMoniker Id="813bfa72-2eea-44a1-ad43-231a4ad91459" />
+        <classShapeMoniker Id="d8ba6c67-9e00-4ed5-ad84-25b87cfed071" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>
