@@ -497,8 +497,10 @@
 
             if (seasonTenYearPlus30Days > seasonTenYear) {
                 for (var y = 0; y < seasonYearNo - 2; y++) {
-                    var seasonYearly = seasonYearData[y][i];
-                    var seasonYearly30Days = seasonYearData[y][i + daySpan - 1];
+                    //var seasonYearly = seasonYearData[y][i];
+                    //var seasonYearly30Days = seasonYearData[y][i + daySpan - 1]
+                    var seasonYearly = closeYearData[y][i];
+                    var seasonYearly30Days = closeYearData[y][i + daySpan - 1];
                     if (seasonYearly30Days > seasonYearly) {
                         up++;
                         if (seasonYearly != 0) {
@@ -511,8 +513,10 @@
                 if (up > 0) averageUp = averageUp / up;
             } else if (seasonTenYearPlus30Days < seasonTenYear) {
                 for (var y = 0; y < seasonYearNo - 2; y++) {
-                    var seasonYearly = seasonYearData[y][i];
-                    var seasonYearly30Days = seasonYearData[y][i + daySpan - 1];
+                    //var seasonYearly = seasonYearData[y][i];
+                    //var seasonYearly30Days = seasonYearData[y][i + daySpan - 1];
+                    var seasonYearly = closeYearData[y][i];
+                    var seasonYearly30Days = closeYearData[y][i + daySpan - 1];
                     if (seasonYearly30Days < seasonYearly) {
                         down++;
                         if (seasonYearly30Days != 0) {
@@ -744,14 +748,23 @@
         graphPrice.highField = "high";
         graphPrice.lowField = "low";
         graphPrice.valueField = "close";
-        graphPrice.lineColor = "#7f8da9";
-        graphPrice.fillColors = "#7f8da9";
-        graphPrice.negativeLineColor = "#db4c3c";
-        graphPrice.negativeFillColors = "#db4c3c";
+
+        //graphPrice.lineColor = "#7f8da9";
+        //graphPrice.fillColors = "#7f8da9";
+        //graphPrice.negativeLineColor = "#db4c3c";
+        //graphPrice.negativeFillColors = "#db4c3c";
+        graphPrice.lineColor = "#0FB203";
+        graphPrice.fillColors = "#0FB203";
+        graphPrice.negativeLineColor = "#A80008";
+        graphPrice.negativeFillColors = "#A80008";
+
         graphPrice.fillAlphas = 1;
         graphPrice.useDataSetColors = false;
         graphPrice.showBalloon = false;
-        graphPrice.proCandlesticks = true;
+
+        //graphPrice.proCandlesticks = true;
+        graphPrice.proCandlesticks = false;
+
         graphPrice.valueAxis = valueAxisPrice;
 
         var graphSeason = new AmCharts.StockGraph();
@@ -921,6 +934,8 @@
     function getCorrelation(plotData, startIndex, endIndex) {
         var X = 0;
         var Y = 0;
+        var sumOfX = 0;
+        var sumOfY = 0;
         var sumOfX2 = 0;
         var sumOfY2 = 0;
         var sumOfXY = 0;
@@ -928,14 +943,17 @@
         for (var i = startIndex - 1; i < endIndex - 1; i++) {
             X = X + 1;
             Y = parseFloat(plotData[i]["close"]);
+            sumOfX = sumOfX + X;
+            sumOfY = sumOfY + Y;
             sumOfXY = sumOfXY + (X * Y);
             sumOfX2 = sumOfX2 + (X * X);
             sumOfY2 = sumOfY2 + (Y * Y);
         }
+        // NΣXY - (ΣX)(ΣY) / Sqrt([NΣX2 - (ΣX)2][NΣY2 - (ΣY)2])
+        return  ((X * sumOfXY) - (sumOfX * sumOfX)) / Math.sqrt((sumOfX2 - (sumOfX * sumOfX)) * (sumOfY2 - (sumOfY * sumOfY)));
 
-        // r = Σ (xy) / sqrt [ ( Σ x2 ) * ( Σ y2 ) ]
-
-        return sumOfXY / Math.sqrt((sumOfX2 * sumOfY2));
+        // r = Σ (xy) / sqrt [ ( Σ x2 ) * ( Σ y2 ) 
+        // return sumOfXY / Math.sqrt((sumOfX2 * sumOfY2));
     }
     function drawTrendLines(stockPanel, plotData, startIndex, endIndex, upChannelLine, downChannelLine, midChannelLine) {
         var m = 0;
@@ -959,7 +977,7 @@
             for (var i = correlationStartIndex; i > startIndex - 1; i--) {
                 if (counter > 30) {
                     chartCoefficient = Math.abs(getCorrelation(plotData, i, correlationStartIndex));
-                    if (chartCoefficient > 0.89) {
+                    if (chartCoefficient < 0.8) {
                         startIndex = i;
                         if (endIndex > 126) {
                             NumberOfDays = 126 - startIndex + 1;
@@ -968,6 +986,7 @@
                         }
                         break;
                     }
+                    //debugger;
                 }
                 counter++;
             }
@@ -1049,9 +1068,21 @@
         $("#symbolInfoChart").html("<a href='#'><span>Chart:</span><span class='pull-right'>" + chartNoOfDays + "</span></a>");
         $("#symbolInfoChannel").html("<a href='#'><span>Channel:</span><span class='pull-right'>" + chartChannelNoOfDays + "</span></a>");
         if (chartSlopePercentage >= 0) {
-            $("#symbolSlopePercentage").html("<a href='#'><font color='#74FB74'><span>AGR:</span><span class='pull-right'>" + chartSlopePercentage.toFixed(2) + "%</span></font></a>");
+            var AGR = 0;
+            if (chartChannelNoOfDays == 0) {
+                AGR = 0;
+            } else {
+                AGR = (chartSlopePercentage / chartChannelNoOfDays) * 252;
+            }
+            $("#symbolSlopePercentage").html("<a href='#'><font color='#74FB74'><span>AGR:</span><span class='pull-right'>" + AGR.toFixed(2) + "%</span></font></a>");
         } else {
-            $("#symbolSlopePercentage").html("<a href='#'><font color='#FA6F6F'><span>ADR:</span><span class='pull-right'>" + chartSlopePercentage.toFixed(2) + "%</span></font></a>");
+            var ADR = 0;
+            if (chartChannelNoOfDays == 0) {
+                ADR = 0;
+            } else {
+                ADR = (chartSlopePercentage / chartChannelNoOfDays) * 252;
+            }
+            $("#symbolSlopePercentage").html("<a href='#'><font color='#FA6F6F'><span>ADR:</span><span class='pull-right'>" + ADR.toFixed(2) + "%</span></font></a>");
         }
         $("#symbolInfoCoefficient").html("<a href='#'><span>Coefficient:</span><span class='pull-right'>" + chartCoefficient.toFixed(2) + "</span></a>");
         $("#symbolInfoRange").html("<a href='#'><span>Range:</span><span class='pull-right'>" + chartChannelRange.toFixed(2) + "%</span></a>");
@@ -1073,8 +1104,10 @@
         for (var i = 0 ; i < seasonYearData.length; i++) {
             if (i < noOfYears) {
                 var Year = currentYear - (noOfYears - i);
-                var startValue = AmCharts.roundTo(seasonYearData[i][xValue], 2);
-                var endValue = AmCharts.roundTo(seasonYearData[i][xValue + 30], 2);
+                //var startValue = AmCharts.roundTo(seasonYearData[i][xValue], 2);
+                //var endValue = AmCharts.roundTo(seasonYearData[i][xValue + 30], 2);
+                var startValue = AmCharts.roundTo(closeYearData[i][xValue], 2);
+                var endValue = AmCharts.roundTo(closeYearData[i][xValue + 30], 2);
                 var status = "<span>" + Year + ":</span><span class='pull-right'>No change.</span>";
                 if (endValue > startValue) {
                     if (startValue == 0) {
@@ -1093,6 +1126,7 @@
                 addHoverOnScannerYear("scannerYearItem" + Year, i);
             } 
         }
+        //debugger;
     }
     function addHoverOnScannerYear(scannerYearItem, i) {
         $('#' + scannerYearItem).hover(
@@ -1218,9 +1252,11 @@
                             var seasonTenYearPlusVarDays = parseFloat(plotData[i + d - 1]["season"]);
                             var result = [];
                             if (seasonTenYearPlusVarDays > seasonTenYear) {
-                                result = scanYearlyData(seasonYearData, 10, i, d, "up");
+                                //result = scanYearlyData(seasonYearData, 10, i, d, "up");
+                                result = scanYearlyData(closeYearData, 10, i, d, "up");  
                             } else {
-                                result = scanYearlyData(seasonYearData, 10, i, d, "down");
+                                //result = scanYearlyData(seasonYearData, 10, i, d, "down");
+                                result = scanYearlyData(closeYearData, 10, i, d, "down");
                             }
                             // Compare the yearly result
                             if (result[0] > 0) {
