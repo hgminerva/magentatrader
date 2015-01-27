@@ -13,7 +13,7 @@ namespace MagentaTrader.Models
         public int UserId { get; set; }
         public string User { get; set; }
         public string SalesNumber { get; set; }
-        public string PurchaseDate { get; set; }
+        public string SalesDate { get; set; }
         public string RenewalDate { get; set; }
         public string ExpiryDate { get; set; }
         public string Particulars { get; set; }

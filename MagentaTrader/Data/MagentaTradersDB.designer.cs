@@ -42,15 +42,15 @@ namespace MagentaTrader.Data
     partial void InsertMstProductPackage(MstProductPackage instance);
     partial void UpdateMstProductPackage(MstProductPackage instance);
     partial void DeleteMstProductPackage(MstProductPackage instance);
-    partial void InsertTrnSale(TrnSale instance);
-    partial void UpdateTrnSale(TrnSale instance);
-    partial void DeleteTrnSale(TrnSale instance);
     partial void InsertMstUser(MstUser instance);
     partial void UpdateMstUser(MstUser instance);
     partial void DeleteMstUser(MstUser instance);
     partial void InsertMstEvent(MstEvent instance);
     partial void UpdateMstEvent(MstEvent instance);
     partial void DeleteMstEvent(MstEvent instance);
+    partial void InsertTrnSale(TrnSale instance);
+    partial void UpdateTrnSale(TrnSale instance);
+    partial void DeleteTrnSale(TrnSale instance);
     #endregion
 		
 		public MagentaTradersDBDataContext() : 
@@ -115,14 +115,6 @@ namespace MagentaTrader.Data
 			}
 		}
 		
-		public System.Data.Linq.Table<TrnSale> TrnSales
-		{
-			get
-			{
-				return this.GetTable<TrnSale>();
-			}
-		}
-		
 		public System.Data.Linq.Table<MstUser> MstUsers
 		{
 			get
@@ -136,6 +128,14 @@ namespace MagentaTrader.Data
 			get
 			{
 				return this.GetTable<MstEvent>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TrnSale> TrnSales
+		{
+			get
+			{
+				return this.GetTable<TrnSale>();
 			}
 		}
 	}
@@ -1058,438 +1058,6 @@ namespace MagentaTrader.Data
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TrnSales")]
-	public partial class TrnSale : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private int _ProductPackageId;
-		
-		private int _UserId;
-		
-		private string _SalesNumber;
-		
-		private System.DateTime _PurchaseDate;
-		
-		private System.DateTime _RenewalDate;
-		
-		private System.DateTime _ExpiryDate;
-		
-		private string _Particulars;
-		
-		private decimal _Quantity;
-		
-		private decimal _Price;
-		
-		private decimal _Amount;
-		
-		private bool _IsActive;
-		
-		private bool _IsRefunded;
-		
-		private EntityRef<MstProductPackage> _MstProductPackage;
-		
-		private EntityRef<MstUser> _MstUser;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnProductPackageIdChanging(int value);
-    partial void OnProductPackageIdChanged();
-    partial void OnUserIdChanging(int value);
-    partial void OnUserIdChanged();
-    partial void OnSalesNumberChanging(string value);
-    partial void OnSalesNumberChanged();
-    partial void OnPurchaseDateChanging(System.DateTime value);
-    partial void OnPurchaseDateChanged();
-    partial void OnRenewalDateChanging(System.DateTime value);
-    partial void OnRenewalDateChanged();
-    partial void OnExpiryDateChanging(System.DateTime value);
-    partial void OnExpiryDateChanged();
-    partial void OnParticularsChanging(string value);
-    partial void OnParticularsChanged();
-    partial void OnQuantityChanging(decimal value);
-    partial void OnQuantityChanged();
-    partial void OnPriceChanging(decimal value);
-    partial void OnPriceChanged();
-    partial void OnAmountChanging(decimal value);
-    partial void OnAmountChanged();
-    partial void OnIsActiveChanging(bool value);
-    partial void OnIsActiveChanged();
-    partial void OnIsRefundedChanging(bool value);
-    partial void OnIsRefundedChanged();
-    #endregion
-		
-		public TrnSale()
-		{
-			this._MstProductPackage = default(EntityRef<MstProductPackage>);
-			this._MstUser = default(EntityRef<MstUser>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProductPackageId", DbType="Int NOT NULL")]
-		public int ProductPackageId
-		{
-			get
-			{
-				return this._ProductPackageId;
-			}
-			set
-			{
-				if ((this._ProductPackageId != value))
-				{
-					if (this._MstProductPackage.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnProductPackageIdChanging(value);
-					this.SendPropertyChanging();
-					this._ProductPackageId = value;
-					this.SendPropertyChanged("ProductPackageId");
-					this.OnProductPackageIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="Int NOT NULL")]
-		public int UserId
-		{
-			get
-			{
-				return this._UserId;
-			}
-			set
-			{
-				if ((this._UserId != value))
-				{
-					if (this._MstUser.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUserIdChanging(value);
-					this.SendPropertyChanging();
-					this._UserId = value;
-					this.SendPropertyChanged("UserId");
-					this.OnUserIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SalesNumber", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string SalesNumber
-		{
-			get
-			{
-				return this._SalesNumber;
-			}
-			set
-			{
-				if ((this._SalesNumber != value))
-				{
-					this.OnSalesNumberChanging(value);
-					this.SendPropertyChanging();
-					this._SalesNumber = value;
-					this.SendPropertyChanged("SalesNumber");
-					this.OnSalesNumberChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PurchaseDate", DbType="DateTime NOT NULL")]
-		public System.DateTime PurchaseDate
-		{
-			get
-			{
-				return this._PurchaseDate;
-			}
-			set
-			{
-				if ((this._PurchaseDate != value))
-				{
-					this.OnPurchaseDateChanging(value);
-					this.SendPropertyChanging();
-					this._PurchaseDate = value;
-					this.SendPropertyChanged("PurchaseDate");
-					this.OnPurchaseDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RenewalDate", DbType="DateTime NOT NULL")]
-		public System.DateTime RenewalDate
-		{
-			get
-			{
-				return this._RenewalDate;
-			}
-			set
-			{
-				if ((this._RenewalDate != value))
-				{
-					this.OnRenewalDateChanging(value);
-					this.SendPropertyChanging();
-					this._RenewalDate = value;
-					this.SendPropertyChanged("RenewalDate");
-					this.OnRenewalDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpiryDate", DbType="DateTime NOT NULL")]
-		public System.DateTime ExpiryDate
-		{
-			get
-			{
-				return this._ExpiryDate;
-			}
-			set
-			{
-				if ((this._ExpiryDate != value))
-				{
-					this.OnExpiryDateChanging(value);
-					this.SendPropertyChanging();
-					this._ExpiryDate = value;
-					this.SendPropertyChanged("ExpiryDate");
-					this.OnExpiryDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Particulars", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Particulars
-		{
-			get
-			{
-				return this._Particulars;
-			}
-			set
-			{
-				if ((this._Particulars != value))
-				{
-					this.OnParticularsChanging(value);
-					this.SendPropertyChanging();
-					this._Particulars = value;
-					this.SendPropertyChanged("Particulars");
-					this.OnParticularsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Decimal(18,5) NOT NULL")]
-		public decimal Quantity
-		{
-			get
-			{
-				return this._Quantity;
-			}
-			set
-			{
-				if ((this._Quantity != value))
-				{
-					this.OnQuantityChanging(value);
-					this.SendPropertyChanging();
-					this._Quantity = value;
-					this.SendPropertyChanged("Quantity");
-					this.OnQuantityChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Price", DbType="Decimal(18,5) NOT NULL")]
-		public decimal Price
-		{
-			get
-			{
-				return this._Price;
-			}
-			set
-			{
-				if ((this._Price != value))
-				{
-					this.OnPriceChanging(value);
-					this.SendPropertyChanging();
-					this._Price = value;
-					this.SendPropertyChanged("Price");
-					this.OnPriceChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Decimal(18,5) NOT NULL")]
-		public decimal Amount
-		{
-			get
-			{
-				return this._Amount;
-			}
-			set
-			{
-				if ((this._Amount != value))
-				{
-					this.OnAmountChanging(value);
-					this.SendPropertyChanging();
-					this._Amount = value;
-					this.SendPropertyChanged("Amount");
-					this.OnAmountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="Bit NOT NULL")]
-		public bool IsActive
-		{
-			get
-			{
-				return this._IsActive;
-			}
-			set
-			{
-				if ((this._IsActive != value))
-				{
-					this.OnIsActiveChanging(value);
-					this.SendPropertyChanging();
-					this._IsActive = value;
-					this.SendPropertyChanged("IsActive");
-					this.OnIsActiveChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRefunded", DbType="Bit NOT NULL")]
-		public bool IsRefunded
-		{
-			get
-			{
-				return this._IsRefunded;
-			}
-			set
-			{
-				if ((this._IsRefunded != value))
-				{
-					this.OnIsRefundedChanging(value);
-					this.SendPropertyChanging();
-					this._IsRefunded = value;
-					this.SendPropertyChanged("IsRefunded");
-					this.OnIsRefundedChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstProductPackage_TrnSale", Storage="_MstProductPackage", ThisKey="ProductPackageId", OtherKey="Id", IsForeignKey=true)]
-		public MstProductPackage MstProductPackage
-		{
-			get
-			{
-				return this._MstProductPackage.Entity;
-			}
-			set
-			{
-				MstProductPackage previousValue = this._MstProductPackage.Entity;
-				if (((previousValue != value) 
-							|| (this._MstProductPackage.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._MstProductPackage.Entity = null;
-						previousValue.TrnSales.Remove(this);
-					}
-					this._MstProductPackage.Entity = value;
-					if ((value != null))
-					{
-						value.TrnSales.Add(this);
-						this._ProductPackageId = value.Id;
-					}
-					else
-					{
-						this._ProductPackageId = default(int);
-					}
-					this.SendPropertyChanged("MstProductPackage");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstUser_TrnSale", Storage="_MstUser", ThisKey="UserId", OtherKey="Id", IsForeignKey=true)]
-		public MstUser MstUser
-		{
-			get
-			{
-				return this._MstUser.Entity;
-			}
-			set
-			{
-				MstUser previousValue = this._MstUser.Entity;
-				if (((previousValue != value) 
-							|| (this._MstUser.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._MstUser.Entity = null;
-						previousValue.TrnSales.Remove(this);
-					}
-					this._MstUser.Entity = value;
-					if ((value != null))
-					{
-						value.TrnSales.Add(this);
-						this._UserId = value.Id;
-					}
-					else
-					{
-						this._UserId = default(int);
-					}
-					this.SendPropertyChanged("MstUser");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstUser")]
 	public partial class MstUser : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1905,6 +1473,438 @@ namespace MagentaTrader.Data
 					this._IsArchived = value;
 					this.SendPropertyChanged("IsArchived");
 					this.OnIsArchivedChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TrnSales")]
+	public partial class TrnSale : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private int _ProductPackageId;
+		
+		private int _UserId;
+		
+		private string _SalesNumber;
+		
+		private System.DateTime _SalesDate;
+		
+		private System.DateTime _RenewalDate;
+		
+		private System.DateTime _ExpiryDate;
+		
+		private string _Particulars;
+		
+		private decimal _Quantity;
+		
+		private decimal _Price;
+		
+		private decimal _Amount;
+		
+		private bool _IsActive;
+		
+		private bool _IsRefunded;
+		
+		private EntityRef<MstProductPackage> _MstProductPackage;
+		
+		private EntityRef<MstUser> _MstUser;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnProductPackageIdChanging(int value);
+    partial void OnProductPackageIdChanged();
+    partial void OnUserIdChanging(int value);
+    partial void OnUserIdChanged();
+    partial void OnSalesNumberChanging(string value);
+    partial void OnSalesNumberChanged();
+    partial void OnSalesDateChanging(System.DateTime value);
+    partial void OnSalesDateChanged();
+    partial void OnRenewalDateChanging(System.DateTime value);
+    partial void OnRenewalDateChanged();
+    partial void OnExpiryDateChanging(System.DateTime value);
+    partial void OnExpiryDateChanged();
+    partial void OnParticularsChanging(string value);
+    partial void OnParticularsChanged();
+    partial void OnQuantityChanging(decimal value);
+    partial void OnQuantityChanged();
+    partial void OnPriceChanging(decimal value);
+    partial void OnPriceChanged();
+    partial void OnAmountChanging(decimal value);
+    partial void OnAmountChanged();
+    partial void OnIsActiveChanging(bool value);
+    partial void OnIsActiveChanged();
+    partial void OnIsRefundedChanging(bool value);
+    partial void OnIsRefundedChanged();
+    #endregion
+		
+		public TrnSale()
+		{
+			this._MstProductPackage = default(EntityRef<MstProductPackage>);
+			this._MstUser = default(EntityRef<MstUser>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProductPackageId", DbType="Int NOT NULL")]
+		public int ProductPackageId
+		{
+			get
+			{
+				return this._ProductPackageId;
+			}
+			set
+			{
+				if ((this._ProductPackageId != value))
+				{
+					if (this._MstProductPackage.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProductPackageIdChanging(value);
+					this.SendPropertyChanging();
+					this._ProductPackageId = value;
+					this.SendPropertyChanged("ProductPackageId");
+					this.OnProductPackageIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserId", DbType="Int NOT NULL")]
+		public int UserId
+		{
+			get
+			{
+				return this._UserId;
+			}
+			set
+			{
+				if ((this._UserId != value))
+				{
+					if (this._MstUser.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUserIdChanging(value);
+					this.SendPropertyChanging();
+					this._UserId = value;
+					this.SendPropertyChanged("UserId");
+					this.OnUserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SalesNumber", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string SalesNumber
+		{
+			get
+			{
+				return this._SalesNumber;
+			}
+			set
+			{
+				if ((this._SalesNumber != value))
+				{
+					this.OnSalesNumberChanging(value);
+					this.SendPropertyChanging();
+					this._SalesNumber = value;
+					this.SendPropertyChanged("SalesNumber");
+					this.OnSalesNumberChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SalesDate", DbType="DateTime NOT NULL")]
+		public System.DateTime SalesDate
+		{
+			get
+			{
+				return this._SalesDate;
+			}
+			set
+			{
+				if ((this._SalesDate != value))
+				{
+					this.OnSalesDateChanging(value);
+					this.SendPropertyChanging();
+					this._SalesDate = value;
+					this.SendPropertyChanged("SalesDate");
+					this.OnSalesDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RenewalDate", DbType="DateTime NOT NULL")]
+		public System.DateTime RenewalDate
+		{
+			get
+			{
+				return this._RenewalDate;
+			}
+			set
+			{
+				if ((this._RenewalDate != value))
+				{
+					this.OnRenewalDateChanging(value);
+					this.SendPropertyChanging();
+					this._RenewalDate = value;
+					this.SendPropertyChanged("RenewalDate");
+					this.OnRenewalDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpiryDate", DbType="DateTime NOT NULL")]
+		public System.DateTime ExpiryDate
+		{
+			get
+			{
+				return this._ExpiryDate;
+			}
+			set
+			{
+				if ((this._ExpiryDate != value))
+				{
+					this.OnExpiryDateChanging(value);
+					this.SendPropertyChanging();
+					this._ExpiryDate = value;
+					this.SendPropertyChanged("ExpiryDate");
+					this.OnExpiryDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Particulars", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Particulars
+		{
+			get
+			{
+				return this._Particulars;
+			}
+			set
+			{
+				if ((this._Particulars != value))
+				{
+					this.OnParticularsChanging(value);
+					this.SendPropertyChanging();
+					this._Particulars = value;
+					this.SendPropertyChanged("Particulars");
+					this.OnParticularsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="Decimal(18,5) NOT NULL")]
+		public decimal Quantity
+		{
+			get
+			{
+				return this._Quantity;
+			}
+			set
+			{
+				if ((this._Quantity != value))
+				{
+					this.OnQuantityChanging(value);
+					this.SendPropertyChanging();
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Price", DbType="Decimal(18,5) NOT NULL")]
+		public decimal Price
+		{
+			get
+			{
+				return this._Price;
+			}
+			set
+			{
+				if ((this._Price != value))
+				{
+					this.OnPriceChanging(value);
+					this.SendPropertyChanging();
+					this._Price = value;
+					this.SendPropertyChanged("Price");
+					this.OnPriceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Amount", DbType="Decimal(18,5) NOT NULL")]
+		public decimal Amount
+		{
+			get
+			{
+				return this._Amount;
+			}
+			set
+			{
+				if ((this._Amount != value))
+				{
+					this.OnAmountChanging(value);
+					this.SendPropertyChanging();
+					this._Amount = value;
+					this.SendPropertyChanged("Amount");
+					this.OnAmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="Bit NOT NULL")]
+		public bool IsActive
+		{
+			get
+			{
+				return this._IsActive;
+			}
+			set
+			{
+				if ((this._IsActive != value))
+				{
+					this.OnIsActiveChanging(value);
+					this.SendPropertyChanging();
+					this._IsActive = value;
+					this.SendPropertyChanged("IsActive");
+					this.OnIsActiveChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRefunded", DbType="Bit NOT NULL")]
+		public bool IsRefunded
+		{
+			get
+			{
+				return this._IsRefunded;
+			}
+			set
+			{
+				if ((this._IsRefunded != value))
+				{
+					this.OnIsRefundedChanging(value);
+					this.SendPropertyChanging();
+					this._IsRefunded = value;
+					this.SendPropertyChanged("IsRefunded");
+					this.OnIsRefundedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstProductPackage_TrnSale", Storage="_MstProductPackage", ThisKey="ProductPackageId", OtherKey="Id", IsForeignKey=true)]
+		public MstProductPackage MstProductPackage
+		{
+			get
+			{
+				return this._MstProductPackage.Entity;
+			}
+			set
+			{
+				MstProductPackage previousValue = this._MstProductPackage.Entity;
+				if (((previousValue != value) 
+							|| (this._MstProductPackage.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MstProductPackage.Entity = null;
+						previousValue.TrnSales.Remove(this);
+					}
+					this._MstProductPackage.Entity = value;
+					if ((value != null))
+					{
+						value.TrnSales.Add(this);
+						this._ProductPackageId = value.Id;
+					}
+					else
+					{
+						this._ProductPackageId = default(int);
+					}
+					this.SendPropertyChanged("MstProductPackage");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstUser_TrnSale", Storage="_MstUser", ThisKey="UserId", OtherKey="Id", IsForeignKey=true)]
+		public MstUser MstUser
+		{
+			get
+			{
+				return this._MstUser.Entity;
+			}
+			set
+			{
+				MstUser previousValue = this._MstUser.Entity;
+				if (((previousValue != value) 
+							|| (this._MstUser.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MstUser.Entity = null;
+						previousValue.TrnSales.Remove(this);
+					}
+					this._MstUser.Entity = value;
+					if ((value != null))
+					{
+						value.TrnSales.Add(this);
+						this._UserId = value.Id;
+					}
+					else
+					{
+						this._UserId = default(int);
+					}
+					this.SendPropertyChanged("MstUser");
 				}
 			}
 		}

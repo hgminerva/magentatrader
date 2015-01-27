@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -11,7 +12,7 @@ namespace MagentaTrader.Controllers
     {
         private Data.MagentaTradersDBDataContext db = new Data.MagentaTradersDBDataContext();
 
-        // GET api/User
+        // GET api/Event
         [Authorize]
         public List<Models.Event> Get()
         {
@@ -57,5 +58,102 @@ namespace MagentaTrader.Controllers
             }
             return values;
         }
+
+        // POST api/Event
+        [Authorize]
+        public int Post(Models.Event value)
+        {
+            try
+            {
+
+                Data.MstEvent NewEvent = new Data.MstEvent();
+
+                SqlDateTime EventDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.EventDate).Year, +
+                                                                     Convert.ToDateTime(value.EventDate).Month, +
+                                                                     Convert.ToDateTime(value.EventDate).Day));
+
+
+                NewEvent.EventDate = EventDate.Value;
+                NewEvent.EventDescription = value.EventDescription;
+                NewEvent.Particulars = value.Particulars;
+                NewEvent.URL = value.URL;
+                NewEvent.EventType = value.EventType;
+                NewEvent.IsRestricted = value.IsRestricted;
+                NewEvent.IsArchived = value.IsArchived;
+
+                db.MstEvents.InsertOnSubmit(NewEvent);
+                db.SubmitChanges();
+
+                return NewEvent.Id;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        // PUT /api/Event/5
+        [Authorize]
+        public HttpResponseMessage Put(int Id, Models.Event value)
+        {
+            try
+            {
+                var Events = from d in db.MstEvents where d.Id == Id select d;
+
+                if (Events.Any())
+                {
+                    var UpdatedEvent = Events.FirstOrDefault();
+
+                    SqlDateTime EventDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.EventDate).Year, +
+                                                                         Convert.ToDateTime(value.EventDate).Month, +
+                                                                         Convert.ToDateTime(value.EventDate).Day));
+
+
+                    UpdatedEvent.EventDate = EventDate.Value;
+                    UpdatedEvent.EventDescription = value.EventDescription;
+                    UpdatedEvent.Particulars = value.Particulars;
+                    UpdatedEvent.URL = value.URL;
+                    UpdatedEvent.EventType = value.EventType;
+                    UpdatedEvent.IsRestricted = value.IsRestricted;
+                    UpdatedEvent.IsArchived = value.IsArchived;
+
+                    db.SubmitChanges();
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (NullReferenceException)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+        }
+
+        // DELETE api/Event/5
+        [Authorize]
+        public HttpResponseMessage Delete(int Id)
+        {
+            Data.MstEvent DeleteEvent = db.MstEvents.Where(d => d.Id == Id).First();
+
+            if (DeleteEvent != null)
+            {
+                db.MstEvents.DeleteOnSubmit(DeleteEvent);
+                try
+                {
+                    db.SubmitChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                catch
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+        }  
     }
 }

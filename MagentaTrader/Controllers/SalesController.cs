@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -31,7 +32,7 @@ namespace MagentaTrader.Controllers
                                        UserId = d.UserId,
                                        User = d.MstUser.UserName,
                                        SalesNumber = d.SalesNumber,
-                                       PurchaseDate = d.PurchaseDate.ToShortDateString(),
+                                       SalesDate = d.SalesDate.ToShortDateString(),
                                        RenewalDate = d.RenewalDate.ToShortDateString(),
                                        ExpiryDate = d.ExpiryDate.ToShortDateString(),
                                        Particulars = d.Particulars,
@@ -65,5 +66,122 @@ namespace MagentaTrader.Controllers
             }
             return values;
         }
+
+        // POST api/Sales
+        [Authorize]
+        public int Post(Models.Sales value)
+        {
+            try
+            {
+
+                Data.TrnSale NewSale = new Data.TrnSale();
+
+                SqlDateTime SalesDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.SalesDate).Year, +
+                                                                     Convert.ToDateTime(value.SalesDate).Month, +
+                                                                     Convert.ToDateTime(value.SalesDate).Day));
+                SqlDateTime RenewalDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.RenewalDate).Year, +
+                                                                       Convert.ToDateTime(value.RenewalDate).Month, +
+                                                                       Convert.ToDateTime(value.RenewalDate).Day));
+                SqlDateTime ExpiryDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.ExpiryDate).Year, +
+                                                                      Convert.ToDateTime(value.ExpiryDate).Month, +
+                                                                      Convert.ToDateTime(value.ExpiryDate).Day));
+
+                NewSale.ProductPackageId = value.ProductPackageId;
+                NewSale.UserId = value.UserId;
+                NewSale.SalesNumber = value.SalesNumber;
+                NewSale.SalesDate = SalesDate.Value;
+                NewSale.RenewalDate = RenewalDate.Value;
+                NewSale.ExpiryDate = ExpiryDate.Value;
+                NewSale.Particulars = value.Particulars;
+                NewSale.Quantity = value.Quantity;
+                NewSale.Price = value.Price;
+                NewSale.Amount = value.Amount;
+                NewSale.IsActive = value.IsActive;
+                NewSale.IsRefunded = value.IsRefunded;
+
+                db.TrnSales.InsertOnSubmit(NewSale);
+                db.SubmitChanges();
+
+                return NewSale.Id;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        // PUT /api/Sales/5
+        [Authorize]
+        public HttpResponseMessage Put(int Id, Models.Sales value)
+        {
+            try
+            {
+                var Sales = from d in db.TrnSales where d.Id == Id select d;
+
+                if (Sales.Any())
+                {
+                    var UpdatedSale = Sales.FirstOrDefault();
+
+                    SqlDateTime SalesDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.SalesDate).Year, +
+                                                                         Convert.ToDateTime(value.SalesDate).Month, +
+                                                                         Convert.ToDateTime(value.SalesDate).Day));
+                    SqlDateTime RenewalDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.RenewalDate).Year, +
+                                                                           Convert.ToDateTime(value.RenewalDate).Month, +
+                                                                           Convert.ToDateTime(value.RenewalDate).Day));
+                    SqlDateTime ExpiryDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.ExpiryDate).Year, +
+                                                                          Convert.ToDateTime(value.ExpiryDate).Month, +
+                                                                          Convert.ToDateTime(value.ExpiryDate).Day));
+
+                    UpdatedSale.ProductPackageId = value.ProductPackageId;
+                    UpdatedSale.UserId = value.UserId;
+                    UpdatedSale.SalesNumber = value.SalesNumber;
+                    UpdatedSale.SalesDate = SalesDate.Value;
+                    UpdatedSale.RenewalDate = RenewalDate.Value;
+                    UpdatedSale.ExpiryDate = ExpiryDate.Value;
+                    UpdatedSale.Particulars = value.Particulars;
+                    UpdatedSale.Quantity = value.Quantity;
+                    UpdatedSale.Price = value.Price;
+                    UpdatedSale.Amount = value.Amount;
+                    UpdatedSale.IsActive = value.IsActive;
+                    UpdatedSale.IsRefunded = value.IsRefunded;
+
+                    db.SubmitChanges();
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+            catch (NullReferenceException)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+        }
+
+        // DELETE api/Sales/5
+        [Authorize]
+        public HttpResponseMessage Delete(int Id)
+        {
+            Data.TrnSale DeleteSale = db.TrnSales.Where(d => d.Id == Id).First();
+
+            if (DeleteSale != null)
+            {
+                db.TrnSales.DeleteOnSubmit(DeleteSale);
+                try
+                {
+                    db.SubmitChanges();
+                    return Request.CreateResponse(HttpStatusCode.OK);
+                }
+                catch
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest);
+                }
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+        }  
     }
 }
