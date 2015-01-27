@@ -7,37 +7,34 @@ using System.Web.Http;
 
 namespace MagentaTrader.Controllers
 {
-    public class UserController : ApiController
+    public class ProductController : ApiController
     {
         private Data.MagentaTradersDBDataContext db = new Data.MagentaTradersDBDataContext();
 
-        // GET api/User
+        // GET api/Product
         [Authorize]
-        public List<Models.User> Get()
+        public List<Models.Product> Get()
         {
             var retryCounter = 0;
-            List<Models.User> values;
+            List<Models.Product> values;
 
             while (true)
             {
                 try
                 {
-                    var Users = from d in db.MstUsers
-                                select new Models.User
-                                {
-                                    UserName = d.UserName,
-                                    FirstName = d.FirstName,
-                                    LastName = d.LastName,
-                                    EmailAddress = d.EmailAddress,
-                                    PhoneNumber = d.PhoneNumber
-                                };
-                    if (Users.Count() > 0)
+                    var Products = from d in db.MstProducts
+                                   select new Models.Product
+                                   {
+                                     Id = d.Id,
+                                     ProductDescription = d.Product
+                                  };
+                    if (Products.Count() > 0)
                     {
-                        values = Users.ToList();
+                        values = Products.ToList();
                     }
                     else
                     {
-                        values = new List<Models.User>();
+                        values = new List<Models.Product>();
                     }
                     break;
                 }
@@ -45,7 +42,7 @@ namespace MagentaTrader.Controllers
                 {
                     if (retryCounter == 3)
                     {
-                        values = new List<Models.User>();
+                        values = new List<Models.Product>();
                         break;
                     }
 

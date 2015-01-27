@@ -12,6 +12,7 @@ namespace MagentaTrader.Controllers
         private Data.MagentaTradersDBDataContext db = new Data.MagentaTradersDBDataContext();
 
         // GET api/User
+        [Authorize]
         public List<Models.Event> Get()
         {
             var retryCounter = 0;

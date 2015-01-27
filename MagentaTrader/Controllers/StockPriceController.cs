@@ -12,6 +12,7 @@ namespace MagentaTrader.Controllers
         private Data.MagentaTradersDBDataContext db = new Data.MagentaTradersDBDataContext();
 
         // GET api/StockPrice/FB
+        [Authorize]
         public Models.StockPriceWrapper Get(string symbol)
         {
             List<Models.StockPrice> prices;

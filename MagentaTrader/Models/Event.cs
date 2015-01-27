@@ -7,6 +7,7 @@ namespace MagentaTrader.Models
 {
     public class Event
     {
+        public int Id { get; set; }
         public string EventDate { get; set; }
         public string EventDescription { get; set; }
         public string Particulars { get; set; }

@@ -176,6 +176,9 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\ProductPackageController.cs" />
+    <Compile Include="Controllers\SalesController.cs" />
     <Compile Include="Controllers\SoftwareController.cs" />
     <Compile Include="Controllers\StockPriceController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -190,6 +193,9 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Product.cs" />
+    <Compile Include="Models\ProductPackage.cs" />
+    <Compile Include="Models\Sales.cs" />
     <Compile Include="Models\StockPrice.cs" />
     <Compile Include="Models\StockPriceWrapper.cs" />
     <Compile Include="Models\User.cs" />
