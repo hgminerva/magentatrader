@@ -1,0 +1,1589 @@
+﻿@{
+    ViewBag.Title = "Software";
+}
+
+<link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+<link href="/dist/css/sb-admin-2.css" rel="stylesheet">
+<link href="/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="/bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<script src="/bower_components/raphael/raphael-min.js"></script>
+
+<script src="/dist/js/sb-admin-2.js"></script>
+
+<div id="wrapper">
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/Home" style="font-size:smaller"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"> - v.Beta.1.20150115</span></a>
+        </div>
+
+        <ul class="nav navbar-top-links navbar-right">
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-gear fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-messages">
+                    <li>
+                        <a href="/Admin">
+                            <div><strong>Admin</strong></div>
+                            <div>Administration modules for Magenta Trader.</div>
+                        </a>
+                    </li>
+                    <li >
+                        <a href="#">
+                            <div><strong>Log Off @User.Identity.Name</strong></div>
+                            <div>
+                                @using (Html.BeginForm("LogOff", "Account"))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input class="btn btn-sm btn-danger" title="Log off" value="Log Off" type="submit" />
+                                }
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- /.dropdown-messages -->
+            </li>
+        </ul>
+        <!-- /.navbar-top-links -->
+
+        <div class="navbar-default sidebar" role="navigation">
+            <div class="sidebar-nav navbar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="sidebar-search">
+                        <div class="input-group custom-search-form">
+                            <input id="searchSymbol" type="text" class="form-control" style="padding-right:2px" placeholder="Symbol...">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" id="getSymbol" onclick="getSymbol()">
+                                    <i class="fa fa-refresh"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </li>
+                    <li class="sidebar-item">
+                        <a id="symbol" href="#" style="padding: 2px 15px; color: black; text-align: center"><span>Symbol</span></a>
+                        <ul class="nav nav-second-level">
+                            <li id=symbolInfoChart></li>
+                            <li id=symbolInfoChannel></li>
+                            <li id=symbolSlopePercentage></li>
+                            <li id=symbolInfoCoefficient></li>
+                            <li id=symbolInfoRange></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-item">
+                        <div id="scannerDayRange" class="input-group-btn" style="padding: 2px 15px;">
+                            <button id="scannerDayRangeMenu" class="col-sm-10 btn btn-default">
+                                <b>30 Day(s) Scanner</b>
+                            </button>
+                            <button class="col-sm-2 btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul id="scannerDayRangeItem" class="dropdown-menu pull-left" style="height: auto; max-height: 200px; overflow-x: hidden; padding:10px"></ul>
+                        </div>
+                        <ul id="scannerYear" class="nav nav-second-level"></ul>
+                    </li>
+                    <li class="sidebar-item">
+                        <a id="varScannerYearHeading" href="#" style="padding: 2px 15px; color:black; text-align:center"><span>Variable Scanner</span></a>
+                    </li>
+                    <li class="sidebar-search">
+                        <div class=" input-group custom-search-form">
+                            <input id="startNoOfDay" type="text" placeholder="Min..." class="form-control">
+                            <span class="input-group-btn" style="width:0px;"></span>
+                            <input id="endNoOfDay" type="text" placeholder="Max..." class="form-control">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" id="varScanner" onclick="varScanner()">
+                                    <i class="fa fa-refresh"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="page-wrapper">
+        <div id="chartdiv" style="width: 100%; height: 650px; padding: 20px 10px 10px 10px; "></div>
+    </div>
+</div>
+
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="Loading..." aria-hidden="true" >
+    <div class="modal-dialog" style="width: 220px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Loading...</h4>
+            </div>
+            <div class="modal-body">
+                <img src="/img/progress_bar.gif" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/date.js"></script>
+
+<link rel="stylesheet" href="/amcharts/amcharts/style.css" type="text/css">
+<script src="/amcharts/amcharts/amcharts.js" type="text/javascript"></script>
+<script src="/amcharts/amcharts/serial.js" type="text/javascript"></script>
+<script src="/amcharts/amcharts/amstock.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    // Modal
+    var pleaseWaitDiv = $('<div class="modal hide" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false"><div class="modal-header"><h1>Processing...</h1></div><div class="modal-body"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></div>');
+
+    // Chart data repository variable
+    var dataSymbol = "";
+    var dataSymbolDescription = "";
+    var data;
+
+    // AMChart variable
+    var chart;
+    var stockPanel1;
+    var stockPanel2;
+
+    // Constant colors
+    var seasonColor = "#F0F004";
+    var season5YearColor = "#65BF04"
+    var positiveGuideColor = "#00FF00";
+    var negativeGuideColor = "#FF0000";
+
+    // 10-Year Chart Data
+    var chartData = [];
+
+    // 6-Months + Future 6 Months of Plotted Data
+    var plotData = [];
+
+    // Seasonality data
+    var seasonTenYearData = [];
+    var seasonFiveYearData = [];
+    var seasonYearData = [];
+    var closeYearData = [];
+
+    // Hidden Season Yearly Graph
+    var scannerYearGraph = [];
+
+    // Number of trading days in a year / period
+    var NumberOfDaysInYear = 252;
+
+    // Number of years process (extended one year so as to exclude the last six months)
+    var seasonYearNo = 12;
+
+    // List of plotted year graphs
+    var plottedYearGraphs = []
+
+    // Scanner range
+    var scannerRange = 30;
+
+    // Variable scanner guide
+    var varScannerUp;
+    var varScannerDown;
+
+    // DOM Chart Information labels
+    var chartSymbol = "";
+    var chartNoOfDays = 0;
+    var chartChannelNoOfDays = 0;
+    var chartSlopePercentage = 0;
+    var chartCoefficient = 0;
+    var chartChannelRange = 0;
+
+    function getSymbol() {
+        var symbol = $('#searchSymbol').val();
+        if (symbol != "") {
+            chartSymbol = $('#searchSymbol').val().toUpperCase();
+            $('#searchSymbol').val(null)
+            getData(symbol);
+        } else {
+            if (!!chart) {
+                //chart.validateNow();
+            }
+        }
+    }
+    function getData(symbol) {
+        $('#loading').modal('show');
+        $.ajax({
+            url: '/api/StockPrice/' + symbol,
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (priceData) {
+                $('#loading').modal('hide');
+                if (priceData.StockPrices.length > 0) {
+                    dataSymbol = priceData.Symbol;
+                    dataSymbolDescription = priceData.SymbolDescription;
+                    data = priceData.StockPrices;
+                    $('#chartdiv').empty();
+
+                    createStockChart(symbol, data);
+                } else {
+                    alert("No data.");
+                }
+            }
+        }).fail(
+                function (xhr, textStatus, err) {
+                    pleaseWaitDiv.modal('hide');
+                    alert(err);
+                }
+        );
+    }
+    function parseDate(input) {
+        var parts = input.split('-');
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+    function createStockChart(symbol, stockPrice) {
+        chart = new AmCharts.AmStockChart();
+
+        chart.pathToImages = "/amcharts/amcharts/images/";
+
+        // Day number (0-251) in a year: mid year - 125
+        var dayIndex = 0;
+
+        // Chart data
+        while (chartData.length > 0) chartData.pop();
+
+        // Plot data
+        while (plotData.length > 0) plotData.pop();
+
+        // Hidden season yearly data
+        while (scannerYearGraph.length > 0) scannerYearGraph.pop();
+
+        // 10-Years Seasonality data (average)
+        while (seasonTenYearData.length > 0) seasonTenYearData.pop();
+        for (var i = 0; i < NumberOfDaysInYear; i++) seasonTenYearData.push(0);
+
+        // 5-Years Seasonality data (average)
+        while (seasonFiveYearData.length > 0) seasonFiveYearData.pop();
+        for (var i = 0; i < NumberOfDaysInYear; i++) seasonFiveYearData.push(0);
+
+        // Yearly Seasonality data
+        while (seasonYearData.length > 0) seasonYearData.pop();
+        for (var i = 0; i < seasonYearNo; i++) {
+            seasonYearData[i] = [];
+            for (var d = 0; d < NumberOfDaysInYear; d++) seasonYearData[i].push(0);
+        }
+
+        // Yearly closing price data
+        while (closeYearData.length > 0) closeYearData.pop();
+        for (var i = 0; i < seasonYearNo; i++) {
+            closeYearData[i] = [];
+            for (var d = 0; d < NumberOfDaysInYear; d++) closeYearData[i].push(0);
+        }
+
+        // DATA ///////////////////////////////////////////////////////////////////////////////
+        // 1. Reverse the data of the stockPrice JSON objet
+        // 2. Process the data from the stockPrice JSON object
+        // 3. Compute for the seasonCount: 252 day cycle
+        // 4. By-pass the dates that is lesser than the first date (alignment purposes)
+        ///////////////////////////////////////////////////////////////////////////////////////
+        stockPrice.reverse();
+
+        var symbolDescription = dataSymbolDescription;
+
+        var countYear = 0;
+        var indexDate = new Date();
+        var saveFlag = true;
+
+        if (stockPrice.length > 2646) {
+            // ==================================================
+            // If the number of records exceeds 10 years or more.
+            // ==================================================
+            for (var i = 0; i < stockPrice.length; i++) {
+                // Check alignment
+                if (dayIndex == 0 && countYear == 0) {
+                    indexDate = new Date(parseDate(stockPrice[i]["QuoteDate"]));
+                    saveFlag = true;
+                } else {
+                    if (dayIndex == 0) {
+                        var alignDate = new Date(parseDate(stockPrice[i]["QuoteDate"]))
+                        var newIndexDate = new Date(indexDate).add(1).years();
+                        if (alignDate >= newIndexDate) {
+                            indexDate = new Date(newIndexDate);
+                            saveFlag = true;
+                        } else {
+                            saveFlag = false;
+                        }
+                    } else {
+                        saveFlag = true;
+                    }
+                }
+                // Save to chart data
+                if (saveFlag == true) {
+                    var date = new Date();
+                    var open = 0;
+                    var high = 0;
+                    var low = 0;
+                    var close = 0;
+                    var volume = 0;
+
+                    for (var prop in stockPrice[i]) {
+                        if (prop == "QuoteDate") date = parseDate(stockPrice[i][prop]);
+                        if (prop == "OpenPrice") open = stockPrice[i][prop];
+                        if (prop == "HighPrice") high = stockPrice[i][prop];
+                        if (prop == "LowPrice") low = stockPrice[i][prop];
+                        if (prop == "ClosePrice") close = stockPrice[i][prop];
+                        if (prop == "Volume") volume = stockPrice[i][prop];
+                    }
+
+                    chartData.push({
+                        date: date,
+                        open: open,
+                        high: high,
+                        low: low,
+                        close: close,
+                        season: 0,
+                        season5Year: 0,
+                        seasonCount: dayIndex,
+                        volume: volume
+                    });
+
+                    dayIndex++;
+                    if (dayIndex == 252) {
+                        dayIndex = 0;
+                        countYear++;
+                    }
+                }
+            }
+        } else {
+            // ==============================================
+            // If the number of records is less than 10 years
+            // ==============================================
+            stockPrice.reverse();
+            dayIndex = 125;
+            countYear = -1;
+            for (var i = 0; i < stockPrice.length; i++) {
+                var date = new Date();
+                var open = 0;
+                var high = 0;
+                var low = 0;
+                var close = 0;
+                var volume = 0;
+
+                for (var prop in stockPrice[i]) {
+                    if (prop == "QuoteDate") date = parseDate(stockPrice[i][prop]);
+                    if (prop == "OpenPrice") open = stockPrice[i][prop];
+                    if (prop == "HighPrice") high = stockPrice[i][prop];
+                    if (prop == "LowPrice") low = stockPrice[i][prop];
+                    if (prop == "ClosePrice") close = stockPrice[i][prop];
+                    if (prop == "Volume") volume = stockPrice[i][prop];
+                }
+
+                chartData.push({
+                    date: date,
+                    open: open,
+                    high: high,
+                    low: low,
+                    close: close,
+                    season: 0,
+                    season5Year: 0,
+                    seasonCount: dayIndex,
+                    volume: volume
+                });
+
+                dayIndex--;
+                if (dayIndex == -1) {
+                    dayIndex = 251;
+                    countYear++;
+                }
+            }
+            chartData.reverse();
+        }
+        //debugger;
+
+        // SEASON AVERAGE DATA ////////////////////////////////////////////////////////////////////////////
+        // 1. Loop through the chartData
+        // 2. Compute for the 10-Years Seasonality Average (season)
+        // 3. Compute for the 5-Years Seasonality Average (season5Year)
+        // 4. Save the results in the chartData
+        // 5. Save the year to year season data (use for scanner/guide win/loss comparison)
+        // 6. Save the year to year closing price data (use for scanner/guide average computation)
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        dayIndex = parseInt(chartData[0]["seasonCount"]);
+        countYear = 0;
+
+        var seasonDivisor = 1;
+        var season = 0;
+        var season5Year = 0;
+
+        for (var i = 0; i < chartData.length; i++) {
+            if (countYear < 10 || i > chartData.length - 126) {
+                if (dayIndex == 0) {
+                    seasonDivisor = parseFloat(chartData[i]["close"]);
+                    season = 0;
+                    if (countYear > 4) season5Year = season;
+                } else {
+                    if (i == 0) {
+                        if (dayIndex > 0) {
+                            seasonDivisor = parseFloat(chartData[i]["close"]);
+                            season = 0;
+                        }
+                    } else {
+                        season = ((parseFloat(chartData[i]["close"]) - seasonDivisor) / seasonDivisor) * 100;
+                        if (countYear > 4) season5Year = season;
+                    }
+                }
+
+                chartData[i]["season"] = season;
+                chartData[i]["season5Year"] = season5Year;
+
+                seasonTenYearData[dayIndex] = seasonTenYearData[dayIndex] + season;
+                seasonFiveYearData[dayIndex] = seasonFiveYearData[dayIndex] + season5Year;
+
+                seasonYearData[countYear][dayIndex] = season;
+                closeYearData[countYear][dayIndex] = parseFloat(chartData[i]["close"]);
+            }
+            //debugger;
+            dayIndex++;
+            if (dayIndex == 252) {
+                dayIndex = 0;
+                countYear++;
+            }
+        }
+        //debugger;
+        // PLOT DATA ///////////////////////////////////////////////////////////////////////////////////////
+        // 1. plotData is the last six months (126 days) of the chartData plus six months future data
+        // 2. The seasonality of the future data of the plotData is taken from the historial seasonData
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        dayIndex = 0;
+
+        var futureDate = new Date((new Date(chartData[chartData.length - 1]["date"])).add(1).days());
+
+        for (var i = chartData.length - (NumberOfDaysInYear / 2) ;
+                 i < chartData.length + (NumberOfDaysInYear / 2) ;
+                 i++) {
+            if (i >= chartData.length) {
+                if (new Date(futureDate).getDay() == 0 || new Date(futureDate).getDay() == 6) {
+                    dayIndex--;
+                    i--;
+                } else {
+                    plotData.push({
+                        date: new Date(futureDate),
+                        season: (seasonTenYearData[dayIndex] / 10).toFixed(2),
+                        season5Year: (seasonFiveYearData[dayIndex] / 5).toFixed(2),
+                        seasonCount: dayIndex,
+                        seasonY0: seasonYearData[0][dayIndex].toFixed(2),
+                        seasonY1: seasonYearData[1][dayIndex].toFixed(2),
+                        seasonY2: seasonYearData[2][dayIndex].toFixed(2),
+                        seasonY3: seasonYearData[3][dayIndex].toFixed(2),
+                        seasonY4: seasonYearData[4][dayIndex].toFixed(2),
+                        seasonY5: seasonYearData[5][dayIndex].toFixed(2),
+                        seasonY6: seasonYearData[6][dayIndex].toFixed(2),
+                        seasonY7: seasonYearData[7][dayIndex].toFixed(2),
+                        seasonY8: seasonYearData[8][dayIndex].toFixed(2),
+                        seasonY9: seasonYearData[9][dayIndex].toFixed(2)
+                    });
+                }
+                futureDate = futureDate.add(1).day();
+            } else {
+                plotData.push({
+                    date: chartData[i]["date"],
+                    open: chartData[i]["open"],
+                    high: chartData[i]["high"],
+                    low: chartData[i]["low"],
+                    close: chartData[i]["close"],
+                    season: (seasonTenYearData[dayIndex] / 10).toFixed(2),
+                    season5Year: (seasonFiveYearData[dayIndex] / 5).toFixed(2),
+                    seasonCount: dayIndex,
+                    seasonY0: seasonYearData[0][dayIndex].toFixed(2),
+                    seasonY1: seasonYearData[1][dayIndex].toFixed(2),
+                    seasonY2: seasonYearData[2][dayIndex].toFixed(2),
+                    seasonY3: seasonYearData[3][dayIndex].toFixed(2),
+                    seasonY4: seasonYearData[4][dayIndex].toFixed(2),
+                    seasonY5: seasonYearData[5][dayIndex].toFixed(2),
+                    seasonY6: seasonYearData[6][dayIndex].toFixed(2),
+                    seasonY7: seasonYearData[7][dayIndex].toFixed(2),
+                    seasonY8: seasonYearData[8][dayIndex].toFixed(2),
+                    seasonY9: seasonYearData[9][dayIndex].toFixed(2),
+                    volume: chartData[i]["volume"]
+                });
+            }
+            dayIndex++;
+        }
+
+        // MIDPOINT ////////////////////////////////////////////////////////////////////////////////////
+        var midTenYearMultiplier = parseFloat(plotData[125]["season"]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["season"]);
+        var midFiveYearMultiplier = parseFloat(plotData[125]["season5Year"]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["season5Year"]);
+        var midYearMultiplier = [];
+        for (var y = 0; y < 10; y++) {
+            midYearMultiplier[y] = parseFloat(plotData[125]["seasonY" + y]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["seasonY" + y]);
+        }
+        for (var i = 0; i < NumberOfDaysInYear; i++) {
+            plotData[i]["season"] = (parseFloat(plotData[i]["season"]) * midTenYearMultiplier).toFixed(2);
+            plotData[i]["season5Year"] = (parseFloat(plotData[i]["season5Year"]) * midFiveYearMultiplier).toFixed(2);
+            for (var y = 0; y < 10; y++) {
+                plotData[i]["seasonY" + y] = (parseFloat(plotData[i]["seasonY" + y]) * midYearMultiplier[y]).toFixed(2);
+            }
+        }
+
+        // DATASETS ////////////////////////////////////////////////////////////////////////////////////
+        var dataSet = new AmCharts.DataSet();
+        dataSet.title = symbol;
+        dataSet.color = "#7f8da9";
+        dataSet.fieldMappings = [{
+            fromField: "open",
+            toField: "open"
+        }, {
+            fromField: "high",
+            toField: "high"
+        }, {
+            fromField: "low",
+            toField: "low"
+        }, {
+            fromField: "close",
+            toField: "close"
+        }, {
+            fromField: "season",
+            toField: "season"
+        }, {
+            fromField: "season5Year",
+            toField: "season5Year"
+        }, {
+            fromField: "seasonY0",
+            toField: "seasonY0"
+        }, {
+            fromField: "seasonY1",
+            toField: "seasonY1"
+        }, {
+            fromField: "seasonY2",
+            toField: "seasonY2"
+        }, {
+            fromField: "seasonY3",
+            toField: "seasonY3"
+        }, {
+            fromField: "seasonY4",
+            toField: "seasonY4"
+        }, {
+            fromField: "seasonY5",
+            toField: "seasonY5"
+        }, {
+            fromField: "seasonY6",
+            toField: "seasonY6"
+        }, {
+            fromField: "seasonY7",
+            toField: "seasonY7"
+        }, {
+            fromField: "seasonY8",
+            toField: "seasonY8"
+        }, {
+            fromField: "seasonY9",
+            toField: "seasonY9"
+        }, {
+            fromField: "volume",
+            toField: "volume"
+        }];
+        dataSet.dataProvider = plotData;
+        dataSet.categoryField = "date";
+
+        chart.dataSets = [dataSet];
+
+        // PANELS ///////////////////////////////////////////
+        stockPanel1 = new AmCharts.StockPanel();
+        stockPanel1.showCategoryAxis = false;
+        stockPanel1.title = symbolDescription;
+        stockPanel1.percentHeight = 80;
+        stockPanel1.recalculateToPercents = "never";
+
+        stockPanel2 = new AmCharts.StockPanel();
+        stockPanel2.title = "Volume";
+        stockPanel2.allowTurningOff = true;
+        stockPanel2.percentHeight = 20;
+
+        // CATEGORY AXIS GUIDES ///////////////////////////////////////////
+        var guideCurrentDate = new AmCharts.Guide();
+        guideCurrentDate.date = plotData[125]["date"];
+        guideCurrentDate.lineColor = "#FF0000";
+        guideCurrentDate.lineAlpha = 1;
+        guideCurrentDate.dashLength = 2;
+        guideCurrentDate.inside = true;
+        guideCurrentDate.labelRotation = 90;
+        guideCurrentDate.label = "";
+        stockPanel1.categoryAxis.addGuide(guideCurrentDate);
+
+        // GUIDE DATA (SCANNER DATA) //////////////////////////////////////////////////////////////////////
+        // 1. Loop through the entire 252 trading day less 30 days
+        // 2. Compare the value of the season of the current day and 30 days after the current day
+        // 3. Increment and win/loss (up/down)
+        // 4. Compute for the percetage of win/loss using the closing price of the current day and
+        //    the 30 days after the current day
+        // 5. Save the result to the guideData
+        ///////////////////////////////////////////////////////////////////////////////////////////////////
+        seasonYearNo = 12;
+
+        var guideData = [];
+        var daySpan = 30;
+
+        //for (var i = 0; i < NumberOfDaysInYear - daySpan ; i++) {
+        //    var up = 0;
+        //    var down = 0;
+        //    var averageUp = 0;
+        //    var averageDown = 0;
+
+        //    var seasonTenYear = parseFloat(plotData[i]["season"]);
+        //    var seasonTenYearPlus30Days = parseFloat(parseFloat(plotData[i + daySpan - 1]["season"]));
+
+        //    if (seasonTenYearPlus30Days > seasonTenYear) {
+        //        for (var y = 0; y < seasonYearNo - 2; y++) {
+        //            //var seasonYearly = seasonYearData[y][i];
+        //            //var seasonYearly30Days = seasonYearData[y][i + daySpan - 1]
+        //            var seasonYearly = closeYearData[y][i];
+        //            var seasonYearly30Days = closeYearData[y][i + daySpan - 1];
+        //            if (seasonYearly30Days > seasonYearly) {
+        //                up++;
+        //                if (seasonYearly != 0) {
+        //                    var startValue = seasonYearly / midTenYearMultiplier;
+        //                    var endValue = seasonYearly30Days / midTenYearMultiplier;
+        //                    averageUp = averageUp + (((endValue - startValue) / startValue) * 100 * sign(startValue));
+        //                }
+        //            }
+        //        }
+        //        if (up > 0) averageUp = averageUp / up;
+        //    } else if (seasonTenYearPlus30Days < seasonTenYear) {
+        //        for (var y = 0; y < seasonYearNo - 2; y++) {
+        //            //var seasonYearly = seasonYearData[y][i];
+        //            //var seasonYearly30Days = seasonYearData[y][i + daySpan - 1];
+        //            var seasonYearly = closeYearData[y][i];
+        //            var seasonYearly30Days = closeYearData[y][i + daySpan - 1];
+        //            if (seasonYearly30Days < seasonYearly) {
+        //                down++;
+        //                if (seasonYearly30Days != 0) {
+        //                    var startValue = seasonYearly / midTenYearMultiplier;
+        //                    var endValue = seasonYearly30Days / midTenYearMultiplier;
+        //                    averageDown = averageDown + (((startValue - endValue) / endValue) * 100 * sign(endValue));
+        //                }
+        //            }
+        //        }
+        //        if (down > 0) averageDown = averageDown / down;
+        //    }
+
+        //    guideData.push({
+        //        up: up,
+        //        down: down,
+        //        averageUp: averageUp.toFixed(2),
+        //        averageDown: averageDown.toFixed(2),
+        //        date: plotData[i]["date"],
+        //        toDate: plotData[i + daySpan - 1]["date"],
+        //        label: plotData[i]["date"].toString('MMM dd') + '-' +
+        //               plotData[i + daySpan - 1]["date"].toString('MMM dd') + '   ' +
+        //               (up > down ? up + '/' + (10 - up) + ' Average:' + averageUp.toFixed(2) + '%' :
+        //                            down + '/' + (10 - down) + ' Average:' + averageDown.toFixed(2) + '%'),
+        //        seasonCount: i
+        //    });
+        //}
+
+        // PLOT GUIDE (SCANNER) ///////////////////////////////////////////////////////////////
+        // First part
+        // 1. Loop through 0-126 trading days
+        // 2. Get the highest win/up and loss/down values
+        // 3. Plot the highest value
+        // Second part
+        // 1. Loop though 127-252 trading days but in reverse to get the highest value
+        //    nearer to the current day
+        // 2. Get the highes win/up and loss/down value
+        // 3. Plot the highest value
+        ///////////////////////////////////////////////////////////////////////////////////////
+        var guideScanner = [];
+
+        var positiveDate = new Date();
+        var positiveToDate = new Date();
+        var positiveLabel = "";
+
+        var negativeDate = new Date();
+        var negativeToDate = new Date();
+        var negativeLabel = "";
+
+        var highestUp = 0;
+        var highestDown = 0;
+
+        //for (var i = 0 ; i < NumberOfDaysInYear - daySpan ; i++) {
+        //    if (i == 0) {
+        //        highestUp = parseFloat(guideData[i]["up"]);
+        //        highestDown = parseFloat(guideData[i]["down"]);
+
+        //        positivelabel = guideData[i]["label"];
+        //        negativeLabel = guideData[i]["label"];
+
+        //        positiveDate = guideData[i]["date"];
+        //        positiveToDate = guideData[i]["toDate"];
+
+        //        negativeDate = guideData[i]["date"];
+        //        negativeToDate = guideData[i]["toDate"];
+        //    } else {
+        //        if (parseFloat(guideData[i]["up"]) >= highestUp) {
+        //            highestUp = parseFloat(guideData[i]["up"]);
+        //            positivelabel = guideData[i]["label"];
+        //            positiveDate = guideData[i]["date"];
+        //            positiveToDate = guideData[i]["toDate"];
+        //        }
+        //        if (parseFloat(guideData[i]["down"]) >= highestDown) {
+        //            highestDown = parseFloat(guideData[i]["down"]);
+        //            negativeLabel = guideData[i]["label"];
+        //            negativeDate = guideData[i]["date"];
+        //            negativeToDate = guideData[i]["toDate"];
+        //        }
+        //        if (i == 126) {
+        //            if (highestUp > 0) {
+        //                guideScanner[0] = new AmCharts.Guide();
+        //                guideScanner[0].date = positiveDate;
+        //                guideScanner[0].toDate = positiveToDate;
+        //                guideScanner[0].fillColor = positiveGuideColor;
+        //                guideScanner[0].fillAlpha = 0.3;
+        //                guideScanner[0].labelRotation = 90;
+        //                guideScanner[0].inside = true;
+        //                guideScanner[0].label = "Up: " + positivelabel;
+        //                stockPanel1.categoryAxis.addGuide(guideScanner[0]);
+        //            }
+        //            if (highestDown > 0) {
+        //                guideScanner[1] = new AmCharts.Guide();
+        //                guideScanner[1].date = negativeDate;
+        //                guideScanner[1].toDate = negativeToDate;
+        //                guideScanner[1].fillColor = negativeGuideColor;
+        //                guideScanner[1].fillAlpha = 0.3;
+        //                guideScanner[1].labelRotation = 90;
+        //                guideScanner[1].inside = true;
+        //                guideScanner[1].label = "Down: " + negativeLabel;
+        //                stockPanel1.categoryAxis.addGuide(guideScanner[1]);
+        //            }
+
+        //            highestUp = parseFloat(guideData[i]["up"]);
+        //            highestDown = parseFloat(guideData[i]["down"]);
+
+        //            positivelabel = guideData[i]["label"];
+        //            negativeLabel = guideData[i]["label"];
+
+        //            positiveDate = guideData[i]["date"];
+        //            positiveToDate = guideData[i]["toDate"];
+
+        //            negativeDate = guideData[i]["date"];
+        //            negativeToDate = guideData[i]["toDate"];
+        //        }
+        //    }
+        //}
+        //if (highestUp > 0) {
+        //    guideScanner[2] = new AmCharts.Guide();
+        //    guideScanner[2].date = positiveDate;
+        //    guideScanner[2].toDate = positiveToDate;
+        //    guideScanner[2].fillColor = positiveGuideColor;
+        //    guideScanner[2].fillAlpha = 0.3;
+        //    guideScanner[2].labelRotation = 90;
+        //    guideScanner[2].inside = true;
+        //    guideScanner[2].label = "Up: " + positivelabel;
+        //    stockPanel1.categoryAxis.addGuide(guideScanner[2]);
+        //}
+        //if (highestDown > 0) {
+        //    guideScanner[3] = new AmCharts.Guide();
+        //    guideScanner[3].date = negativeDate;
+        //    guideScanner[3].toDate = negativeToDate;
+        //    guideScanner[3].fillColor = negativeGuideColor;
+        //    guideScanner[3].fillAlpha = 0.3;
+        //    guideScanner[3].labelRotation = 90;
+        //    guideScanner[3].inside = true;
+        //    guideScanner[3].label = "Down: " + negativeLabel;
+        //    stockPanel1.categoryAxis.addGuide(guideScanner[3]);
+        //}
+
+        // PRICE AXIS /////////////////////////////////////////////////////////////////////////////////////
+        var minValue = 0;
+        var maxValue = 0;
+        var upDistance = 0;
+        var downDistance = 0;
+        var addInterval = 0;
+
+        var valueAxisPrice = new AmCharts.ValueAxis();
+        for (var i = 0; i < NumberOfDaysInYear / 2; i++) {
+            if (i == 0) {
+                minValue = parseFloat(plotData[i]["close"]);
+                maxValue = parseFloat(plotData[i]["close"]);
+            } else {
+                if (parseFloat(plotData[i]["close"]) < minValue) minValue = parseFloat(plotData[i]["close"]);
+                if (parseFloat(plotData[i]["close"]) > maxValue) maxValue = parseFloat(plotData[i]["close"]);
+            }
+        }
+        upDistance = maxValue - parseFloat(plotData[125]["close"]);
+        downDistance = parseFloat(plotData[125]["close"]) - minValue;
+        addInterval = 0;
+        if (upDistance > downDistance) {
+            valueAxisPrice.maximum = maxValue;
+            valueAxisPrice.minimum = minValue - (upDistance - downDistance);
+        } else if (upDistance < downDistance) {
+            valueAxisPrice.maximum = maxValue + (downDistance - upDistance);
+            valueAxisPrice.minimum = minValue;
+        }
+        stockPanel1.addValueAxis(valueAxisPrice);
+
+        // 10-YEAR SEASONALITY AXIS //////////////////////////////////////////////////////////////////////
+        var valueAxisTenYearSeasonality = new AmCharts.ValueAxis();
+        for (var i = 0; i < NumberOfDaysInYear; i++) {
+            if (i == 0) {
+                minValue = parseFloat(plotData[i]["season"]);
+                maxValue = parseFloat(plotData[i]["season"]);
+            } else {
+                if (parseFloat(plotData[i]["season"]) < minValue) minValue = parseFloat(plotData[i]["season"]);
+                if (parseFloat(plotData[i]["season"]) > maxValue) maxValue = parseFloat(plotData[i]["season"]);
+            }
+        }
+        upDistance = maxValue - parseFloat(plotData[125]["season"]);
+        downDistance = parseFloat(plotData[125]["season"]) - minValue;
+        addInterval = 0;
+        if (upDistance > downDistance) {
+            valueAxisTenYearSeasonality.maximum = maxValue;
+            valueAxisTenYearSeasonality.minimum = minValue - (upDistance - downDistance);
+        } else if (upDistance < downDistance) {
+            valueAxisTenYearSeasonality.maximum = maxValue + (downDistance - upDistance);
+            valueAxisTenYearSeasonality.minimum = minValue;
+        }
+        valueAxisTenYearSeasonality.labelsEnabled = false;
+        valueAxisTenYearSeasonality.position = "right";
+        valueAxisTenYearSeasonality.gridThickness = 0;
+        valueAxisTenYearSeasonality.axisThickness = 0;
+        stockPanel1.addValueAxis(valueAxisTenYearSeasonality);
+
+        // 5-YEAR SEASONALITY AXIS //////////////////////////////////////////////////////////////////////
+        var valueAxisFiveYearSeasonality = new AmCharts.ValueAxis();
+        for (var i = 0; i < NumberOfDaysInYear; i++) {
+            if (i == 0) {
+                minValue = parseFloat(plotData[i]["season5Year"]);
+                maxValue = parseFloat(plotData[i]["season5Year"]);
+            } else {
+                if (parseFloat(plotData[i]["season5Year"]) < minValue) minValue = parseFloat(plotData[i]["season5Year"]);
+                if (parseFloat(plotData[i]["season5Year"]) > maxValue) maxValue = parseFloat(plotData[i]["season5Year"]);
+            }
+        }
+        upDistance = maxValue - parseFloat(plotData[125]["season5Year"]);
+        downDistance = parseFloat(plotData[125]["season5Year"]) - minValue;
+        addInterval = 0;
+        if (upDistance > downDistance) {
+            valueAxisFiveYearSeasonality.maximum = maxValue;
+            valueAxisFiveYearSeasonality.minimum = minValue - (upDistance - downDistance);
+        } else if (upDistance < downDistance) {
+            valueAxisFiveYearSeasonality.maximum = maxValue + (downDistance - upDistance);
+            valueAxisFiveYearSeasonality.minimum = minValue;
+        }
+        valueAxisFiveYearSeasonality.labelsEnabled = false;
+        valueAxisFiveYearSeasonality.position = "right";
+        valueAxisFiveYearSeasonality.gridThickness = 0;
+        valueAxisFiveYearSeasonality.axisThickness = 0;
+        stockPanel1.addValueAxis(valueAxisFiveYearSeasonality);
+
+        // GRAPHS ////////////////////////////////////////////////////////////////////////////////////////
+        var graphPrice = new AmCharts.StockGraph();
+        graphPrice.id = "graphPrice";
+        graphPrice.title = "Price";
+        graphPrice.type = "candlestick";
+        graphPrice.openField = "open";
+        graphPrice.closeField = "close";
+        graphPrice.highField = "high";
+        graphPrice.lowField = "low";
+        graphPrice.valueField = "close";
+
+        //graphPrice.lineColor = "#7f8da9";
+        //graphPrice.fillColors = "#7f8da9";
+        //graphPrice.negativeLineColor = "#db4c3c";
+        //graphPrice.negativeFillColors = "#db4c3c";
+        graphPrice.lineColor = "#0FB203";
+        graphPrice.fillColors = "#0FB203";
+        graphPrice.negativeLineColor = "#A80008";
+        graphPrice.negativeFillColors = "#A80008";
+
+        graphPrice.fillAlphas = 1;
+        graphPrice.useDataSetColors = false;
+        graphPrice.showBalloon = false;
+
+        //graphPrice.proCandlesticks = true;
+        graphPrice.proCandlesticks = false;
+
+        graphPrice.valueAxis = valueAxisPrice;
+
+        var graphSeason = new AmCharts.StockGraph();
+        graphSeason.id = "graphSeason";
+        graphSeason.title = "10-Years Seasonality";
+        graphSeason.valueField = "season";
+        graphSeason.useDataSetColors = false;
+        graphSeason.color = seasonColor;
+        graphSeason.type = "line";
+        graphSeason.lineThickness = 2;
+        graphSeason.lineColor = seasonColor;
+        graphSeason.valueAxis = valueAxisTenYearSeasonality;
+
+        var graphSeason5Year = new AmCharts.StockGraph();
+        graphSeason5Year.id = "graphSeason5Year";
+        graphSeason5Year.title = "5-Years Seasonality";
+        graphSeason5Year.valueField = "season5Year";
+        graphSeason5Year.useDataSetColors = false;
+        graphSeason5Year.color = season5YearColor;
+        graphSeason5Year.type = "line";
+        graphSeason5Year.lineThickness = 1;
+        graphSeason5Year.lineColor = season5YearColor;
+        graphSeason5Year.valueAxis = valueAxisFiveYearSeasonality;
+
+        var graphVolume = new AmCharts.StockGraph();
+        graphVolume.id = "graphVolume";
+        graphVolume.valueField = "volume";
+        graphVolume.type = "column";
+        graphVolume.useDataSetColors = false;
+        graphVolume.color = "#9C0063";
+        graphVolume.lineColor = "#9C0063";
+        graphVolume.showBalloon = false;
+        graphVolume.fillAlphas = 1;
+
+        // HIDDEN YEARLY SEASONALITY GRAPHS //////////////////////////////////////////////////////////////////
+        var valueAxisYearSeasonality = [];
+        for (var y = 0; y < 10; y++) {
+            // Value Axis
+            valueAxisYearSeasonality[y] = new AmCharts.ValueAxis();
+            for (var i = 0; i < NumberOfDaysInYear; i++) {
+                if (i == 0) {
+                    minValue = parseFloat(plotData[i]["seasonY" + y]);
+                    maxValue = parseFloat(plotData[i]["seasonY" + y]);
+                } else {
+                    if (parseFloat(plotData[i]["seasonY" + y]) < minValue) minValue = parseFloat(plotData[i]["seasonY" + y]);
+                    if (parseFloat(plotData[i]["seasonY" + y]) > maxValue) maxValue = parseFloat(plotData[i]["seasonY" + y]);
+                }
+            }
+            upDistance = maxValue - parseFloat(plotData[125]["seasonY" + y]);
+            downDistance = parseFloat(plotData[125]["seasonY" + y]) - minValue;
+            addInterval = 0;
+            if (upDistance > downDistance) {
+                valueAxisYearSeasonality[y].maximum = maxValue;
+                valueAxisYearSeasonality[y].minimum = minValue - (upDistance - downDistance);
+            } else if (upDistance < downDistance) {
+                valueAxisYearSeasonality[y].maximum = maxValue + (downDistance - upDistance);
+                valueAxisYearSeasonality[y].minimum = minValue;
+            }
+            valueAxisYearSeasonality[y].labelsEnabled = false;
+            valueAxisYearSeasonality[y].position = "right";
+            valueAxisYearSeasonality[y].gridThickness = 0;
+            valueAxisYearSeasonality[y].axisThickness = 0;
+            stockPanel1.addValueAxis(valueAxisYearSeasonality[y]);
+            // Hidden Graph
+            scannerYearGraph[y] = new AmCharts.StockGraph();
+            scannerYearGraph[y].valueField = "seasonY" + y;
+            scannerYearGraph[y].useDataSetColors = false;
+            scannerYearGraph[y].visibleInLegend = false;
+            scannerYearGraph[y].type = "line";
+            scannerYearGraph[y].lineThickness = 1;
+            scannerYearGraph[y].lineColor = "#9E9E9E";
+            scannerYearGraph[y].valueAxis = valueAxisYearSeasonality[y];
+            stockPanel1.addStockGraph(scannerYearGraph[y]);
+            stockPanel1.hideGraph(scannerYearGraph[y]);
+        }
+
+        // PANELS ///////////////////////////////////////////////////////////////////////////////////////////
+        stockPanel1.addStockGraph(graphPrice);
+        stockPanel1.addStockGraph(graphSeason);
+        stockPanel1.addStockGraph(graphSeason5Year);
+        stockPanel1.stockLegend = new AmCharts.StockLegend();
+
+        stockPanel2.addStockGraph(graphVolume);
+        stockPanel2.stockLegend = new AmCharts.StockLegend();
+
+        chart.panels = [stockPanel1, stockPanel2];
+
+        // OTHER SETTINGS ///////////////////////////////////////////////////////////////////////////////////
+        var chartScrollbarSettings = new AmCharts.ChartScrollbarSettings();
+        chartScrollbarSettings.graph = graphPrice;
+        chartScrollbarSettings.graphType = "line";
+        chart.chartScrollbarSettings = chartScrollbarSettings;
+
+        var categoryAxesSettings = new AmCharts.CategoryAxesSettings()
+        categoryAxesSettings.maxSeries = 0;
+        categoryAxesSettings.groupToPeriods = ["DD", "WW"]
+        categoryAxesSettings.equalSpacing = true;
+        chart.categoryAxesSettings = categoryAxesSettings;
+
+        var chartCursorSettings = new AmCharts.ChartCursorSettings();
+        chartCursorSettings.valueLineEnabled = true;
+        chart.chartCursorSettings = chartCursorSettings;
+
+        // PERIOD SELECTOR /////////////////////////////////////////////////////////////////////////////////
+        var periodSelector = new AmCharts.PeriodSelector();
+        periodSelector.position = "bottom";
+        periodSelector.inputFieldsEnabled = false;
+        periodSelector.periods = [
+        {
+            period: "MAX",
+            selected: true,
+            label: "MAX"
+        }];
+        chart.periodSelector = periodSelector;
+
+        // DRAW CHART //////////////////////////////////////////////////////////////////////////////////////
+        chart.write('chartdiv');
+
+        // TREND LINES /////////////////////////////////////////////////////////////////////////////////////
+        var upChannelLine = new AmCharts.TrendLine();
+        var downChannelLine = new AmCharts.TrendLine();
+        var midChannelLine = new AmCharts.TrendLine();
+
+        drawTrendLines(stockPanel1, plotData, 1, 252, upChannelLine, downChannelLine, midChannelLine);
+
+        // DISPLAY SIDE BAR INFO ///////////////////////////////////////////////////////////////////////////
+        displayChartInfo();
+
+        // EVENT - ZOOMED //////////////////////////////////////////////////////////////////////////////////
+        chart.addListener("zoomed", function (event) {
+            // Redraw Trendlines
+            var start = 0;
+            var end = 0;
+            var startDate = new Date(event.startDate);
+            var endDate = new Date(event.endDate);
+
+            stockPanel1.removeTrendLine(upChannelLine);
+            stockPanel1.removeTrendLine(downChannelLine);
+            stockPanel1.removeTrendLine(midChannelLine);
+            stockPanel1.validateNow();
+
+            for (var i = 0; i < NumberOfDaysInYear; i++) {
+                var plotDate = new Date(plotData[i]["date"]);
+                if (startDate.equals(plotDate) == true) start = parseInt(plotData[i]["seasonCount"]);
+                if (endDate.equals(plotDate) == true) end = parseInt(plotData[i]["seasonCount"]);
+            }
+
+            if (end > 0) {
+                drawTrendLines(stockPanel1, plotData, start, end, upChannelLine, downChannelLine, midChannelLine);
+            } else {
+                drawTrendLines(stockPanel1, plotData, 1, 252, upChannelLine, downChannelLine, midChannelLine);
+            }
+
+            // Recalibrate axis
+            for (var i = 0; i < NumberOfDaysInYear; i++) {
+                var plotDate = new Date(plotData[i]["date"]);
+                if (startDate.equals(plotDate) == true) start = i;
+                if (endDate.equals(plotDate) == true) end = i;
+            }
+
+            if (start == 0 && end == 0) {
+                for (var i = 0; i < NumberOfDaysInYear; i++) {
+                    if (i == 0) {
+                        minValue = parseFloat(plotData[i]["close"]);
+                        maxValue = parseFloat(plotData[i]["close"]);
+                    } else {
+                        if (parseFloat(plotData[i]["close"]) < minValue) minValue = parseFloat(plotData[i]["close"]);
+                        if (parseFloat(plotData[i]["close"]) > maxValue) maxValue = parseFloat(plotData[i]["close"]);
+                    }
+                }
+                upDistance = maxValue - parseFloat(plotData[125]["close"]);
+                downDistance = parseFloat(plotData[125]["close"]) - minValue;
+                if (upDistance > downDistance) {
+                    valueAxisPrice.maximum = maxValue;
+                    valueAxisPrice.minimum = minValue - (upDistance - downDistance);
+                } else if (upDistance < downDistance) {
+                    valueAxisPrice.maximum = maxValue + (downDistance - upDistance);
+                    valueAxisPrice.minimum = minValue;
+                }
+            } else {
+                for (var i = start; i < end + 1; i++) {
+                    if (i == start) {
+                        minValue = parseFloat(plotData[i]["close"]);
+                        maxValue = parseFloat(plotData[i]["close"]);
+                    } else {
+                        if (parseFloat(plotData[i]["close"]) < minValue) minValue = parseFloat(plotData[i]["close"]);
+                        if (parseFloat(plotData[i]["close"]) > maxValue) maxValue = parseFloat(plotData[i]["close"]);
+                    }
+                }
+                valueAxisPrice.maximum = maxValue;
+                valueAxisPrice.minimum = minValue;
+            }
+
+            if (start == 0 && end == 0) {
+                for (var i = 0; i < NumberOfDaysInYear; i++) {
+                    if (i == 0) {
+                        minValue = parseFloat(plotData[i]["season"]);
+                        maxValue = parseFloat(plotData[i]["season"]);
+                    } else {
+                        if (parseFloat(plotData[i]["season"]) < minValue) minValue = parseFloat(plotData[i]["season"]);
+                        if (parseFloat(plotData[i]["season"]) > maxValue) maxValue = parseFloat(plotData[i]["season"]);
+                    }
+                }
+                upDistance = maxValue - parseFloat(plotData[125]["season"]);
+                downDistance = parseFloat(plotData[125]["season"]) - minValue;
+                if (upDistance > downDistance) {
+                    valueAxisTenYearSeasonality.maximum = maxValue;
+                    valueAxisTenYearSeasonality.minimum = minValue - (upDistance - downDistance);
+                } else if (upDistance < downDistance) {
+                    valueAxisTenYearSeasonality.maximum = maxValue + (downDistance - upDistance);
+                    valueAxisTenYearSeasonality.minimum = minValue;
+                }
+            } else {
+                for (var i = start; i < end + 1; i++) {
+                    if (i == start) {
+                        minValue = parseFloat(plotData[i]["season"]);
+                        maxValue = parseFloat(plotData[i]["season"]);
+                    } else {
+                        if (parseFloat(plotData[i]["season"]) < minValue) minValue = parseFloat(plotData[i]["season"]);
+                        if (parseFloat(plotData[i]["season"]) > maxValue) maxValue = parseFloat(plotData[i]["season"]);
+                    }
+                }
+                valueAxisTenYearSeasonality.maximum = maxValue;
+                valueAxisTenYearSeasonality.minimum = minValue;
+            }
+
+            if (start == 0 && end == 0) {
+                for (var i = 0; i < NumberOfDaysInYear; i++) {
+                    if (i == 0) {
+                        minValue = parseFloat(plotData[i]["season5Year"]);
+                        maxValue = parseFloat(plotData[i]["season5Year"]);
+                    } else {
+                        if (parseFloat(plotData[i]["season5Year"]) < minValue) minValue = parseFloat(plotData[i]["season5Year"]);
+                        if (parseFloat(plotData[i]["season5Year"]) > maxValue) maxValue = parseFloat(plotData[i]["season5Year"]);
+                    }
+                }
+                upDistance = maxValue - parseFloat(plotData[125]["season5Year"]);
+                downDistance = parseFloat(plotData[125]["season5Year"]) - minValue;
+                if (upDistance > downDistance) {
+                    valueAxisFiveYearSeasonality.maximum = maxValue;
+                    valueAxisFiveYearSeasonality.minimum = minValue - (upDistance - downDistance);
+                } else if (upDistance < downDistance) {
+                    valueAxisFiveYearSeasonality.maximum = maxValue + (downDistance - upDistance);
+                    valueAxisFiveYearSeasonality.minimum = minValue;
+                }
+            } else {
+                for (var i = start; i < end + 1; i++) {
+                    if (i == start) {
+                        minValue = parseFloat(plotData[i]["season5Year"]);
+                        maxValue = parseFloat(plotData[i]["season5Year"]);
+                    } else {
+                        if (parseFloat(plotData[i]["season5Year"]) < minValue) minValue = parseFloat(plotData[i]["season5Year"]);
+                        if (parseFloat(plotData[i]["season5Year"]) > maxValue) maxValue = parseFloat(plotData[i]["season5Year"]);
+                    }
+                }
+                valueAxisFiveYearSeasonality.maximum = maxValue;
+                valueAxisFiveYearSeasonality.minimum = minValue;
+            }
+
+            stockPanel1.validateNow();
+            //debugger;
+
+            // Display chart info
+            displayChartInfo();
+        });
+
+        // EVENT - MOUSE MOVE /////////////////////////////////////////////////////////////////////////////
+        $("#chartdiv").mousemove(function (event) {
+            event = event || window.event;
+            fixPageXY(event);
+
+            var xValue = stockPanel1.categoryAxis.xToIndex(event.pageX.toFixed() - 228);
+            var currentYear = plotData[125]["date"].getFullYear();
+
+            if (xValue >= 0 && xValue <= 251) {
+                var dateValue = (new Date(plotData[xValue]["date"])).toString('M/d/yyyy');
+                $('#scannerYear').empty();
+                displayScannerYears(seasonYearData, currentYear, xValue, dateValue);
+            }
+        });
+    }
+    function getCorrelation(plotData, startIndex, endIndex) {
+        var X = 0;
+        var Y = 0;
+        var sumOfX = 0;
+        var sumOfY = 0;
+        var sumOfX2 = 0;
+        var sumOfY2 = 0;
+        var sumOfXY = 0;
+
+        for (var i = startIndex - 1; i < endIndex - 1; i++) {
+            X = X + 1;
+            Y = parseFloat(plotData[i]["close"]);
+            sumOfX = sumOfX + X;
+            sumOfY = sumOfY + Y;
+            sumOfXY = sumOfXY + (X * Y);
+            sumOfX2 = sumOfX2 + (X * X);
+            sumOfY2 = sumOfY2 + (Y * Y);
+        }
+        // NΣXY - (ΣX)(ΣY) / Sqrt([NΣX2 - (ΣX)2][NΣY2 - (ΣY)2])
+        return ((X * sumOfXY) - (sumOfX * sumOfX)) / Math.sqrt((sumOfX2 - (sumOfX * sumOfX)) * (sumOfY2 - (sumOfY * sumOfY)));
+
+        // r = Σ (xy) / sqrt [ ( Σ x2 ) * ( Σ y2 )
+        // return sumOfXY / Math.sqrt((sumOfX2 * sumOfY2));
+    }
+    function drawTrendLines(stockPanel, plotData, startIndex, endIndex, upChannelLine, downChannelLine, midChannelLine) {
+        var m = 0;
+        var NumberOfDays = 0;
+
+        // Get the number of days
+        if (endIndex > 126) {
+            NumberOfDays = 126 - startIndex + 1;
+            chartNoOfDays = NumberOfDays;
+        } else {
+            NumberOfDays = endIndex - startIndex + 1;
+        }
+        chartNoOfDays = NumberOfDays; // Use to display the Number of days in the chart.
+
+        // Check for the correlation (you only check for the correlation if the data is more than 30 days onward)
+        // Move the startIndex if the correlation is greater than 0.8 both ways to that day
+        // Recompute the number of days to that day
+        if (NumberOfDays > 30) {
+            var correlationStartIndex = endIndex > 126 ? 126 : endIndex;
+            var counter = 0;
+            for (var i = correlationStartIndex; i > startIndex - 1; i--) {
+                if (counter > 30) {
+                    chartCoefficient = Math.abs(getCorrelation(plotData, i, correlationStartIndex));
+                    if (chartCoefficient < 0.8) {
+                        startIndex = i;
+                        if (endIndex > 126) {
+                            NumberOfDays = 126 - startIndex + 1;
+                        } else {
+                            NumberOfDays = endIndex - startIndex + 1;
+                        }
+                        break;
+                    }
+                    //debugger;
+                }
+                counter++;
+            }
+        }
+        chartChannelNoOfDays = NumberOfDays; // Use to display the number of days in the channel.
+
+        // Compute for the slope
+        if (endIndex > 126) {
+            m = (parseFloat(plotData[125]["close"]) - parseFloat(plotData[startIndex - 1]["close"])) / NumberOfDays;
+
+            if (parseFloat(plotData[startIndex - 1]["close"]) == 0) {
+                chartSlopePercentage = 0;
+            } else {
+                chartSlopePercentage = ((parseFloat(plotData[125]["close"]) - parseFloat(plotData[startIndex - 1]["close"])) / parseFloat(plotData[startIndex - 1]["close"])) * 100;
+            }
+        } else {
+            m = (parseFloat(plotData[endIndex - 1]["close"]) - parseFloat(plotData[startIndex - 1]["close"])) / NumberOfDays;
+
+            if (parseFloat(plotData[startIndex - 1]["close"]) == 0) {
+                chartSlopePercentage = 0;
+            } else {
+                chartSlopePercentage = ((parseFloat(plotData[endIndex - 1]["close"]) - parseFloat(plotData[startIndex - 1]["close"])) / parseFloat(plotData[startIndex - 1]["close"])) * 100;
+            }
+        }
+
+        // Prepare the data (intercepts)
+        var b = [];
+        for (var i = 0; i < NumberOfDays ; i++) {
+            b[i] = parseFloat(plotData[i + startIndex - 1]["close"]) - (m * (i + 1));
+        }
+        b.sort(function (a, b) {
+            return a - b;
+        });
+
+        // Set the b-intercepts
+        var bMax = b[parseInt(NumberOfDays * .9)];
+        var bMid = b[parseInt(NumberOfDays * .5)];
+        var bMin = b[parseInt(NumberOfDays * .1)];
+
+        if (bMin != 0) {
+            chartChannelRange = ((bMax - bMin) / bMin) * 100;
+        } else {
+            chartChannelRange = 100;
+        }
+
+        // Plot the channels
+        upChannelLine.lineColor = "#00FF00";
+        upChannelLine.initialDate = plotData[startIndex - 1]["date"];
+        upChannelLine.finalDate = plotData[endIndex - 1]["date"];
+        upChannelLine.initialValue = (m + bMax);
+        upChannelLine.finalValue = ((m * (endIndex - startIndex + 1)) + bMax);
+        stockPanel.addTrendLine(upChannelLine);
+
+        downChannelLine.lineColor = "#FF0000";
+        downChannelLine.initialDate = plotData[startIndex - 1]["date"];
+        downChannelLine.finalDate = plotData[endIndex - 1]["date"];
+        downChannelLine.initialValue = (m + bMin);
+        downChannelLine.finalValue = ((m * (endIndex - startIndex + 1)) + bMin);
+        stockPanel.addTrendLine(downChannelLine);
+
+        midChannelLine.lineColor = "#9C0063";
+        midChannelLine.initialDate = plotData[startIndex - 1]["date"];
+        midChannelLine.finalDate = plotData[endIndex - 1]["date"];
+        midChannelLine.initialValue = (m + bMid);
+        midChannelLine.finalValue = ((m * (endIndex - startIndex + 1)) + bMid);
+        stockPanel.addTrendLine(midChannelLine);
+
+        stockPanel.validateNow();
+    }
+    function displayChartInfo() {
+        var GreenColor = "#0FB203";
+        var RedColor = "#A80008";
+
+        $("#symbol").empty();
+        $("#symbolInfoChart").empty();
+        $("#symbolInfoChannel").empty();
+        $("#symbolSlopePercentage").empty();
+        $("#symbolInfoCoefficient").empty();
+        $("#symbolInfoRange").empty();
+
+        $("#symbol").html("<span><b>" + chartSymbol + "</b></span>");
+        $("#symbolInfoChart").html("<a href='#' style='padding: 2px 20px'><span>Chart:</span><span class='pull-right'>" + chartNoOfDays + "</span></a>");
+        $("#symbolInfoChannel").html("<a href='#' style='padding: 2px 20px'><span>Channel:</span><span class='pull-right'>" + chartChannelNoOfDays + "</span></a>");
+        if (chartSlopePercentage >= 0) {
+            var AGR = 0;
+            if (chartChannelNoOfDays == 0) {
+                AGR = 0;
+            } else {
+                AGR = (chartSlopePercentage / chartChannelNoOfDays) * 252;
+            }
+            $("#symbolSlopePercentage").html("<a href='#' style='padding: 2px 20px'><font color='" + GreenColor + "'><span>AGR:</span><span class='pull-right'>" + AGR.toFixed(2) + "%</span></font></a>");
+        } else {
+            var ADR = 0;
+            if (chartChannelNoOfDays == 0) {
+                ADR = 0;
+            } else {
+                ADR = (chartSlopePercentage / chartChannelNoOfDays) * 252;
+            }
+            $("#symbolSlopePercentage").html("<a href='#' style='padding: 2px 20px'><font color='" + RedColor + "'><span>ADR:</span><span class='pull-right'>" + ADR.toFixed(2) + "%</span></font></a>");
+        }
+        $("#symbolInfoCoefficient").html("<a href='#' style='padding: 2px 20px'><span>Coefficient:</span><span class='pull-right'>" + chartCoefficient.toFixed(2) + "</span></a>");
+        $("#symbolInfoRange").html("<a href='#' style='padding: 2px 20px'><span>Range:</span><span class='pull-right'>" + chartChannelRange.toFixed(2) + "%</span></a>");
+
+    }
+    function displayScannerYears(seasonYearData, currentYear, xValue, dateValue) {
+        var GreenColor = "#0FB203";
+        var RedColor = "#A80008";
+
+        $("#scannerYearHeading").empty();
+        $("#scannerYearHeading").html("<span>30 Day Scanner:</span><span class='pull-right'>" + dateValue + "</span>");
+
+        // Check the no. of years available
+        var noOfYears = 0;
+        for (var i = 0; i < seasonYearData.length; i++) {
+            if (seasonYearData[i][1] != 0) {
+                if (i < 11) noOfYears++;
+            }
+        }
+        // Display year date
+        for (var i = 0 ; i < seasonYearData.length; i++) {
+            if (i < noOfYears) {
+                var Year = currentYear - (noOfYears - i);
+                //var startValue = AmCharts.roundTo(seasonYearData[i][xValue], 2);
+                //var endValue = AmCharts.roundTo(seasonYearData[i][xValue + 30], 2);
+                var startValue = AmCharts.roundTo(closeYearData[i][xValue], 2);
+                var endValue = AmCharts.roundTo(closeYearData[i][xValue + scannerRange], 2);
+                var checked = plottedYearGraphs.indexOf(Year) >= 0 ? "checked" : "";
+                var status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><span> " + Year + ":</span><span class='pull-right'>No change.</span>";
+                if (endValue > startValue) {
+                    if (startValue == 0) {
+                        status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='#" + GreenColor + "'><span> " + Year + "</span><span class='pull-right'>100.00%</span></font>";
+                    } else {
+                        status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='" + GreenColor + "'><span> " + Year + "</span><span class='pull-right'>" + AmCharts.roundTo((((endValue - startValue) / startValue) * 100 * sign(startValue)), 2) + "%</span></font>";
+                    }
+                } else if (startValue > endValue) {
+                    if (endValue == 0) {
+                        status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='" + RedColor + "'><span> " + Year + "</span><span class='pull-right'>100.00%</span></font>";
+                    } else {
+                        status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='" + RedColor + "'><span> " + Year + "</span><span class='pull-right'>" + AmCharts.roundTo((((startValue - endValue) / endValue) * 100 * sign(endValue)), 2) + "%</span></font>";
+                    }
+                }
+                $("#scannerYear").append("<li id='scannerYearItem" + Year + "'><a id=Y" + Year + " href='#' style='padding: 2px 20px'>" + status + "</a></li>");
+            }
+        }
+    }
+    function checkYear(Year, i) {
+        $("#checked" + Year).attr("checked", !$("#checked" + Year).attr("checked"));
+
+        if ($("#checked" + Year).attr("checked") == "checked") {
+            if (!!scannerYearGraph[i]) {
+                stockPanel1.showGraph(scannerYearGraph[i]);
+                plottedYearGraphs.push(Year);
+            }
+        } else {
+            if (!!scannerYearGraph[i]) {
+                stockPanel1.hideGraph(scannerYearGraph[i]);
+                var index = plottedYearGraphs.indexOf(Year);
+                if (index > -1) {
+                    plottedYearGraphs.splice(index, 1);
+                }
+            }
+        }
+    }
+    function sign(x) {
+        return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
+    }
+    function fixPageXY(e) {
+        if (e.pageX == null && e.clientX != null) {
+            var html = document.documentElement
+            var body = document.body
+
+            e.pageX = e.clientX + (html.scrollLeft || body && body.scrollLeft || 0)
+            e.pageX -= html.clientLeft || 0
+
+            e.pageY = e.clientY + (html.scrollTop || body && body.scrollTop || 0)
+            e.pageY -= html.clientTop || 0
+        }
+    }
+    function scanYearlyData(yearlyData, noOfYears, index, daySpan, direction) {
+        var result = [];
+        var up = 0;
+        var down = 0;
+        var averageUp = 0;
+        var averageDown = 0;
+        if (direction == "up") {
+            for (var y = 0; y < noOfYears - 1; y++) {
+                var startData = yearlyData[y][index];
+                var endData = yearlyData[y][index + daySpan - 1];
+                if (endData > startData) {
+                    up++;
+                    if (startData != 0) {
+                        averageUp = averageUp + ((((endData - startData) / startData) * sign(startData)) * 100);
+                    }
+                }
+            }
+            if (up > 0) {
+                averageUp = averageUp / up;
+            }
+            result[0] = up;
+            result[1] = averageUp;
+            result[2] = 0;
+            result[3] = 0;
+        } else {
+            for (var y = 0; y < noOfYears - 1; y++) {
+                var startData = yearlyData[y][index];
+                var endData = yearlyData[y][index + daySpan - 1];
+                if (startData > endData) {
+                    down++;
+                    if (endData != 0) {
+                        averageDown = averageDown + ((((startData - endData) / endData) * sign(endData)) * 100);
+                    }
+                }
+            }
+            if (down > 0) {
+                averageDown = averageDown / down;
+            }
+            result[0] = 0;
+            result[1] = 0;
+            result[2] = down;
+            result[3] = averageDown;
+        }
+        return result;
+    }
+    function varScanner() {
+        if (!!chart) {
+            // Checking of range values
+            var startNoOfDay = parseInt($('#startNoOfDay').val());
+            var endNoOfDay = parseInt($('#endNoOfDay').val());
+            var process = true;
+
+            if (!startNoOfDay) {
+                startNoOfDay = 10;
+            } else {
+                if (parseInt(startNoOfDay) >= 10 && parseInt(startNoOfDay) <= 40) {
+                    process = true;
+                } else {
+                    process = false;
+                }
+            }
+
+            if (!endNoOfDay) {
+                endNoOfDay = 40;
+            } else {
+                if (parseInt(endNoOfDay) >= 10 && parseInt(endNoOfDay) <= 40) {
+                    process = true;
+                } else {
+                    process = false;
+                }
+            }
+
+            if (process == true) {
+                if (parseInt(startNoOfDay) > parseInt(endNoOfDay)) {
+                    process = false;
+                }
+            }
+            // Processing
+            if (process == false) {
+                alert("Invalid range of number of days.");
+            } else {
+                if (confirm("Compute variable scanner?") == true) {
+                    var highestUp = 0;
+                    var highestUpAverage = 0;
+                    var highestUpIndex = 0;
+                    var highestUpDaySpan = 0;
+                    var highestDown = 0;
+                    var highestDownAverage = 0;
+                    var highestDownIndex = 0;
+                    var highestDownDaySpan = 0;
+
+                    // Process result
+                    for (var d = startNoOfDay; d <= endNoOfDay; d++) {
+                        for (var i = 125 ; i < NumberOfDaysInYear - d ; i++) {
+                            // Get the yearly result
+                            var seasonTenYear = parseFloat(plotData[i]["season"]);
+                            var seasonTenYearPlusVarDays = parseFloat(plotData[i + d - 1]["season"]);
+                            var result = [];
+                            if (seasonTenYearPlusVarDays > seasonTenYear) {
+                                //result = scanYearlyData(seasonYearData, 10, i, d, "up");
+                                result = scanYearlyData(closeYearData, 10, i, d, "up");
+                            } else {
+                                //result = scanYearlyData(seasonYearData, 10, i, d, "down");
+                                result = scanYearlyData(closeYearData, 10, i, d, "down");
+                            }
+                            // Compare the yearly result
+                            if (result[0] > 0) {
+                                if (result[0] > highestUp || (result[0] == highestUp && result[1] > highestUpAverage)) {
+                                    highestUp = result[0];
+                                    highestUpAverage = result[1];
+                                    highestUpIndex = i;
+                                    highestUpDaySpan = d;
+                                }
+                            } else if (result[2] > 0) {
+                                if (result[2] > highestDown || (result[2] == highestDown && result[3] > highestDownAverage)) {
+                                    highestDown = result[2];
+                                    highestDownAverage = result[3];
+                                    highestDownIndex = i;
+                                    highestDownDaySpan = d;
+                                }
+                            }
+
+                        }
+                    }
+
+                    // Plot result
+                    if (highestUp > 0) {
+                        if (!varScannerUp) varScannerUp = new AmCharts.Guide();
+                        else stockPanel1.categoryAxis.removeGuide(varScannerUp);
+
+                        varScannerUp.date = plotData[highestUpIndex]["date"];
+                        varScannerUp.toDate = plotData[highestUpIndex + highestUpDaySpan]["date"];
+                        varScannerUp.fillColor = positiveGuideColor;
+                        varScannerUp.fillAlpha = 0.6;
+                        //varScannerUp.labelRotation = 90;
+                        varScannerUp.inside = true;
+                        varScannerUp.label = "Variable Scanner\nUp: " + highestUp + "/" + (10 - highestUp) + " " + highestUpAverage.toFixed(2) + "%";
+                        varScannerUp.position = "top";
+                        stockPanel1.categoryAxis.addGuide(varScannerUp);
+                    }
+                    if (highestDown > 0) {
+                        if (!varScannerDown) varScannerDown = new AmCharts.Guide();
+                        else stockPanel1.categoryAxis.removeGuide(varScannerDown);
+
+                        varScannerDown.date = plotData[highestDownIndex]["date"];
+                        varScannerDown.toDate = plotData[highestDownIndex + highestDownDaySpan]["date"];
+                        varScannerDown.fillColor = negativeGuideColor;
+                        varScannerDown.fillAlpha = 0.6;
+                        //varScannerDown.labelRotation = 90;
+                        varScannerDown.inside = true;
+                        varScannerDown.label = "Variable Scanner\nDown: " + highestDown + "/" + (10 - highestDown) + " " + highestDownAverage.toFixed(2) + "%";
+                        varScannerDown.position = "top";
+                        stockPanel1.categoryAxis.addGuide(varScannerDown);
+                    }
+                    stockPanel1.validateNow();
+
+                } // Compute?
+            } // Process = true?
+        }  // Chart
+    }
+
+    $(document).ready(function () {
+        for (var i = 0 ; i < 252; i++) {
+            $("#scannerDayRangeItem").append("<li><a href='#' data-value='" + (i + 1) + "'><b>" + (i + 1) + " Day(s) Scanner</b></a></li>");
+        }
+        $("#scannerDayRangeItem li a").click(function () {
+            $("#scannerDayRangeMenu").html("<b>" + $(this).text() + "</b>");
+            $("#scannerDayRangeMenu").val($(this).data('value'));
+
+            scannerRange = parseInt($(this).data('value'));
+        });
+    });
+</script>
