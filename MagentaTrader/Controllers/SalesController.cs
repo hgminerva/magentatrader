@@ -69,6 +69,7 @@ namespace MagentaTrader.Controllers
 
         // POST api/Sales
         [Authorize]
+        [Route("api/AddSales")]
         public int Post(Models.Sales value)
         {
             try
@@ -112,6 +113,7 @@ namespace MagentaTrader.Controllers
 
         // PUT /api/Sales/5
         [Authorize]
+        [Route("api/UpdateSales")]
         public HttpResponseMessage Put(int Id, Models.Sales value)
         {
             try
@@ -161,6 +163,7 @@ namespace MagentaTrader.Controllers
 
         // DELETE api/Sales/5
         [Authorize]
+        [Route("api/DeleteSales")]
         public HttpResponseMessage Delete(int Id)
         {
             Data.TrnSale DeleteSale = db.TrnSales.Where(d => d.Id == Id).First();

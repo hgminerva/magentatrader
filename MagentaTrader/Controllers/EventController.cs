@@ -61,6 +61,7 @@ namespace MagentaTrader.Controllers
 
         // POST api/Event
         [Authorize]
+        [Route("api/AddEvent")]
         public int Post(Models.Event value)
         {
             try
@@ -94,6 +95,7 @@ namespace MagentaTrader.Controllers
 
         // PUT /api/Event/5
         [Authorize]
+        [Route("api/UpdateEvent")]
         public HttpResponseMessage Put(int Id, Models.Event value)
         {
             try
@@ -133,6 +135,7 @@ namespace MagentaTrader.Controllers
 
         // DELETE api/Event/5
         [Authorize]
+        [Route("api/DeleteEvent")]
         public HttpResponseMessage Delete(int Id)
         {
             Data.MstEvent DeleteEvent = db.MstEvents.Where(d => d.Id == Id).First();
