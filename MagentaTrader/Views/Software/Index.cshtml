@@ -882,7 +882,6 @@
         graphPrice.highField = "high";
         graphPrice.lowField = "low";
         graphPrice.valueField = "close";
-
         //graphPrice.lineColor = "#7f8da9";
         //graphPrice.fillColors = "#7f8da9";
         //graphPrice.negativeLineColor = "#db4c3c";
@@ -891,14 +890,11 @@
         graphPrice.fillColors = "#0FB203";
         graphPrice.negativeLineColor = "#A80008";
         graphPrice.negativeFillColors = "#A80008";
-
         graphPrice.fillAlphas = 1;
         graphPrice.useDataSetColors = false;
-        graphPrice.showBalloon = false;
-
+        graphPrice.showBalloon = true;
         //graphPrice.proCandlesticks = true;
         graphPrice.proCandlesticks = false;
-
         graphPrice.valueAxis = valueAxisPrice;
 
         var graphSeason = new AmCharts.StockGraph();
@@ -910,6 +906,7 @@
         graphSeason.type = "line";
         graphSeason.lineThickness = 2;
         graphSeason.lineColor = seasonColor;
+        graphSeason.showBalloon = false;
         graphSeason.valueAxis = valueAxisTenYearSeasonality;
 
         var graphSeason5Year = new AmCharts.StockGraph();
@@ -921,6 +918,7 @@
         graphSeason5Year.type = "line";
         graphSeason5Year.lineThickness = 1;
         graphSeason5Year.lineColor = season5YearColor;
+        graphSeason5Year.showBalloon = false;
         graphSeason5Year.valueAxis = valueAxisFiveYearSeasonality;
 
         var graphVolume = new AmCharts.StockGraph();
@@ -1000,7 +998,16 @@
 
         var chartCursorSettings = new AmCharts.ChartCursorSettings();
         chartCursorSettings.valueLineEnabled = true;
+        chartCursorSettings.valueBalloonsEnabled = true;
         chart.chartCursorSettings = chartCursorSettings;
+
+        //var defaultCursor = new AmCharts.ChartCursor();
+        //defaultCursor.
+        //stockPanel1.addChartCursor(defaultCursor);
+
+        //var rangeCursor = new AmCharts.ChartCursor();
+        //rangeCursor.adjustment = 30;
+        //stockPanel1.addChartCursor(rangeCursor);
 
         // PERIOD SELECTOR /////////////////////////////////////////////////////////////////////////////////
         var periodSelector = new AmCharts.PeriodSelector();

@@ -56,7 +56,7 @@ namespace MagentaTrader.Controllers
             return values;
         }
 
-        // POST api/User
+        // POST api/AddUser
         [Authorize]
         [Route("api/AddUser")]
         public int Post(Models.User value)
@@ -83,9 +83,9 @@ namespace MagentaTrader.Controllers
             }
         }
 
-        // PUT /api/User/5
+        // PUT /api/UpdateUser/5
         [Authorize]
-        [Route("api/UpdateUser")]
+        [Route("api/UpdateUser/{Id}")]
         public HttpResponseMessage Put(int Id, Models.User value)
         {
             try
@@ -116,9 +116,9 @@ namespace MagentaTrader.Controllers
             }
         }
 
-        // DELETE api/User/5
+        // DELETE api/DeleteUser/5
         [Authorize]
-        [Route("api/DeleteUser")]
+        [Route("api/DeleteUser/{Id}")]
         public HttpResponseMessage Delete(int Id)
         {
             Data.MstUser DeleteUser = db.MstUsers.Where(d => d.Id == Id).First();

@@ -1241,6 +1241,8 @@
     <Content Include="wijmo\styles\themes\wijmo.theme.zen.min.css" />
     <Content Include="wijmo\styles\wijmo.css" />
     <Content Include="wijmo\styles\wijmo.min.css" />
+    <None Include="Properties\PublishProfiles\magentatrader - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\magentatrader - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\magentatraders - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\magentatraders - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
