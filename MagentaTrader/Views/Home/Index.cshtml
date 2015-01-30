@@ -190,6 +190,11 @@
             </div>
             <div class="col-lg-5 col-sm-pull-6  col-sm-6">
                 <img class="img-responsive" src="/img/webinar.png" alt="">
+                <ul id="WebinarList" class="list-group">
+                    <li class="list-group-item" style="text-align:center"><a href="#">Webinar1</a></li>
+                    <li class="list-group-item" style="text-align:center"><a href="#">Webinar2</a></li>
+                    <li class="list-group-item" style="text-align:center"><a href="#">Webinar3</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -274,4 +279,25 @@
     </div>
 </footer>
 
-
+<!--JAVASCRIPT-->>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#WebinarList").empty();
+        $.ajax({
+            url: '/api/LatestEvent',
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (Results) {
+                if (Results.length > 0) {
+                    for (i = 0; i < Results.length; i++) {
+                        $("#WebinarList").append("<li class='list-group-item' style='text-align:center'><a href='" + Results[i]["URL"] + "'>" + Results[i]["EventDate"] + " - " + Results[i]["EventDescription"] + "</a></li>");
+                    }
+                } 
+            }
+        }).fail(
+            function (xhr, textStatus, err) {  }
+        );
+    });
+</script>

@@ -25,6 +25,7 @@ namespace MagentaTrader.Controllers
                     var Users = from d in db.MstUsers
                                 select new Models.User
                                 {
+                                    Id = d.Id,
                                     UserName = d.UserName,
                                     FirstName = d.FirstName,
                                     LastName = d.LastName,
@@ -140,6 +141,6 @@ namespace MagentaTrader.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
-        }  
+        }
     }
 }

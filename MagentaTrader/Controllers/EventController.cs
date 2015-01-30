@@ -26,6 +26,7 @@ namespace MagentaTrader.Controllers
                     var Events = from d in db.MstEvents
                                  select new Models.Event
                                  {
+                                     Id = d.Id,
                                      EventDate = d.EventDate.ToShortDateString(),
                                      EventDescription = d.EventDescription,
                                      Particulars = d.Particulars,
@@ -37,6 +38,54 @@ namespace MagentaTrader.Controllers
                     if (Events.Count() > 0)
                     {
                         values = Events.ToList();
+                    }
+                    else
+                    {
+                        values = new List<Models.Event>();
+                    }
+                    break;
+                }
+                catch
+                {
+                    if (retryCounter == 3)
+                    {
+                        values = new List<Models.Event>();
+                        break;
+                    }
+
+                    System.Threading.Thread.Sleep(1000);
+                    retryCounter++;
+                }
+            }
+            return values;
+        }
+
+        [Route("api/LatestEvent")]
+        public List<Models.Event> GetLatest()
+        {
+            var retryCounter = 0;
+            List<Models.Event> values;
+
+            while (true)
+            {
+                try
+                {
+                    var Events = from d in db.MstEvents
+                                 orderby d.Id descending
+                                 select new Models.Event
+                                 {
+                                     Id = d.Id,
+                                     EventDate = d.EventDate.ToShortDateString(),
+                                     EventDescription = d.EventDescription,
+                                     Particulars = d.Particulars,
+                                     URL = d.URL,
+                                     EventType = d.EventType,
+                                     IsRestricted = d.IsRestricted,
+                                     IsArchived = d.IsArchived,
+                                 };
+                    if (Events.Count() > 0)
+                    {
+                        values = Events.Take(7).ToList();
                     }
                     else
                     {
@@ -110,7 +159,6 @@ namespace MagentaTrader.Controllers
                                                                          Convert.ToDateTime(value.EventDate).Month, +
                                                                          Convert.ToDateTime(value.EventDate).Day));
 
-
                     UpdatedEvent.EventDate = EventDate.Value;
                     UpdatedEvent.EventDescription = value.EventDescription;
                     UpdatedEvent.Particulars = value.Particulars;
@@ -157,6 +205,6 @@ namespace MagentaTrader.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
-        }  
+        }
     }
 }

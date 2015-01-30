@@ -336,7 +336,7 @@
                 <dl class="dl-horizontal">
                     <dt>Product Package ID</dt>
                     <dd>
-                        <input class="form-control" id="SaleAdd_ProductPackageId" type="text" readonly="true" value="1" />
+                        <input class="form-control" id="SaleAdd_ProductPackageId" type="text" readonly="true" value="2" />
                     </dd>
                     <dt>User ID</dt>
                     <dd>
@@ -345,6 +345,10 @@
                     <dt>Sales Number</dt>
                     <dd>
                         <input class="form-control" id="SaleAdd_SalesNumber" type="text" />
+                    </dd>
+                    <dt>Sales Date</dt>
+                    <dd>
+                        <input class="form-control" id="SaleAdd_SalesDate" type="text" />
                     </dd>
                     <dt>Renewal Date</dt>
                     <dd>
@@ -408,7 +412,7 @@
                     </dd>
                     <dt>Product Package ID</dt>
                     <dd>
-                        <input class="form-control" id="SaleEdit_ProductPackageId" type="text" readonly="true" value="1" />
+                        <input class="form-control" id="SaleEdit_ProductPackageId" type="text" readonly="true" value="2" />
                     </dd>
                     <dt>User ID</dt>
                     <dd>
@@ -417,6 +421,10 @@
                     <dt>Sales Number</dt>
                     <dd>
                         <input class="form-control" id="SaleEdit_SalesNumber" type="text" />
+                    </dd>
+                    <dt>Sales Date</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_SalesDate" type="text" />
                     </dd>
                     <dt>Renewal Date</dt>
                     <dd>
@@ -539,13 +547,13 @@
 
         document.getElementById('btnEditSales').addEventListener('click', function () {
             Sales.editItem(Sales.currentItem);
-            //  UpdateDialogSales(Sales.currentEditItem);
+            UpdateDialogSales(Sales.currentEditItem);
         });
         document.getElementById('btnDeleteSales').addEventListener('click', function () {
             var r = confirm("Delete Purchase?");
             if (r == true) {
                 Sales.editItem(Sales.currentItem);
-                //  getIDSales(Sales.currentEditItem);
+                getIDSales(Sales.currentEditItem);
             }
         });
 
@@ -590,7 +598,7 @@
     }
     function InsertUsers() {
 
-        var errorUser = ValidateUser();
+        var errorUser = ValidateUserAdd();
 
         if (errorUser == "") {
             var r = confirm("Insert User?");
@@ -606,22 +614,26 @@
                 User.PhoneNumber = document.getElementById('UserAdd_PhoneNumber').value;
 
                 var dataToPost = JSON.stringify(User);
-
+                debugger;
                 $.ajax({
                     type: "POST",
                     url: "/api/AddUser",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: dataToPost,
-                    success: function(data) {
-                        UserGrid.refresh();
+                    success: function (data) {
+                        Users.refresh();
+
                         alert("Success");
                     },
-                    failure: function(response) {
+                    failure: function (response) {
                         alert("Error - " + response.d);
                     },
-                    error: function(e) {}
+                    error: function (e) { }
                 });
+
+                window.location.reload();
+                Users.refresh();
             }
         } else {
             alert(errorUser);
@@ -636,7 +648,7 @@
         document.getElementById('UserEdit_PhoneNumber').value = User.PhoneNumber ? User.PhoneNumber : '';
     }
     function EditUsers() {
-        var errorUser = ValidateUser();
+        var errorUser = ValidateUserEdit();
         if (errorUser == "") {
             var r = confirm("Update User?");
             if (r == true) {
@@ -654,12 +666,12 @@
 
                 $.ajax({
                     type: "PUT",
-                    url: "/api/UpdateUser",
+                    url: "/api/UpdateUser/" + User.Id,
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: dataToPost,
                     success: function (data) {
-                        UserGrid.refresh();
+                        Users.refresh();
                         alert("Success");
                     },
                     failure: function (response) {
@@ -667,6 +679,8 @@
                     },
                     error: function (e) { }
                 });
+                window.location.reload();
+                Users.refresh();
             }
         } else {
             alert(errorUser);
@@ -675,30 +689,31 @@
     function getID(User) {
         DeleteUsers(User.Id);
     }
-    function DeleteUsers(Id) {
-        alert(Id);
+    function DeleteUsers(UserId) {
         $.ajax({
             type: "DELETE",
-            url: "/api/DeleteUser",
+            url: "/api/DeleteUser/" + UserId,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            data: {Id:Id},
+            data: { Id: UserId },
             success: function (data) {
                 alert("Success");
-                UserGrid.refresh();
+                Users.refresh();
             },
             failure: function (response) {
                 alert("Error - " + response.d);
             },
             error: function (e) { }
+
         });
+        window.location.reload();
+        Users.refresh();
     }
-    function ValidateUser() {
+    function ValidateUserAdd() {
         var errortext = "";
         //Firstname
         var fname = document.getElementById('UserAdd_FirstName').value;
-        if (!(isNaN(fname)))
-        {
+        if (!(isNaN(fname))) {
             errortext += "\n Invalid First name";
         }
         //Lastname
@@ -720,9 +735,34 @@
 
         return errortext;
     }
+    function ValidateUserEdit() {
+        var errortext = "";
+        //Firstname
+        var fname = document.getElementById('UserEdit_FirstName').value;
+        if (!(isNaN(fname))) {
+            errortext += "\n Invalid First name";
+        }
+        //Lastname
+        var lname = document.getElementById('UserEdit_LastName').value;
+        if (!(isNaN(lname))) {
+            errortext += "\n Invalid Last name";
+        }
+        //Email
+        var email = document.getElementById('UserEdit_EmailAddress').value;
+        var filter = /^([a-zA-Z0-9_\.\-])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (!filter.test(email)) {
+            errortext += "\n Invalid Email Address";
+        }
+        //Phone number
+        var phone = document.getElementById('UserEdit_PhoneNumber').value;
+        if (isNaN(phone)) {
+            errortext += "\n Invalid Phone number";
+        }
+
+        return errortext;
+    }
 
     /*EVENTS*/
-
     function ShowEvents() {
         document.getElementById('DivUsers').style.display = 'none';
         document.getElementById('DivSales').style.display = 'none';
@@ -763,16 +803,16 @@
     }
     function InsertEvents() {
 
-        var Events = new Object();
-        Events.EventDate = document.getElementById('EventAdd_EventDate').value;
-        Events.EventDescription = document.getElementById('EventAdd_EventDescription').value;
-        Events.Particulars = document.getElementById('EventAdd_Particulars').value;
-        Events.URL = document.getElementById('EventAdd_URL').value;
-        Events.EventType = document.getElementById('EventAdd_EventType').value;
-        Events.IsRestricted = document.getElementById('EventAdd_IsRestricted').value;
-        Events.IsArchived = document.getElementById('EventAdd_IsArchived').value;
+        var Event = new Object();
+        Event.EventDate = document.getElementById('EventAdd_EventDate').value;
+        Event.EventDescription = document.getElementById('EventAdd_EventDescription').value;
+        Event.Particulars = document.getElementById('EventAdd_Particulars').value;
+        Event.URL = document.getElementById('EventAdd_URL').value;
+        Event.EventType = document.getElementById('EventAdd_EventType').value;
+        Event.IsRestricted = document.getElementById('EventAdd_IsRestricted').checked;
+        Event.IsArchived = document.getElementById('EventAdd_IsArchived').checked;
 
-        var dataToPost = JSON.stringify(Events);
+        var dataToPost = JSON.stringify(Event);
 
         $.ajax({
             type: "POST",
@@ -781,7 +821,7 @@
             dataType: "json",
             data: dataToPost,
             success: function (data) {
-                EventGrid.refresh();
+                Events.refreshCells();
                 alert("Success");
             },
             failure: function (response) {
@@ -789,8 +829,9 @@
             },
             error: function (e) { }
         });
+        window.location.reload();
+        Events.refreshCells();
     }
-
     function UpdateDialogEvents(Event) {
         document.getElementById('EventEdit_Id').value = Event.Id !== null && typeof (Event.Id) != 'undefined' ? wijmo.Globalize.format(Event.Id) : '';
         document.getElementById('EventEdit_EventDate').value = Event.EventDate ? Event.EventDate : '';
@@ -800,7 +841,6 @@
         document.getElementById('EventEdit_EventType').value = Event.EventType ? Event.EventType : '';
         document.getElementById('EventEdit_IsRestricted').checked = Event.active;
         document.getElementById('EventEdit_IsArchived').checked = Event.active;
-        ';
     }
     function EditEvents() {
         //  var errorUser = ValidateUser();
@@ -809,26 +849,25 @@
         if (r == true) {
 
             //var users = new wijmo.collections.ObservableArray();
-            var Events = new Object();
-            Events.EventDate = document.getElementById('EventEdit_EventDate').value;
-            Events.EventDescription = document.getElementById('EventEdit_EventDescription').value;
-            Events.Particulars = document.getElementById('EventEdit_Particulars').value;
-            Events.URL = document.getElementById('EventEdit_URL').value;
-            Events.EventType = document.getElementById('EventEdit_EventType').value;
-            Events.IsRestricted = document.getElementById('EventEdit_IsRestricted').value;
-            Events.IsArchived = document.getElementById('EventEdit_IsArchived').value;
+            var Event = new Object();
+            Event.Id = document.getElementById('EventEdit_Id').value;
+            Event.EventDate = document.getElementById('EventEdit_EventDate').value;
+            Event.EventDescription = document.getElementById('EventEdit_EventDescription').value;
+            Event.Particulars = document.getElementById('EventEdit_Particulars').value;
+            Event.URL = document.getElementById('EventEdit_URL').value;
+            Event.EventType = document.getElementById('EventEdit_EventType').value;
+            Event.IsRestricted = document.getElementById('EventEdit_IsRestricted').checked;
+            Event.IsArchived = document.getElementById('EventEdit_IsArchived').checked;
 
-
-            var dataToPost = JSON.stringify(Events);
-
+            var dataToPost = JSON.stringify(Event);
             $.ajax({
                 type: "PUT",
-                url: "/api/UpdateEvent",
+                url: "/api/UpdateEvent/" + Event.Id,
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: dataToPost,
                 success: function (data) {
-                    EventGrid.refresh();
+                    Events.refresh();
                     alert("Success");
                 },
                 failure: function (response) {
@@ -836,6 +875,8 @@
                 },
                 error: function (e) { }
             });
+            window.location.reload();
+            Events.refresh();
         }
         // } else {
         //     alert(errorUser);
@@ -844,23 +885,24 @@
     function getIDEvents(Event) {
         DeleteEvents(Event.Id);
     }
-    function DeleteEvents(Id) {
-        alert(Id);
+    function DeleteEvents(EventId) {
         $.ajax({
             type: "DELETE",
-            url: "/api/DeleteEvent",
+            url: "/api/DeleteEvent/" + EventId,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            data: { Id: Id },
+            data: { Id: EventId },
             success: function (data) {
                 alert("Success");
-                EventGrid.refresh();
+                Events.refresh();
             },
             failure: function (response) {
                 alert("Error - " + response.d);
             },
             error: function (e) { }
         });
+        window.location.reload();
+        Events.refresh();
     }
     /*function ValidateUser() {
         var errortext = "";
@@ -885,7 +927,6 @@
         if (isNaN(phone)) {
             errortext += "\n Invalid Phone number";
         }
-
         return errortext;
     }
     */
@@ -937,12 +978,11 @@
         return events;
     }
     function InsertSales() {
-
         var Sales = new Object();
         Sales.ProductPackageId = document.getElementById('SaleAdd_ProductPackageId').value;
         Sales.UserId = document.getElementById('SaleAdd_UserId').value;
-        Sales.SalesNumber = document.getElementById('SaleAdd_Particulars').value;
-        Sales.SalesDate = document.getElementById('SaleAdd_SalesNumber').value;
+        Sales.SalesNumber = document.getElementById('SaleAdd_SalesNumber').value;
+        Sales.SalesDate = document.getElementById('SaleAdd_SalesDate').value;
         Sales.RenewalDate = document.getElementById('SaleAdd_RenewalDate').value;
         Sales.ExpiryDate = document.getElementById('SaleAdd_ExpiryDate').value;
         Sales.Particulars = document.getElementById('SaleAdd_Particulars').value;
@@ -970,75 +1010,93 @@
             },
             error: function (e) { }
         });
+
+        window.location.reload();
     }
-
-    /*
-    function UpdateDialogUser(User) {
-        document.getElementById('UserEdit_Id').value = User.Id !== null && typeof (User.Id) != 'undefined' ? wijmo.Globalize.format(User.Id) : '';
-        document.getElementById('UserEdit_UserName').value = User.UserName ? User.UserName : '';
-        document.getElementById('UserEdit_FirstName').value = User.FirstName ? User.FirstName : '';
-        document.getElementById('UserEdit_LastName').value = User.LastName ? User.LastName : '';
-        document.getElementById('UserEdit_EmailAddress').value = User.EmailAddress ? User.EmailAddress : '';
-        document.getElementById('UserEdit_PhoneNumber').value = User.PhoneNumber ? User.PhoneNumber : '';
+    function UpdateDialogSales(Sale) {
+        document.getElementById('SaleEdit_Id').value = Sale.Id !== null && typeof (Sale.Id) != 'undefined' ? wijmo.Globalize.format(Sale.Id) : '';
+        document.getElementById('SaleEdit_ProductPackageId').value = Sale.ProductPackageId ? Sale.ProductPackageId : '';
+        document.getElementById('SaleEdit_UserId').value = Sale.UserId ? Sale.UserId : '';
+        document.getElementById('SaleEdit_SalesNumber').value = Sale.SalesNumber ? Sale.SalesNumber : '';
+        document.getElementById('SaleEdit_SalesDate').value = Sale.SalesDate ? Sale.SalesDate : '';
+        document.getElementById('SaleEdit_RenewalDate').value = Sale.RenewalDate ? Sale.RenewalDate : '';
+        document.getElementById('SaleEdit_ExpiryDate').value = Sale.ExpiryDate ? Sale.ExpiryDate : '';
+        document.getElementById('SaleEdit_Particulars').value = Sale.Particulars ? Sale.Particulars : '';
+        document.getElementById('SaleEdit_Quantity').value = Sale.Quantity ? Sale.Quantity : '';
+        document.getElementById('SaleEdit_Price').value = Sale.Price ? Sale.Price : '';
+        document.getElementById('SaleEdit_Amount').value = Sale.Amount ? Sale.Amount : '';
+        document.getElementById('SaleEdit_IsActive').checked = Sale.active;
+        document.getElementById('SaleEdit_IsRefunded').checked = Sale.active;
     }
-   function EditUsers() {
-        var errorUser = ValidateUser();
-        if (errorUser == "") {
-            var r = confirm("Update User?");
-            if (r == true) {
+    function EditSales() {
+        // var errorUser = ValidateUser();
+        // if (errorUser == "") {
+        var r = confirm("Update Purchase?");
+        if (r == true) {
+            //var users = new wijmo.collections.ObservableArray();
+            var Sale = new Object();
 
-                //var users = new wijmo.collections.ObservableArray();
-                var User = new Object();
-                User.Id = document.getElementById('UserEdit_Id').value;
-                User.UserName = document.getElementById('UserEdit_UserName').value;
-                User.FirstName = document.getElementById('UserEdit_FirstName').value;
-                User.LastName = document.getElementById('UserEdit_LastName').value;
-                User.EmailAddress = document.getElementById('UserEdit_EmailAddress').value;
-                User.PhoneNumber = document.getElementById('UserEdit_PhoneNumber').value;
+            Sale.Id = document.getElementById('SaleEdit_Id').value;
+            Sale.ProductPackageId = document.getElementById('SaleEdit_ProductPackageId').value;
+            Sale.UserId = document.getElementById('SaleEdit_UserId').value;
+            Sale.SalesNumber = document.getElementById('SaleEdit_SalesNumber').value;
+            Sale.SalesDate = document.getElementById('SaleEdit_SalesDate').value;
+            Sale.RenewalDate = document.getElementById('SaleEdit_RenewalDate').value;
+            Sale.ExpiryDate = document.getElementById('SaleEdit_ExpiryDate').value;
+            Sale.Particulars = document.getElementById('SaleEdit_Particulars').value;
+            Sale.Quantity = document.getElementById('SaleEdit_Quantity').value;
+            Sale.Price = document.getElementById('SaleEdit_Price').value;
+            Sale.Amount = document.getElementById('SaleEdit_Amount').value;
+            Sale.IsActive = document.getElementById('SaleEdit_IsActive').checked;
+            Sale.IsRefunded = document.getElementById('SaleEdit_IsRefunded').checked;
 
-                var dataToPost = JSON.stringify(User);
 
-                $.ajax({
-                    type: "PUT",
-                    url: "/api/UpdateUser",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    data: dataToPost,
-                    success: function (data) {
-                        UserGrid.refresh();
-                        alert("Success");
-                    },
-                    failure: function (response) {
-                        alert("Error - " + response.d);
-                    },
-                    error: function (e) { }
-                });
-            }
-        } else {
-            alert(errorUser);
+            var dataToPost = JSON.stringify(Sale);
+
+            $.ajax({
+                type: "PUT",
+                url: "/api/UpdateSales/" + Sale.Id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: dataToPost,
+                success: function (data) {
+                    SalesGrid.refresh();
+                    alert("Success");
+                },
+                failure: function (response) {
+                    alert("Error - " + response.d);
+                },
+                error: function (e) { }
+            });
+            window.location.reload();
         }
+        // } else {
+        //     alert(errorUser);
+        // }
     }
-   function getID(User) {
-        DeleteUsers(User.Id);
+    function getIDSales(Sales) {
+        DeleteSales(Sales.Id);
     }
-   function DeleteUsers(Id) {
-        alert(Id);
+    function DeleteSales(SaleId) {
         $.ajax({
             type: "DELETE",
-            url: "/api/DeleteUser",
+            url: "/api/DeleteSales/" + SaleId,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            data: { Id: Id },
+            data: { Id: SaleId },
             success: function (data) {
                 alert("Success");
-                UserGrid.refresh();
+                Sales.refresh();
             },
             failure: function (response) {
                 alert("Error - " + response.d);
             },
             error: function (e) { }
         });
+        window.location.reload();
+        Sales.refresh();
     }
+    /*
     function ValidateUser() {
         var errortext = "";
         //Firstname
