@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using MagentaTrader.Models;
+using MagentaTrader.IdentityExtensions;
 
 namespace MagentaTrader.Controllers
 {
@@ -26,6 +27,17 @@ namespace MagentaTrader.Controllers
         }
 
         public UserManager<ApplicationUser> UserManager { get; private set; }
+        //public AccountController()
+        //    : this(new AppUserManager())
+        //{
+        //}
+
+        //public AccountController(AppUserManager userManager)
+        //{
+        //    UserManager = userManager;
+        //}
+
+        //public AppUserManager UserManager { get; private set; }
 
         //
         // GET: /Account/Login
@@ -63,7 +75,8 @@ namespace MagentaTrader.Controllers
 
         //
         // GET: /Account/Register
-        [AllowAnonymous]
+        //[AllowAnonymous]
+        [Authorize]
         public ActionResult Register()
         {
             return View();
@@ -72,7 +85,8 @@ namespace MagentaTrader.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
+        //[AllowAnonymous]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {

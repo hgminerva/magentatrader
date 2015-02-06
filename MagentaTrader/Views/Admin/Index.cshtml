@@ -4,6 +4,15 @@
 <script src="/wijmo/controls/wijmo.min.js" type="text/javascript"></script>
 <script src="/wijmo/controls/wijmo.grid.min.js" type="text/javascript"></script>
 
+<!--Theme-->
+<link href="http://cdn.wijmo.com/themes/aristo/jquery-wijmo.css" rel="stylesheet" type="text/css" />
+
+<!--Wijmo Widgets CSS-->
+<link href="http://cdn.wijmo.com/jquery.wijmo-pro.all.3.20143.59.min.css" rel="stylesheet" type="text/css" />
+
+<!--RequireJs-->
+<script type="text/javascript" src="http://cdn.wijmo.com/external/require.js"></script>
+
 <!--NAV-->
 <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
     <div class="container topnav">
@@ -14,7 +23,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand topnav" href="/Home"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"> - Admin v.Beta.1.20150101</span></a>
+            <a class="navbar-brand topnav" href="/Home"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"> - Admin v.Beta.1.20150130</span></a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
@@ -28,7 +37,7 @@
                     <a href="#">Products</a>
                 </li>
                 <li>
-                    <a href="#sales" id="TabSales" class="alink" onclick="ShowSales()">Purchases</a>
+                    <a href="#sales" id="TabSales" class="alink" onclick="ShowSales()">Sales</a>
                 </li>
             </ul>
         </div>
@@ -45,7 +54,7 @@
 
                 <div class="clearfix"></div>
                 <h2 class="section-heading">Users</h2>
-                <div id="UserGrid"></div>
+                <div id="UserGrid" class="grid" onclick="UserShow();"></div>
                 <div class="row-fluid well grid-sort-group">
                     <button class="btn btn-default" data-toggle="modal" data-target="#UsersDetail" id="btnEditUsers">
                         Edit Detail...
@@ -57,6 +66,28 @@
                         Delete
                     </button>
                 </div>
+
+                <div class="row-fluid well row">
+                    <div class="col-md-5">
+                        <input id="pagingInput" type="text" class="form-control" placeholder="0 or empty is for no paging." />
+                    </div>
+                    <div class="btn-group col-md-7" id="naviagtionPage">
+                        <button type="button" class="btn btn-default" id="btnMoveToFirstPage">
+                            <span class="glyphicon glyphicon-fast-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnMoveToPreviousPage">
+                            <span class="glyphicon glyphicon-step-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" disabled style="width:100px" id="btnCurrentPage"></button>
+                        <button type="button" class="btn btn-default" id="btnMoveToNextPage">
+                            <span class="glyphicon glyphicon-step-forward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnMoveToLastPage">
+                            <span class="glyphicon glyphicon-fast-forward"></span>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -105,55 +136,57 @@
                 <button type="button" class="btn btn-primary" data-dismiss="modal" id="CmdOKEditUser" onclick="EditUsers()">
                     OK
                 </button>
-                <button type="button" class="btn btn-warning" data-dismiss="modal" id="CmdCancelEditUser">
+                <button type="button" class="btn btn-warning" data-dismiss="modal" id="CmdCancelEditUser" onclick="CancelEditUsers()">
                     Cancel
                 </button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="UsersDetailAdd">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    &times;
-                </button>
-                <h4 class="modal-title">User Detail</h4>
-            </div>
-            <form id="formUsers">
-                <div class="modal-body">
-                    <dl class="dl-horizontal">
-                        <dt>User Name</dt>
-                        <dd>
-                            <input class="form-control" id="UserAdd_UserName" type="text" />
-                        </dd>
-                        <dt>First Name</dt>
-                        <dd>
-                            <input class="form-control" id="UserAdd_FirstName" type="text" />
-                        </dd>
-                        <dt>Last Name</dt>
-                        <dd>
-                            <input class="form-control" id="UserAdd_LastName" type="text" />
-                        </dd>
-                        <dt>Email Address</dt>
-                        <dd>
-                            <input class="form-control" id="UserAdd_EmailAddress" type="text" />
-                        </dd>
-                        <dt>Phone Number</dt>
-                        <dd>
-                            <input class="form-control" id="UserAdd_PhoneNumber" type="text" />
-                        </dd>
-                    </dl>
+<div id="DivUsersDetailAdd">
+    <div class="modal fade" id="UsersDetailAdd">
+        <div class="modal-dialog" id="DivUsersDetailAdd2">
+            <div class="modal-content" id="DivUsersDetailAdd3">
+                <div class="modal-header" id="DivUsersDetailAdd4">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title">User Detail</h4>
                 </div>
-            </form>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="CmdOKAddUser" onclick="InsertUsers()">
-                    OK
-                </button>
-                <button type="button" class="btn btn-warning" data-dismiss="modal" id="CmdCancelAddUser">
-                    Cancel
-                </button>
+                <form id="formUsers">
+                    <div class="modal-body" id="DivUsersDetailAdd5">
+                        <dl class="dl-horizontal">
+                            <dt>User Name</dt>
+                            <dd>
+                                <input class="form-control" id="UserAdd_UserName" type="text" />
+                            </dd>
+                            <dt>First Name</dt>
+                            <dd>
+                                <input class="form-control" id="UserAdd_FirstName" type="text" />
+                            </dd>
+                            <dt>Last Name</dt>
+                            <dd>
+                                <input class="form-control" id="UserAdd_LastName" type="text" />
+                            </dd>
+                            <dt>Email Address</dt>
+                            <dd>
+                                <input class="form-control" id="UserAdd_EmailAddress" type="text" />
+                            </dd>
+                            <dt>Phone Number</dt>
+                            <dd>
+                                <input class="form-control" id="UserAdd_PhoneNumber" type="text" />
+                            </dd>
+                        </dl>
+                    </div>
+                </form>
+                <div class="modal-footer" id="DivUsersDetailAdd6">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="CmdOKAddUser" onclick="InsertUsers()">
+                        OK
+                    </button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal" id="CmdCancelAddUser" onclick="CancelAddUsers()">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -169,7 +202,7 @@
                 <hr class="section-heading-spacer">
                 <div class="clearfix"></div>
                 <h2 class="section-heading">Events</h2>
-                <div id="EventGrid"></div>
+                <div id="EventGrid" class="grid" onclick="EventShow();"></div>
                 <div class="row-fluid well grid-sort-group">
                     <button class="btn btn-default" data-toggle="modal" data-target="#EventDetailEdit" id="btnEditEvent">
                         Edit Detail...
@@ -180,6 +213,26 @@
                     <button class="btn btn-default" id="btnDeleteEvent">
                         Delete
                     </button>
+                </div>
+                <div class="row-fluid well row">
+                    <div class="col-md-5">
+                        <input id="pagingInputEvent" type="text" class="form-control" placeholder="0 or empty is for no paging." />
+                    </div>
+                    <div class="btn-group col-md-7" id="naviagtionPageEvent">
+                        <button type="button" class="btn btn-default" id="btnMoveToFirstPageEvent">
+                            <span class="glyphicon glyphicon-fast-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnMoveToPreviousPageEvent">
+                            <span class="glyphicon glyphicon-step-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" disabled style="width:100px" id="btnCurrentPageEvent"></button>
+                        <button type="button" class="btn btn-default" id="btnMoveToNextPageEvent">
+                            <span class="glyphicon glyphicon-step-forward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnMoveToLastPageEvent">
+                            <span class="glyphicon glyphicon-fast-forward"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -200,6 +253,7 @@
                     <dt>Date</dt>
                     <dd>
                         <input class="form-control" id="EventAdd_EventDate" type="text" />
+                        <div class="form-control" id="calendarAddEvent"></div>
                     </dd>
                     <dt>Event</dt>
                     <dd>
@@ -213,9 +267,20 @@
                     <dd>
                         <input class="form-control" id="EventAdd_URL" type="text" />
                     </dd>
+                    <dt>Video URL</dt>
+                    <dd>
+                        <input class="form-control" id="EventAdd_VideoURL" type="text" />
+                    </dd>
                     <dt>Type</dt>
                     <dd>
-                        <input class="form-control" id="EventAdd_EventType" type="text" />
+                        <select class="form-control" id="EventAdd_EventType">
+                            <option value="WEBINAR">WEBINAR</option>
+                            <option value="USER">USER</option>
+                            <option value="WEB99">WEB99</option>
+                            <option value="REALTIMEBETA">REALTIMEBETA</option>
+                            <option value="WORKSHOP">WORKSHOP</option>
+                            <option value="OTHER">OTHER</option>
+                        </select>
                     </dd>
                     <dt>Resticted</dt>
                     <dd>
@@ -255,7 +320,8 @@
                     </dd>
                     <dt>Date</dt>
                     <dd>
-                        <input class="form-control" id="EventEdit_EventDate" type="text" />
+                        <input class="form-control" id="EventEdit_EventDate" type="text" name="EventEdit_EventDate" />
+                        <div class="form-control" id="calendarEditEvent"></div>
                     </dd>
                     <dt>Event</dt>
                     <dd>
@@ -269,9 +335,21 @@
                     <dd>
                         <input class="form-control" id="EventEdit_URL" type="text" />
                     </dd>
+                    <dt>Video URL</dt>
+                    <dd>
+                        <input class="form-control" id="EventEdit_VideoURL" type="text" />
+                    </dd>
                     <dt>Type</dt>
                     <dd>
-                        <input class="form-control" id="EventEdit_EventType" type="text" />
+                        <!-- <input class="form-control" id="EventEdit_EventType" type="text" /> -->
+                        <select class="form-control" id="EventEdit_EventType">
+                            <option value="WEBINAR">WEBINAR</option>
+                            <option value="USER">USER</option>
+                            <option value="WEB99">WEB99</option>
+                            <option value="REALTIMEBETA">REALTIMEBETA</option>
+                            <option value="WORKSHOP">WORKSHOP</option>
+                            <option value="OTHER">OTHER</option>
+                        </select>
                     </dd>
                     <dt>Resticted</dt>
                     <dd>
@@ -306,7 +384,7 @@
                 <hr class="section-heading-spacer">
                 <div class="clearfix"></div>
                 <h2 class="section-heading">Sales</h2>
-                <div id="SalesGrid"></div>
+                <div id="SalesGrid" class="grid" onclick="SaleShow();"></div>
                 <div class="row-fluid well grid-sort-group">
                     <button class="btn btn-default" data-toggle="modal" data-target="#SaleDetailEdit" id="btnEditSales">
                         Edit Detail...
@@ -318,6 +396,27 @@
                         Delete
                     </button>
                 </div>
+                <div class="row-fluid well row">
+                    <div class="col-md-5">
+                        <input id="pagingInputSale" type="text" class="form-control" placeholder="0 or empty is for no paging." />
+                    </div>
+                    <div class="btn-group col-md-7" id="naviagtionPageSale">
+                        <button type="button" class="btn btn-default" id="btnMoveToFirstPageSale">
+                            <span class="glyphicon glyphicon-fast-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnMoveToPreviousPageSale">
+                            <span class="glyphicon glyphicon-step-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" disabled style="width:100px" id="btnCurrentPageSale"></button>
+                        <button type="button" class="btn btn-default" id="btnMoveToNextPageSale">
+                            <span class="glyphicon glyphicon-step-forward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnMoveToLastPageSale">
+                            <span class="glyphicon glyphicon-fast-forward"></span>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -330,33 +429,40 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                     &times;
                 </button>
-                <h4 class="modal-title">Purchase Detail</h4>
+                <h4 class="modal-title">Sales Detail</h4>
             </div>
             <div class="modal-body">
                 <dl class="dl-horizontal">
-                    <dt>Product Package ID</dt>
+                    <dt>Product Package</dt>
                     <dd>
-                        <input class="form-control" id="SaleAdd_ProductPackageId" type="text" readonly="true" value="2" />
+                        <div id="cboSaleAdd_ProductPackageId"></div>
+                        <input class="form-control" id="SaleAdd_ProductPackageId" type="hidden" readonly="true" value="2" />
+
                     </dd>
-                    <dt>User ID</dt>
+                    <dt>User Name</dt>
                     <dd>
-                        <input class="form-control" id="SaleAdd_UserId" type="text" readonly="true" value="1" />
+                        <div id="cboSaleAdd_UserId"></div>
+                        <input class="form-control" id="SaleAdd_UserId" type="hidden" readonly="true" value="1" />
                     </dd>
                     <dt>Sales Number</dt>
                     <dd>
+
                         <input class="form-control" id="SaleAdd_SalesNumber" type="text" />
                     </dd>
                     <dt>Sales Date</dt>
                     <dd>
                         <input class="form-control" id="SaleAdd_SalesDate" type="text" />
+                        <div class="form-control" id="calendarSaleAdd_SalesDate"></div>
                     </dd>
                     <dt>Renewal Date</dt>
                     <dd>
                         <input class="form-control" id="SaleAdd_RenewalDate" type="text" />
+                        <div class="form-control" id="calendarSaleAdd_RenewalDate"></div>
                     </dd>
                     <dt>Expiry Date</dt>
                     <dd>
                         <input class="form-control" id="SaleAdd_ExpiryDate" type="text" />
+                        <div class="form-control" id="calendarSaleAdd_ExpiryDate"></div>
                     </dd>
                     <dt>Particulars</dt>
                     <dd>
@@ -402,7 +508,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                     &times;
                 </button>
-                <h4 class="modal-title">Edit Event Detail</h4>
+                <h4 class="modal-title">Sales Detail</h4>
             </div>
             <div class="modal-body">
                 <dl class="dl-horizontal">
@@ -410,13 +516,20 @@
                     <dd>
                         <input class="form-control" id="SaleEdit_Id" type="text" readonly="true" />
                     </dd>
-                    <dt>Product Package ID</dt>
+                    <dt>Product Package</dt>
                     <dd>
-                        <input class="form-control" id="SaleEdit_ProductPackageId" type="text" readonly="true" value="2" />
+                        <!-- <select class="form-control" id="SaleEdit_ProductPackageId">
+                                </select> -->
+                        <!--<input class="form-control" id="SaleEdit_ProductPackageId" type="text" readonly="true" value="2" />-->
+                        <input class="form-control" id="SaleEdit_ProductPackageId_Info" type="text" readonly="true" />
+                        <input class="form-control" id="SaleEdit_ProductPackageId" type="hidden" readonly="true" />
+
                     </dd>
-                    <dt>User ID</dt>
+                    <dt>User Name</dt>
                     <dd>
-                        <input class="form-control" id="SaleEdit_UserId" type="text" readonly="true" value="1" />
+                        <!--<input class="form-control" id="SaleEdit_UserId" type="text" readonly="true" value="1" />-->
+                        <input class="form-control" id="SaleEdit_UserId_Info" type="text" readonly="true" />
+                        <input class="form-control" id="SaleEdit_UserId" type="hidden" readonly="true" />
                     </dd>
                     <dt>Sales Number</dt>
                     <dd>
@@ -425,14 +538,17 @@
                     <dt>Sales Date</dt>
                     <dd>
                         <input class="form-control" id="SaleEdit_SalesDate" type="text" />
+                        <div class="form-control" id="calendarSaleEdit_SalesDate"></div>
                     </dd>
                     <dt>Renewal Date</dt>
                     <dd>
                         <input class="form-control" id="SaleEdit_RenewalDate" type="text" />
+                        <div class="form-control" id="calendarSaleEdit_RenewalDate"></div>
                     </dd>
                     <dt>Expiry Date</dt>
                     <dd>
                         <input class="form-control" id="SaleEdit_ExpiryDate" type="text" />
+                        <div class="form-control" id="calendarSaleEdit_ExpiryDate"></div>
                     </dd>
                     <dt>Particulars</dt>
                     <dd>
@@ -473,10 +589,234 @@
 </div>
 
 <!--JAVASCRIPT-->>
+<script id="scriptInit" type="text/javascript">
+
+    require(["wijmo.wijcalendar"], function () {
+        /*EVENTS*/
+        $(function () {
+            $("#calendarAddEvent").wijcalendar({
+                //set the calendar is a pop-up calendar.
+                popupMode: true,
+                selectedDatesChanged: function () {
+                    var selDate = $(this).wijcalendar("getSelectedDate");
+                    var selectDate = new Date(selDate);
+                    if (!!selDate) $("#EventAdd_EventDate").val(selectDate.getMonth() + 1 + "/" + selectDate.getDate() + "/" + selectDate.getFullYear());
+                }
+            });
+
+            $("#EventAdd_EventDate").click(function () {
+                //Pops up the calendar at specifies position.
+                $("#calendarAddEvent").wijcalendar("popup", {
+                    of: $("#EventAdd_EventDate")
+                });
+            });
+
+            $("#calendarEditEvent").wijcalendar({
+                //set the calendar is a pop-up calendar.
+                popupMode: true,
+                selectedDatesChanged: function () {
+                    var selDate = $(this).wijcalendar("getSelectedDate");
+                    var selectDate = new Date(selDate);
+                    if (!!selDate) $("#EventEdit_EventDate").val(selectDate.getMonth() + 1 + "/" + selectDate.getDate() + "/" + selectDate.getFullYear());
+                }
+            });
+
+            $("#EventEdit_EventDate").click(function () {
+                //Pops up the calendar at specifies position.
+                $("#calendarEditEvent").wijcalendar("popup", {
+                    of: $("#EventEdit_EventDate")
+                });
+            });
+
+            /*SALES*/
+            $("#calendarSaleAdd_SalesDate").wijcalendar({
+                //set the calendar is a pop-up calendar.
+                popupMode: true,
+                selectedDatesChanged: function () {
+                    var selDate = $(this).wijcalendar("getSelectedDate");
+                    var selectDate = new Date(selDate);
+                    if (!!selDate) $("#SaleAdd_SalesDate").val(selectDate.getMonth() + 1 + "/" + selectDate.getDate() + "/" + selectDate.getFullYear());
+                }
+            });
+
+            $("#SaleAdd_SalesDate").click(function () {
+                //Pops up the calendar at specifies position.
+                $("#calendarSaleAdd_SalesDate").wijcalendar("popup", {
+                    of: $("#SaleAdd_SalesDate")
+                });
+            });
+
+            $("#calendarSaleAdd_RenewalDate").wijcalendar({
+                //set the calendar is a pop-up calendar.
+                popupMode: true,
+                selectedDatesChanged: function () {
+                    var selDate = $(this).wijcalendar("getSelectedDate");
+                    var selectDate = new Date(selDate);
+                    if (!!selDate) $("#SaleAdd_RenewalDate").val(selectDate.getMonth() + 1 + "/" + selectDate.getDate() + "/" + selectDate.getFullYear());
+                }
+            });
+
+            $("#SaleAdd_RenewalDate").click(function () {
+                //Pops up the calendar at specifies position.
+                $("#calendarSaleAdd_RenewalDate").wijcalendar("popup", {
+                    of: $("#SaleAdd_RenewalDate")
+                });
+            });
+
+
+            $("#calendarSaleAdd_ExpiryDate").wijcalendar({
+                //set the calendar is a pop-up calendar.
+                popupMode: true,
+                selectedDatesChanged: function () {
+                    var selDate = $(this).wijcalendar("getSelectedDate");
+                    var selectDate = new Date(selDate);
+                    if (!!selDate) $("#SaleAdd_ExpiryDate").val(selectDate.getMonth() + 1 + "/" + selectDate.getDate() + "/" + selectDate.getFullYear());
+                }
+            });
+
+            $("#SaleAdd_ExpiryDate").click(function () {
+                //Pops up the calendar at specifies position.
+                $("#calendarSaleAdd_ExpiryDate").wijcalendar("popup", {
+                    of: $("#SaleAdd_ExpiryDate")
+                });
+            });
+
+
+            $("#calendarSaleEdit_SalesDate").wijcalendar({
+                //set the calendar is a pop-up calendar.
+                popupMode: true,
+                selectedDatesChanged: function () {
+                    var selDate = $(this).wijcalendar("getSelectedDate");
+                    var selectDate = new Date(selDate);
+                    if (!!selDate) $("#SaleEdit_SalesDate").val(selectDate.getMonth() + 1 + "/" + selectDate.getDate() + "/" + selectDate.getFullYear());
+                }
+            });
+
+            $("#SaleEdit_SalesDate").click(function () {
+                //Pops up the calendar at specifies position.
+                $("#calendarSaleEdit_SalesDate").wijcalendar("popup", {
+                    of: $("#SaleEdit_SalesDate")
+                });
+            });
+
+
+            $("#calendarSaleEdit_RenewalDate").wijcalendar({
+                //set the calendar is a pop-up calendar.
+                popupMode: true,
+                selectedDatesChanged: function () {
+                    var selDate = $(this).wijcalendar("getSelectedDate");
+                    var selectDate = new Date(selDate);
+                    if (!!selDate) $("#SaleEdit_RenewalDate").val(selectDate.getMonth() + 1 + "/" + selectDate.getDate() + "/" + selectDate.getFullYear());
+                }
+            });
+
+            $("#SaleEdit_RenewalDate").click(function () {
+                //Pops up the calendar at specifies position.
+                $("#calendarSaleEdit_RenewalDate").wijcalendar("popup", {
+                    of: $("#SaleEdit_RenewalDate")
+                });
+            });
+
+
+            $("#calendarSaleEdit_ExpiryDate").wijcalendar({
+                //set the calendar is a pop-up calendar.
+                popupMode: true,
+                selectedDatesChanged: function () {
+                    var selDate = $(this).wijcalendar("getSelectedDate");
+                    var selectDate = new Date(selDate);
+                    if (!!selDate) $("#SaleEdit_ExpiryDate").val(selectDate.getMonth() + 1 + "/" + selectDate.getDate() + "/" + selectDate.getFullYear());
+                }
+            });
+
+            $("#SaleEdit_ExpiryDate").click(function () {
+                //Pops up the calendar at specifies position.
+                $("#calendarSaleEdit_ExpiryDate").wijcalendar("popup", {
+                    of: $("#SaleEdit_ExpiryDate")
+                });
+            });
+
+
+
+        });
+    });
+
+    require(["wijmo.wijcombobox"], function () {
+        $(document).ready(function () {
+
+            var ac = new wijmo.input.AutoComplete('#cboSaleAdd_UserId', {
+                itemsSource: getUsersList(UserList.items),
+                placeholder: 'Select User ',
+                onSelectedIndexChanged: function (e, data) {
+
+                    $("#SaleAdd_UserId").val(UserList.items[this.selectedIndex].Id);
+                }
+            });
+
+            var ax = new wijmo.input.AutoComplete('#cboSaleAdd_ProductPackageId', {
+                itemsSource: getProductPackageList(ProductPackageList.items),
+                placeholder: 'Select Product Package ',
+                onSelectedIndexChanged: function (e, data) {
+
+                    $("#SaleAdd_ProductPackageId").val(ProductPackageList.items[this.selectedIndex].Id);
+                }
+            });
+
+            //$("#cboSaleAdd_UserId").wijgrid({
+
+            //    selectionChanged: function () {
+            //        alert("changed!!!");
+            //    }
+            //});
+            // put all your jQuery goodness in here.
+
+            //   $("#EventAdd_EventType").wijcombobox(
+            //  {
+            //      showingAnimation: { effect: "blind" },
+            //     hidingAnimation: { effect: "blind" }
+            // });
+
+            // $("#EventEdit_EventType").wijcombobox(
+            //  {
+            //      showingAnimation: { effect: "blind" },
+            //      hidingAnimation: { effect: "blind" }
+            //  });
+
+        });
+    });
+
+    require(["wijmo.wijgrid"], function () {
+        $(document).ready(function () {
+
+            $("#UserGrid").wijgrid({ selectionChanged: function (e, args) { $("#btnEditUsers").hide(); } });
+
+            //$("#UserGrid").wijgrid("ensureControl", true); // refresh wijgrid
+
+            // $("#EventGrid").wijgrid("ensureControl", true); // refresh wijgrid
+
+            // $("#SalesGrid").wijgrid("ensureControl", true); // refresh wijgrid
+        });
+    });
+
+</script>
+
+
 <script type="text/javascript">
+
+    requirejs.config({
+        baseUrl: "http://cdn.wijmo.com/amd-js/3.20143.59",
+        paths: {
+            "jquery": "jquery-1.11.1.min",
+            "jquery-ui": "jquery-ui-1.11.0.custom.min",
+            "jquery.ui": "jquery-ui",
+            "jquery.mousewheel": "jquery.mousewheel.min",
+            "globalize": "globalize.min"
+        }
+    });
+
 
     var Users;
     var UserGrid;
+    var UserList;
 
     var Events;
     var EventGrid;
@@ -484,18 +824,104 @@
     var Sales;
     var SalesGrid;
 
+    var SelectedIndex;
+    var ProductPackageList;
+
+
     $(document).ready(function () {
+
         /*USER*/
+        $("#btnEditUsers").hide();
+        $("#btnDeleteUsers").hide();
+
+        $("#btnEditEvent").hide();
+        $("#btnDeleteEvent").hide();
+
+        $("#btnEditSales").hide();
+        $("#btnDeleteSales").hide();
+
+
+
+
+
+        UserList = new wijmo.collections.CollectionView(getUsers());
         Users = new wijmo.collections.CollectionView(getUsers());
-        UserGrid = new wijmo.grid.FlexGrid('#UserGrid');
+        UserGrid = new wijmo.grid.FlexGrid('#UserGrid'),
+               btnFirstPage = document.getElementById('btnMoveToFirstPage'),
+               btnPreviousPage = document.getElementById('btnMoveToPreviousPage'),
+               btnNextPage = document.getElementById('btnMoveToNextPage'),
+               btnLastPage = document.getElementById('btnMoveToLastPage'),
+               btnCurrentPage = document.getElementById('btnCurrentPage');
 
         UserGrid.initialize({
             itemsSource: Users,
             isReadOnly: true,
             selectionMode: wijmo.grid.SelectionMode.Row
+
         });
 
         UserGrid.trackChanges = true;
+        Users.pageSize = 10;
+
+        document.getElementById('pagingInput').value = Users.pageSize;
+        // init the button status.
+        updateNaviagteButtons();
+        // update the collectionview's pagesize according to the user's input.
+        document.getElementById('pagingInput').addEventListener('blur',
+            function () {
+                var pagesize = this.value;
+                if (!pagesize) { pagesize = 0; }
+                else { pagesize = wijmo.Globalize.parseInt(pagesize); }
+                Users.pageSize = pagesize; updateNaviagteButtons();
+            });
+        // update the navigation buttons' status
+        function updateNaviagteButtons() {
+            if (Users.pageSize <= 0) {
+                document.getElementById('naviagtionPage').style.display = 'none';
+                return;
+            }
+            document.getElementById('naviagtionPage').style.display = 'block';
+            if (Users.pageIndex === 0) {
+                btnFirstPage.setAttribute('disabled', 'disabled');
+                btnPreviousPage.setAttribute('disabled', 'disabled');
+                btnNextPage.removeAttribute('disabled');
+                btnLastPage.removeAttribute('disabled');
+            }
+            else if (Users.pageIndex === (Users.pageCount - 1)) {
+                btnFirstPage.removeAttribute('disabled');
+                btnPreviousPage.removeAttribute('disabled');
+                btnLastPage.setAttribute('disabled', 'disabled');
+                btnNextPage.setAttribute('disabled', 'disabled');
+            }
+            else {
+                btnFirstPage.removeAttribute('disabled');
+                btnPreviousPage.removeAttribute('disabled');
+                btnNextPage.removeAttribute('disabled');
+                btnLastPage.removeAttribute('disabled');
+            }
+
+            btnCurrentPage.innerHTML = (Users.pageIndex + 1) + ' / ' + Users.pageCount;
+        }
+        // commands: moving page.
+        btnFirstPage.addEventListener('click', function () {
+            // move to the first page.
+            Users.moveToFirstPage();
+            updateNaviagteButtons();
+        });
+
+        btnPreviousPage.addEventListener('click', function () {
+            // move to the previous page.
+            Users.moveToPreviousPage();
+            updateNaviagteButtons();
+        });
+
+        btnNextPage.addEventListener('click', function () {
+            // move to the next page.
+            Users.moveToNextPage(); updateNaviagteButtons();
+        }); btnLastPage.addEventListener('click', function () {
+            // move to the last page.
+            Users.moveToLastPage(); updateNaviagteButtons();
+        });
 
         document.getElementById('btnEditUsers').addEventListener('click', function () {
             Users.editItem(Users.currentItem);
@@ -511,7 +937,12 @@
 
         /*EVENTS*/
         Events = new wijmo.collections.CollectionView(getEvents());
-        EventGrid = new wijmo.grid.FlexGrid('#EventGrid');
+        EventGrid = new wijmo.grid.FlexGrid('#EventGrid'),
+                 btnFirstPageEvent = document.getElementById('btnMoveToFirstPageEvent'),
+                 btnPreviousPageEvent = document.getElementById('btnMoveToPreviousPageEvent'),
+                 btnNextPageEvent = document.getElementById('btnMoveToNextPageEvent'),
+                 btnLastPageEvent = document.getElementById('btnMoveToLastPageEvent'),
+                 btnCurrentPageEvent = document.getElementById('btnCurrentPageEvent');
 
         EventGrid.initialize({
             itemsSource: Events,
@@ -520,6 +951,69 @@
         });
 
         EventGrid.trackChanges = true;
+
+        Events.pageSize = 10;
+
+        document.getElementById('pagingInputEvent').value = Events.pageSize;
+        // init the button status.
+        updateNaviagteButtonsEvent();
+        // update the collectionview's pagesize according to the user's input.
+        document.getElementById('pagingInputEvent').addEventListener('blur',
+            function () {
+                var pagesize = this.value;
+                if (!pagesize) { pagesize = 0; }
+                else { pagesize = wijmo.Globalize.parseInt(pagesize); }
+                Events.pageSize = pagesize; updateNaviagteButtonsEvent();
+            });
+        // update the navigation buttons' status
+        function updateNaviagteButtonsEvent() {
+            if (Events.pageSize <= 0) {
+                document.getElementById('naviagtionPageEvent').style.display = 'none';
+                return;
+            }
+            document.getElementById('naviagtionPageEvent').style.display = 'block';
+            if (Events.pageIndex === 0) {
+                btnFirstPageEvent.setAttribute('disabled', 'disabled');
+                btnPreviousPageEvent.setAttribute('disabled', 'disabled');
+                btnNextPageEvent.removeAttribute('disabled');
+                btnLastPageEvent.removeAttribute('disabled');
+            }
+            else if (Events.pageIndex === (Events.pageCount - 1)) {
+                btnFirstPageEvent.removeAttribute('disabled');
+                btnPreviousPageEvent.removeAttribute('disabled');
+                btnLastPageEvent.setAttribute('disabled', 'disabled');
+                btnNextPageEvent.setAttribute('disabled', 'disabled');
+            }
+            else {
+                btnFirstPageEvent.removeAttribute('disabled');
+                btnPreviousPageEvent.removeAttribute('disabled');
+                btnNextPageEvent.removeAttribute('disabled');
+                btnLastPageEvent.removeAttribute('disabled');
+            }
+
+            btnCurrentPageEvent.innerHTML = (Events.pageIndex + 1) + ' / ' + Events.pageCount;
+        }
+        // commands: moving page.
+        btnFirstPageEvent.addEventListener('click', function () {
+            // move to the first page.
+            Events.moveToFirstPage();
+            updateNaviagteButtonsEvent();
+        });
+
+        btnPreviousPageEvent.addEventListener('click', function () {
+            // move to the previous page.
+            Events.moveToPreviousPage();
+            updateNaviagteButtonsEvent();
+        });
+
+        btnNextPageEvent.addEventListener('click', function () {
+            // move to the next page.
+            Events.moveToNextPage(); updateNaviagteButtonsEvent();
+        }); btnLastPageEvent.addEventListener('click', function () {
+            // move to the last page.
+            Events.moveToLastPage(); updateNaviagteButtonsEvent();
+        });
+
 
         document.getElementById('btnEditEvent').addEventListener('click', function () {
             Events.editItem(Events.currentItem);
@@ -533,9 +1027,18 @@
             }
         });
 
+
+
         /*SALES*/
+        ProductPackageList = new wijmo.collections.CollectionView(getProductPackage());
+
         Sales = new wijmo.collections.CollectionView(getSales());
-        SalesGrid = new wijmo.grid.FlexGrid('#SalesGrid');
+        SalesGrid = new wijmo.grid.FlexGrid('#SalesGrid')
+        btnFirstPageSale = document.getElementById('btnMoveToFirstPageSale'),
+        btnPreviousPageSale = document.getElementById('btnMoveToPreviousPageSale'),
+        btnNextPageSale = document.getElementById('btnMoveToNextPageSale'),
+        btnLastPageSale = document.getElementById('btnMoveToLastPageSale'),
+        btnCurrentPageSale = document.getElementById('btnCurrentPageSale');
 
         SalesGrid.initialize({
             itemsSource: Sales,
@@ -543,14 +1046,85 @@
             selectionMode: wijmo.grid.SelectionMode.Row
         });
 
-        EventGrid.trackChanges = true;
+        SalesGrid.trackChanges = true;
+
+        Sales.pageSize = 10;
+
+        document.getElementById('pagingInputSale').value = Sales.pageSize;
+        // init the button status.
+        updateNaviagteButtonsSale();
+        // update the collectionview's pagesize according to the user's input.
+        document.getElementById('pagingInputSale').addEventListener('blur',
+            function () {
+                var pagesize = this.value;
+                if (!pagesize) { pagesize = 0; }
+                else { pagesize = wijmo.Globalize.parseInt(pagesize); }
+                Sales.pageSize = pagesize; updateNaviagteButtonsSale();
+            });
+        // update the navigation buttons' status
+        function updateNaviagteButtonsSale() {
+            if (Sales.pageSize <= 0) {
+                document.getElementById('naviagtionPageSale').style.display = 'none';
+                return;
+            }
+            document.getElementById('naviagtionPageSale').style.display = 'block';
+            if (Sales.pageIndex === 0) {
+                btnFirstPageSale.setAttribute('disabled', 'disabled');
+                btnPreviousPageSale.setAttribute('disabled', 'disabled');
+                btnNextPageSale.removeAttribute('disabled');
+                btnLastPageSale.removeAttribute('disabled');
+            } else if (Sales.pageIndex === (Sales.pageCount - 1)) {
+                btnFirstPageSale.removeAttribute('disabled');
+                btnPreviousPageSale.removeAttribute('disabled');
+                btnLastPageSale.setAttribute('disabled', 'disabled');
+                btnNextPageSale.setAttribute('disabled', 'disabled');
+            } else {
+                btnFirstPageSale.removeAttribute('disabled');
+                btnPreviousPageSale.removeAttribute('disabled');
+                btnNextPageSale.removeAttribute('disabled');
+                btnLastPageSale.removeAttribute('disabled');
+            }
+
+            btnCurrentPageSale.innerHTML = (Sales.pageIndex + 1) + ' / ' + Sales.pageCount;
+        }
+
+        // commands: moving page.
+        btnFirstPageSale.addEventListener('click', function () {
+            // move to the first page.
+            Sales.moveToFirstPage();
+            updateNaviagteButtonsSale();
+        });
+
+        btnPreviousPageSale.addEventListener('click', function () {
+            // move to the previous page.
+            Sales.moveToPreviousPage();
+            updateNaviagteButtonsSale();
+        });
+
+        btnNextPageSale.addEventListener('click', function () {
+            // move to the next page.
+            Sales.moveToNextPage();
+            updateNaviagteButtonsSale();
+        });
+        btnLastPageSale.addEventListener('click', function () {
+            // move to the last page.
+            Sales.moveToLastPage();
+            updateNaviagteButtonsSale();
+        });
+
+        document.getElementById('btnAddSales').addEventListener('click', function () {
+            // Sales.editItem(Sales.currentItem);
+            // UpdateDialogSales(Sales.currentEditItem);
+            //getProduct();
+        });
 
         document.getElementById('btnEditSales').addEventListener('click', function () {
             Sales.editItem(Sales.currentItem);
             UpdateDialogSales(Sales.currentEditItem);
+            //getProduct();
         });
         document.getElementById('btnDeleteSales').addEventListener('click', function () {
-            var r = confirm("Delete Purchase?");
+            var r = confirm("Delete Sales?");
             if (r == true) {
                 Sales.editItem(Sales.currentItem);
                 getIDSales(Sales.currentEditItem);
@@ -559,12 +1133,36 @@
 
     });
 
+    /*********************/
+    function getUsersList(items) {
+        var retList = new Array();
+
+        for (var i = 0; i < items.length; i++) {
+            retList.push(items[i].FirstName + " " + items[i].LastName);
+        }
+
+        return retList;
+    }
+
+    function getProductPackageList(items) {
+
+        var retList = new Array();
+
+        for (var i = 0; i < items.length; i++) {
+            retList.push(items[i].ProductPackageDescription);
+        }
+
+        return retList;
+    }
+    /*********************/
+
     /*USER*/
     function ShowUsers() {
         document.getElementById('DivUsers').style.display = 'block';
         document.getElementById('DivEvents').style.display = 'none';
         document.getElementById('DivSales').style.display = 'none';
     }
+
     function getUsers() {
         var users = new wijmo.collections.ObservableArray();
         $.ajax({
@@ -586,7 +1184,7 @@
                         });
                     }
                 } else {
-                    alert("No data.");
+                    // alert("No data.");
                 }
             }
         }).fail(
@@ -596,6 +1194,8 @@
         );
         return users;
     }
+
+
     function InsertUsers() {
 
         var errorUser = ValidateUserAdd();
@@ -614,31 +1214,30 @@
                 User.PhoneNumber = document.getElementById('UserAdd_PhoneNumber').value;
 
                 var dataToPost = JSON.stringify(User);
-                debugger;
+
                 $.ajax({
                     type: "POST",
                     url: "/api/AddUser",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: dataToPost,
-                    success: function (data) {
-                        Users.refresh();
-
+                    success: function (response) {
                         alert("Success");
+                        window.location.reload();
                     },
                     failure: function (response) {
                         alert("Error - " + response.d);
                     },
                     error: function (e) { }
                 });
-
-                window.location.reload();
-                Users.refresh();
             }
         } else {
+            $('#UsersDetailAdd').modal('hide');
             alert(errorUser);
+            $('#UsersDetailAdd').modal('show');
         }
     }
+
     function UpdateDialogUser(User) {
         document.getElementById('UserEdit_Id').value = User.Id !== null && typeof (User.Id) != 'undefined' ? wijmo.Globalize.format(User.Id) : '';
         document.getElementById('UserEdit_UserName').value = User.UserName ? User.UserName : '';
@@ -647,6 +1246,7 @@
         document.getElementById('UserEdit_EmailAddress').value = User.EmailAddress ? User.EmailAddress : '';
         document.getElementById('UserEdit_PhoneNumber').value = User.PhoneNumber ? User.PhoneNumber : '';
     }
+
     function EditUsers() {
         var errorUser = ValidateUserEdit();
         if (errorUser == "") {
@@ -670,9 +1270,9 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: dataToPost,
-                    success: function (data) {
-                        Users.refresh();
+                    success: function (HttpResponseMessage) {
                         alert("Success");
+                        window.location.reload();
                     },
                     failure: function (response) {
                         alert("Error - " + response.d);
@@ -680,15 +1280,18 @@
                     error: function (e) { }
                 });
                 window.location.reload();
-                Users.refresh();
             }
         } else {
+            $('#UsersDetail').modal('hide');
             alert(errorUser);
+            $('#UsersDetail').modal('show');
         }
     }
+
     function getID(User) {
         DeleteUsers(User.Id);
     }
+
     function DeleteUsers(UserId) {
         $.ajax({
             type: "DELETE",
@@ -696,9 +1299,9 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: { Id: UserId },
-            success: function (data) {
+            success: function (HttpResponseMessage) {
                 alert("Success");
-                Users.refresh();
+                window.location.reload();
             },
             failure: function (response) {
                 alert("Error - " + response.d);
@@ -707,8 +1310,8 @@
 
         });
         window.location.reload();
-        Users.refresh();
     }
+
     function ValidateUserAdd() {
         var errortext = "";
         //Firstname
@@ -735,6 +1338,7 @@
 
         return errortext;
     }
+
     function ValidateUserEdit() {
         var errortext = "";
         //Firstname
@@ -768,6 +1372,7 @@
         document.getElementById('DivSales').style.display = 'none';
         document.getElementById('DivEvents').style.display = 'block';
     }
+
     function getEvents() {
         var events = new wijmo.collections.ObservableArray();
         $.ajax({
@@ -785,13 +1390,14 @@
                             EventDescription: Results[i]["EventDescription"],
                             Particulars: Results[i]["Particulars"],
                             URL: Results[i]["URL"],
+                            VideoURL: Results[i]["VideoURL"],
                             EventType: Results[i]["EventType"],
                             IsRestricted: Results[i]["IsRestricted"],
                             IsArchived: Results[i]["IsArchived"]
                         });
                     }
                 } else {
-                    alert("No data.");
+                    // alert("No data.");
                 }
             }
         }).fail(
@@ -801,47 +1407,55 @@
         );
         return events;
     }
+
     function InsertEvents() {
 
-        var Event = new Object();
-        Event.EventDate = document.getElementById('EventAdd_EventDate').value;
-        Event.EventDescription = document.getElementById('EventAdd_EventDescription').value;
-        Event.Particulars = document.getElementById('EventAdd_Particulars').value;
-        Event.URL = document.getElementById('EventAdd_URL').value;
-        Event.EventType = document.getElementById('EventAdd_EventType').value;
-        Event.IsRestricted = document.getElementById('EventAdd_IsRestricted').checked;
-        Event.IsArchived = document.getElementById('EventAdd_IsArchived').checked;
+        var r = confirm("Insert Event?");
+        if (r == true) {
 
-        var dataToPost = JSON.stringify(Event);
+            var Event = new Object();
+            Event.EventDate = document.getElementById('EventAdd_EventDate').value;
+            Event.EventDescription = document.getElementById('EventAdd_EventDescription').value;
+            Event.Particulars = document.getElementById('EventAdd_Particulars').value;
+            Event.URL = document.getElementById('EventAdd_URL').value;
+            Event.VideoURL = document.getElementById('EventAdd_VideoURL').value;
+            Event.EventType = document.getElementById('EventAdd_EventType').value;
+            Event.IsRestricted = document.getElementById('EventAdd_IsRestricted').checked;
+            Event.IsArchived = document.getElementById('EventAdd_IsArchived').checked;
 
-        $.ajax({
-            type: "POST",
-            url: "/api/AddEvent",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            data: dataToPost,
-            success: function (data) {
-                Events.refreshCells();
-                alert("Success");
-            },
-            failure: function (response) {
-                alert("Error - " + response.d);
-            },
-            error: function (e) { }
-        });
-        window.location.reload();
-        Events.refreshCells();
+            var dataToPost = JSON.stringify(Event);
+
+            $.ajax({
+                type: "POST",
+                url: "/api/AddEvent",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: dataToPost,
+                success: function (response) {
+                    alert("Success");
+                    window.location.reload();
+                },
+                failure: function (response) {
+                    alert("Error - " + response.d);
+                },
+                error: function (e) { }
+            });
+
+        }
     }
+
     function UpdateDialogEvents(Event) {
         document.getElementById('EventEdit_Id').value = Event.Id !== null && typeof (Event.Id) != 'undefined' ? wijmo.Globalize.format(Event.Id) : '';
         document.getElementById('EventEdit_EventDate').value = Event.EventDate ? Event.EventDate : '';
         document.getElementById('EventEdit_EventDescription').value = Event.EventDescription ? Event.EventDescription : '';
         document.getElementById('EventEdit_Particulars').value = Event.Particulars ? Event.Particulars : '';
         document.getElementById('EventEdit_URL').value = Event.URL ? Event.URL : '';
+        document.getElementById('EventEdit_VideoURL').value = Event.VideoURL ? Event.VideoURL : '';
         document.getElementById('EventEdit_EventType').value = Event.EventType ? Event.EventType : '';
-        document.getElementById('EventEdit_IsRestricted').checked = Event.active;
-        document.getElementById('EventEdit_IsArchived').checked = Event.active;
+        document.getElementById('EventEdit_IsRestricted').checked = Event.IsRestricted;
+        document.getElementById('EventEdit_IsArchived').checked = Event.IsArchived;
     }
+
     function EditEvents() {
         //  var errorUser = ValidateUser();
         // if (errorUser == "") {
@@ -855,6 +1469,7 @@
             Event.EventDescription = document.getElementById('EventEdit_EventDescription').value;
             Event.Particulars = document.getElementById('EventEdit_Particulars').value;
             Event.URL = document.getElementById('EventEdit_URL').value;
+            Event.VideoURL = document.getElementById('EventEdit_VideoURL').value;
             Event.EventType = document.getElementById('EventEdit_EventType').value;
             Event.IsRestricted = document.getElementById('EventEdit_IsRestricted').checked;
             Event.IsArchived = document.getElementById('EventEdit_IsArchived').checked;
@@ -866,9 +1481,9 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: dataToPost,
-                success: function (data) {
-                    Events.refresh();
+                success: function (response) {
                     alert("Success");
+                    window.location.reload();
                 },
                 failure: function (response) {
                     alert("Error - " + response.d);
@@ -876,15 +1491,16 @@
                 error: function (e) { }
             });
             window.location.reload();
-            Events.refresh();
         }
         // } else {
         //     alert(errorUser);
         // }
     }
+
     function getIDEvents(Event) {
         DeleteEvents(Event.Id);
     }
+
     function DeleteEvents(EventId) {
         $.ajax({
             type: "DELETE",
@@ -892,9 +1508,9 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: { Id: EventId },
-            success: function (data) {
+            success: function (response) {
                 alert("Success");
-                Events.refresh();
+                window.location.reload();
             },
             failure: function (response) {
                 alert("Error - " + response.d);
@@ -902,34 +1518,34 @@
             error: function (e) { }
         });
         window.location.reload();
-        Events.refresh();
     }
+
     /*function ValidateUser() {
-        var errortext = "";
-        //Firstname
-        var fname = document.getElementById('UserAdd_FirstName').value;
-        if (!(isNaN(fname))) {
-            errortext += "\n Invalid First name";
-        }
-        //Lastname
-        var lname = document.getElementById('UserAdd_LastName').value;
-        if (!(isNaN(lname))) {
-            errortext += "\n Invalid Last name";
-        }
-        //Email
-        var email = document.getElementById('UserAdd_EmailAddress').value;
-        var filter = /^([a-zA-Z0-9_\.\-])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!filter.test(email)) {
-            errortext += "\n Invalid Email Address";
-        }
-        //Phone number
-        var phone = document.getElementById('UserAdd_PhoneNumber').value;
-        if (isNaN(phone)) {
-            errortext += "\n Invalid Phone number";
-        }
-        return errortext;
-    }
-    */
+                var errortext = "";
+                //Firstname
+                var fname = document.getElementById('UserAdd_FirstName').value;
+                if (!(isNaN(fname))) {
+                    errortext += "\n Invalid First name";
+                }
+                //Lastname
+                var lname = document.getElementById('UserAdd_LastName').value;
+                if (!(isNaN(lname))) {
+                    errortext += "\n Invalid Last name";
+                }
+                //Email
+                var email = document.getElementById('UserAdd_EmailAddress').value;
+                var filter = /^([a-zA-Z0-9_\.\-])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                if (!filter.test(email)) {
+                    errortext += "\n Invalid Email Address";
+                }
+                //Phone number
+                var phone = document.getElementById('UserAdd_PhoneNumber').value;
+                if (isNaN(phone)) {
+                    errortext += "\n Invalid Phone number";
+                }
+                return errortext;
+            }
+            */
 
     /*SALES*/
     function ShowSales() {
@@ -937,6 +1553,7 @@
         document.getElementById('DivEvents').style.display = 'none';
         document.getElementById('DivSales').style.display = 'block';
     }
+
     function getSales() {
         var events = new wijmo.collections.ObservableArray();
         $.ajax({
@@ -967,7 +1584,7 @@
                         });
                     }
                 } else {
-                    alert("No data.");
+                    // alert("No data.");
                 }
             }
         }).fail(
@@ -977,42 +1594,111 @@
         );
         return events;
     }
-    function InsertSales() {
-        var Sales = new Object();
-        Sales.ProductPackageId = document.getElementById('SaleAdd_ProductPackageId').value;
-        Sales.UserId = document.getElementById('SaleAdd_UserId').value;
-        Sales.SalesNumber = document.getElementById('SaleAdd_SalesNumber').value;
-        Sales.SalesDate = document.getElementById('SaleAdd_SalesDate').value;
-        Sales.RenewalDate = document.getElementById('SaleAdd_RenewalDate').value;
-        Sales.ExpiryDate = document.getElementById('SaleAdd_ExpiryDate').value;
-        Sales.Particulars = document.getElementById('SaleAdd_Particulars').value;
-        Sales.Quantity = document.getElementById('SaleAdd_Quantity').value;
-        Sales.Price = document.getElementById('SaleAdd_Price').value;
-        Sales.Amount = document.getElementById('SaleAdd_Amount').value;
-        Sales.IsActive = document.getElementById('SaleAdd_IsActive').value;
-        Sales.IsRefunded = document.getElementById('SaleAdd_IsRefunded').value;
 
-        var dataToPost = JSON.stringify(Sales);
-        alert(dataToPost);
-
+    function getProduct() {
+        var product = new wijmo.collections.ObservableArray();
         $.ajax({
-            type: "POST",
-            url: "/api/AddSales",
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            data: dataToPost,
+            url: '/api/Product',
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
             success: function (data) {
-                SalesGrid.refresh();
-                alert("Success");
-            },
-            failure: function (response) {
-                alert("Error - " + response.d);
-            },
-            error: function (e) { }
-        });
-
-        window.location.reload();
+                $('#ProductPackageDesc').html(data);
+                //  if (Results.length > 0) {
+                //      for (i = 0; i < Results.length; i++) {
+                //          product.push({
+                //              Id: Results[i]["Id"],
+                //              ProductDescription: Results[i]["ProductDescription"]
+                //          });
+                //          FillComboWithData(product);
+                //     }
+                // } else {
+                //    alert("No data.");
+                // }
+            }
+        }).fail(
+            function (xhr, textStatus, err) {
+                alert(err);
+            }
+        );
+        return product;
     }
+    function getProductPackage() {
+        var productPackage = new wijmo.collections.ObservableArray();
+        $.ajax({
+            url: '/api/ProductPackage',
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (Results) {
+                if (Results.length > 0) {
+                    for (i = 0; i < Results.length; i++) {
+                        productPackage.push({
+                            Id: Results[i]["Id"],
+                            ProductPackageDescription: Results[i]["ProductPackageDescription"]
+                        });
+                    }
+                } else {
+                    // alert("No data.");
+                }
+            }
+        }).fail(
+            function (xhr, textStatus, err) {
+                alert(err);
+            }
+        );
+        return productPackage;
+    }
+    function FillComboWithData(productArray) {
+        var cmb_Product = $("#SaleEdit_ProductPackageId");
+        //set the datasource of the combobobox
+        cmb_Product.c1combobox({
+            data: productArray
+        });
+    }
+
+    function InsertSales() {
+
+        var r = confirm("Insert Sale?");
+        if (r == true) {
+
+            var Sales = new Object();
+            Sales.ProductPackageId = document.getElementById('SaleAdd_ProductPackageId').value;
+            Sales.UserId = document.getElementById('SaleAdd_UserId').value;
+            Sales.SalesNumber = document.getElementById('SaleAdd_SalesNumber').value;
+            Sales.SalesDate = document.getElementById('SaleAdd_SalesDate').value;
+            Sales.RenewalDate = document.getElementById('SaleAdd_RenewalDate').value;
+            Sales.ExpiryDate = document.getElementById('SaleAdd_ExpiryDate').value;
+            Sales.Particulars = document.getElementById('SaleAdd_Particulars').value;
+            Sales.Quantity = document.getElementById('SaleAdd_Quantity').value;
+            Sales.Price = document.getElementById('SaleAdd_Price').value;
+            Sales.Amount = document.getElementById('SaleAdd_Amount').value;
+            Sales.IsActive = document.getElementById('SaleAdd_IsActive').checked;
+            Sales.IsRefunded = document.getElementById('SaleAdd_IsRefunded').checked;
+
+            var dataToPost = JSON.stringify(Sales);
+
+            $.ajax({
+                type: "POST",
+                url: "/api/AddSales",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: dataToPost,
+                success: function (response) {
+                    alert("Success");
+                    window.location.reload();
+                },
+                failure: function (response) {
+                    alert("Error - " + response.d);
+                },
+                error: function (e) { }
+            });
+
+        }
+    }
+
     function UpdateDialogSales(Sale) {
         document.getElementById('SaleEdit_Id').value = Sale.Id !== null && typeof (Sale.Id) != 'undefined' ? wijmo.Globalize.format(Sale.Id) : '';
         document.getElementById('SaleEdit_ProductPackageId').value = Sale.ProductPackageId ? Sale.ProductPackageId : '';
@@ -1025,13 +1711,21 @@
         document.getElementById('SaleEdit_Quantity').value = Sale.Quantity ? Sale.Quantity : '';
         document.getElementById('SaleEdit_Price').value = Sale.Price ? Sale.Price : '';
         document.getElementById('SaleEdit_Amount').value = Sale.Amount ? Sale.Amount : '';
-        document.getElementById('SaleEdit_IsActive').checked = Sale.active;
-        document.getElementById('SaleEdit_IsRefunded').checked = Sale.active;
+        document.getElementById('SaleEdit_IsActive').checked = Sale.IsActive;
+        document.getElementById('SaleEdit_IsRefunded').checked = Sale.IsRefunded;
+        // document.getElementById("SaleEdit_UserId_Info").value = getUsersInfo(document.getElementById('SaleEdit_UserId'));
+        // document.getElementById("SaleEdit_ProductPackageId_Info").value = getProductPackageInfo(document.getElementById('SaleEdit_ProductPackageId'));
+        document.getElementById("SaleEdit_UserId_Info").value = getUsersInfo(Sale.UserId);
+        document.getElementById("SaleEdit_ProductPackageId_Info").value = getProductPackageInfo(Sale.ProductPackageId);
+
+
+
     }
+
     function EditSales() {
         // var errorUser = ValidateUser();
         // if (errorUser == "") {
-        var r = confirm("Update Purchase?");
+        var r = confirm("Update Sales?");
         if (r == true) {
             //var users = new wijmo.collections.ObservableArray();
             var Sale = new Object();
@@ -1050,7 +1744,6 @@
             Sale.IsActive = document.getElementById('SaleEdit_IsActive').checked;
             Sale.IsRefunded = document.getElementById('SaleEdit_IsRefunded').checked;
 
-
             var dataToPost = JSON.stringify(Sale);
 
             $.ajax({
@@ -1059,9 +1752,9 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 data: dataToPost,
-                success: function (data) {
-                    SalesGrid.refresh();
+                success: function (response) {
                     alert("Success");
+                    window.location.reload();
                 },
                 failure: function (response) {
                     alert("Error - " + response.d);
@@ -1074,9 +1767,11 @@
         //     alert(errorUser);
         // }
     }
+
     function getIDSales(Sales) {
         DeleteSales(Sales.Id);
     }
+
     function DeleteSales(SaleId) {
         $.ajax({
             type: "DELETE",
@@ -1084,9 +1779,9 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             data: { Id: SaleId },
-            success: function (data) {
+            success: function (response) {
                 alert("Success");
-                Sales.refresh();
+                window.location.reload();
             },
             failure: function (response) {
                 alert("Error - " + response.d);
@@ -1094,41 +1789,90 @@
             error: function (e) { }
         });
         window.location.reload();
-        Sales.refresh();
     }
+
     /*
-    function ValidateUser() {
-        var errortext = "";
-        //Firstname
-        var fname = document.getElementById('UserAdd_FirstName').value;
-        if (!(isNaN(fname))) {
-            errortext += "\n Invalid First name";
-        }
-        //Lastname
-        var lname = document.getElementById('UserAdd_LastName').value;
-        if (!(isNaN(lname))) {
-            errortext += "\n Invalid Last name";
-        }
-        //Email
-        var email = document.getElementById('UserAdd_EmailAddress').value;
-        var filter = /^([a-zA-Z0-9_\.\-])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-        if (!filter.test(email)) {
-            errortext += "\n Invalid Email Address";
-        }
-        //Phone number
-        var phone = document.getElementById('UserAdd_PhoneNumber').value;
-        if (isNaN(phone)) {
-            errortext += "\n Invalid Phone number";
-        }
+            function ValidateUser() {
+                var errortext = "";
+                //Firstname
+                var fname = document.getElementById('UserAdd_FirstName').value;
+                if (!(isNaN(fname))) {
+                    errortext += "\n Invalid First name";
+                }
+                //Lastname
+                var lname = document.getElementById('UserAdd_LastName').value;
+                if (!(isNaN(lname))) {
+                    errortext += "\n Invalid Last name";
+                }
+                //Email
+                var email = document.getElementById('UserAdd_EmailAddress').value;
+                var filter = /^([a-zA-Z0-9_\.\-])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                if (!filter.test(email)) {
+                    errortext += "\n Invalid Email Address";
+                }
+                //Phone number
+                var phone = document.getElementById('UserAdd_PhoneNumber').value;
+                if (isNaN(phone)) {
+                    errortext += "\n Invalid Phone number";
+                }
+                return errortext;
+            }
+            */
+    function getUsersInfo(id) {
+        var retItem;
 
-        return errortext;
+        for (var i = 0; i < UserList.items.length; i++) {
+            if (UserList.items[i].Id == id)
+                retItem = UserList.items[i].FirstName + " " + UserList.items[i].LastName;
+        }
+        return retItem;
     }
-    */
 
+    function getProductPackageInfo(id) {
+        var retItem;
+
+        for (var i = 0; i < ProductPackageList.items.length; i++) {
+            if (ProductPackageList.items[i].Id == id)
+                retItem = ProductPackageList.items[i].ProductPackageDescription;
+        }
+
+        return retItem;
+    }
+
+
+    function UserShow() {
+        $("#btnEditUsers").show();
+        $("#btnDeleteUsers").show();
+    }
+
+    function EventShow() {
+        $("#btnEditEvent").show();
+        $("#btnDeleteEvent").show();
+    }
+
+    function SaleShow() {
+        $("#btnEditSales").show();
+        $("#btnDeleteSales").show();
+    }
+
+    function CancelAddUsers() {
+        $('#UsersDetailAdd').modal('show');
+        $('#UsersDetailAdd').modal('hide');
+        document.getElementById('UserAdd_UserName').value = '';
+        document.getElementById('UserAdd_FirstName').value = '';
+        document.getElementById('UserAdd_LastName').value = '';
+        document.getElementById('UserAdd_EmailAddress').value = '';
+        document.getElementById('UserAdd_PhoneNumber').value = '';
+    }
+
+    function CancelEditUsers() {
+        $('#UsersDetail').modal('show');
+        $('#UsersDetail').modal('hide');
+    }
 </script>
 <script src="/lib/jquery/js/jquery.js"></script>
 <script src="/lib/bootstrap/js/bootstrap.js"></script>
 <!--<script src="/wijmo/controls/wijmo.min.js"></script>-->
 <script src="/wijmo/controls/wijmo.input.min.js"></script>
 <!--<script src="/wijmo/controls/wijmo.grid.min.js"></script>-->
-<script src="/wijmo/interop/knockout/wijmo.knockout.min.js"></script>    
+<script src="/wijmo/interop/knockout/wijmo.knockout.min.js"></script>

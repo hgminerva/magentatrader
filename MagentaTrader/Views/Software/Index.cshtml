@@ -1,5 +1,7 @@
 ﻿@{
     ViewBag.Title = "Software";
+
+    var Version = "v.Beta.1.20150203";
 }
 
 <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -24,7 +26,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/Home" style="font-size:smaller"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"> - v.Beta.1.20150115</span></a>
+            <a class="navbar-brand" href="/Home" style="font-size:smaller"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"> - @Version</span></a>
         </div>
 
         <ul class="nav navbar-top-links navbar-right">
@@ -33,12 +35,20 @@
                     <i class="fa fa-gear fa-fw"></i>  <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-messages">
-                    <li>
-                        <a href="/Admin">
-                            <div><strong>Admin</strong></div>
-                            <div>Administration modules for Magenta Trader.</div>
-                        </a>
-                    </li>
+
+                    @using Microsoft.AspNet.Identity
+                    @{
+                        if (User.Identity.GetUserName().ToUpper() == "DPILGER" || User.Identity.GetUserName().ToUpper() == "MORTON")
+                        {
+                        <li>
+                            <a href="/Admin">
+                                <div><strong>Admin</strong></div>
+                                <div>Administration modules for Magenta Trader.</div>
+                            </a>
+                        </li>                            
+                        }
+                    }
+
                     <li >
                         <a href="#">
                             <div><strong>Log Off @User.Identity.Name</strong></div>
@@ -51,6 +61,7 @@
                             </div>
                         </a>
                     </li>
+
                 </ul>
                 <!-- /.dropdown-messages -->
             </li>
@@ -178,7 +189,10 @@
     var seasonYearNo = 12;
 
     // List of plotted year graphs
-    var plottedYearGraphs = []
+    var plottedYearGraphs = [];
+
+    // List of first closing price
+    var firstClosingPrice = [];
 
     // Scanner range
     var scannerRange = 30;
@@ -253,6 +267,9 @@
         // Plot data
         while (plotData.length > 0) plotData.pop();
 
+        // First Closing Prices
+        while (firstClosingPrice.length > 0) firstClosingPrice.pop();
+        
         // Hidden season yearly data
         while (scannerYearGraph.length > 0) scannerYearGraph.pop();
 
@@ -284,6 +301,62 @@
         // 3. Compute for the seasonCount: 252 day cycle
         // 4. By-pass the dates that is lesser than the first date (alignment purposes)
         ///////////////////////////////////////////////////////////////////////////////////////
+
+        var symbolDescription = dataSymbolDescription;
+
+        dayIndex = 126;
+        var countYear = 0;
+        
+        for (var i = 0; i < stockPrice.length; i++) {
+            var date = new Date();
+            var open = 0;
+            var high = 0;
+            var low = 0;
+            var close = 0;
+            var volume = 0;
+
+            for (var prop in stockPrice[i]) {
+                if (prop == "QuoteDate") date = parseDate(stockPrice[i][prop]);
+                if (prop == "OpenPrice") open = stockPrice[i][prop];
+                if (prop == "HighPrice") high = stockPrice[i][prop];
+                if (prop == "LowPrice") low = stockPrice[i][prop];
+                if (prop == "ClosePrice") close = stockPrice[i][prop];
+                if (prop == "Volume") volume = stockPrice[i][prop];
+            }
+
+            chartData.push({
+                date: date,
+                open: open,
+                high: high,
+                low: low,
+                close: close,
+                season: 0,
+                season5Year: 0,
+                seasonCount: dayIndex,
+                volume: volume
+            });
+
+            dayIndex--;
+            if (dayIndex == 0) {
+                dayIndex = 252;
+
+                if (countYear > 0) {
+                    firstClosingPrice.push(close);
+                }
+                countYear++;
+            } else {
+                if (i == stockPrice.length - 1) {
+                    if (countYear > 0) {
+                        firstClosingPrice.push(close);
+                    }
+                }
+            }
+        }
+
+        //debugger;
+
+
+        /**
         stockPrice.reverse();
 
         var symbolDescription = dataSymbolDescription;
@@ -292,7 +365,49 @@
         var indexDate = new Date();
         var saveFlag = true;
 
-        if (stockPrice.length > 2646) {
+        // New code ------------------------------------------------------------
+        //dayIndex = 126;
+        //for (var i = 0; i < stockPrice.length; i++) {
+        //    var date = new Date();
+        //    var open = 0;
+        //    var high = 0;
+        //    var low = 0;
+        //    var close = 0;
+        //    var volume = 0;
+
+        //    for (var prop in stockPrice[i]) {
+        //        if (prop == "QuoteDate") date = parseDate(stockPrice[i][prop]);
+        //        if (prop == "OpenPrice") open = stockPrice[i][prop];
+        //        if (prop == "HighPrice") high = stockPrice[i][prop];
+        //        if (prop == "LowPrice") low = stockPrice[i][prop];
+        //        if (prop == "ClosePrice") close = stockPrice[i][prop];
+        //        if (prop == "Volume") volume = stockPrice[i][prop];
+        //    }
+
+        //    chartData.push({
+        //        date: date,
+        //        open: open,
+        //        high: high,
+        //        low: low,
+        //        close: close,
+        //        season: 0,
+        //        season5Year: 0,
+        //        seasonCount: dayIndex,
+        //        volume: volume
+        //    });
+
+        //    dayIndex--;
+        //    if (dayIndex == 0) {
+        //        dayIndex = 252;
+
+        //        countYear++;
+        //        if (countYear > 10) break;
+        //    }
+        //}
+        //chartData.reverse();
+        // End of new code ------------------------------------------------------------
+
+        //if (stockPrice.length > 2646) {
             // ==================================================
             // If the number of records exceeds 10 years or more.
             // ==================================================
@@ -351,52 +466,56 @@
                         countYear++;
                     }
                 }
+
+                if (i == 2646) break;
             }
-        } else {
-            // ==============================================
-            // If the number of records is less than 10 years
-            // ==============================================
-            stockPrice.reverse();
-            dayIndex = 125;
-            countYear = -1;
-            for (var i = 0; i < stockPrice.length; i++) {
-                var date = new Date();
-                var open = 0;
-                var high = 0;
-                var low = 0;
-                var close = 0;
-                var volume = 0;
+            //debugger;
+        //} else {
+        //    // ==============================================
+        //    // If the number of records is less than 10 years
+        //    // ==============================================
+        //    // stockPrice.reverse();
+        //    dayIndex = 125;
+        //    countYear = -1;
+        //    for (var i = 0; i < stockPrice.length; i++) {
+        //        var date = new Date();
+        //        var open = 0;
+        //        var high = 0;
+        //        var low = 0;
+        //        var close = 0;
+        //        var volume = 0;
 
-                for (var prop in stockPrice[i]) {
-                    if (prop == "QuoteDate") date = parseDate(stockPrice[i][prop]);
-                    if (prop == "OpenPrice") open = stockPrice[i][prop];
-                    if (prop == "HighPrice") high = stockPrice[i][prop];
-                    if (prop == "LowPrice") low = stockPrice[i][prop];
-                    if (prop == "ClosePrice") close = stockPrice[i][prop];
-                    if (prop == "Volume") volume = stockPrice[i][prop];
-                }
+        //        for (var prop in stockPrice[i]) {
+        //            if (prop == "QuoteDate") date = parseDate(stockPrice[i][prop]);
+        //            if (prop == "OpenPrice") open = stockPrice[i][prop];
+        //            if (prop == "HighPrice") high = stockPrice[i][prop];
+        //            if (prop == "LowPrice") low = stockPrice[i][prop];
+        //            if (prop == "ClosePrice") close = stockPrice[i][prop];
+        //            if (prop == "Volume") volume = stockPrice[i][prop];
+        //        }
 
-                chartData.push({
-                    date: date,
-                    open: open,
-                    high: high,
-                    low: low,
-                    close: close,
-                    season: 0,
-                    season5Year: 0,
-                    seasonCount: dayIndex,
-                    volume: volume
-                });
+        //        chartData.push({
+        //            date: date,
+        //            open: open,
+        //            high: high,
+        //            low: low,
+        //            close: close,
+        //            season: 0,
+        //            season5Year: 0,
+        //            seasonCount: dayIndex,
+        //            volume: volume
+        //        });
 
-                dayIndex--;
-                if (dayIndex == -1) {
-                    dayIndex = 251;
-                    countYear++;
-                }
-            }
-            chartData.reverse();
-        }
-        //debugger;
+        //        dayIndex--;
+        //        if (dayIndex == -1) {
+        //            dayIndex = 251;
+        //            countYear++;
+        //        }
+        //    }
+        //    //chartData.reverse();
+        //}
+        //////debugger;
+        **/
 
         // SEASON AVERAGE DATA ////////////////////////////////////////////////////////////////////////////
         // 1. Loop through the chartData
@@ -406,6 +525,47 @@
         // 5. Save the year to year season data (use for scanner/guide win/loss comparison)
         // 6. Save the year to year closing price data (use for scanner/guide average computation)
         //////////////////////////////////////////////////////////////////////////////////////////////////
+
+        var season = 0;
+        var season5Year = 0;
+
+        countYear = 0;
+        dayIndex = 251;
+        for (var i = 126; i < chartData.length; i++) {
+            if (firstClosingPrice[countYear] > 0) {
+                season = ((parseFloat(chartData[i]["close"]) - firstClosingPrice[countYear]) / firstClosingPrice[countYear]) * 100;  
+            } else {
+                season = 0;
+            }
+
+            if (countYear < 5) season5Year = season;
+
+            chartData[i]["season"] = season;
+            chartData[i]["season5Year"] = season5Year;
+
+            seasonYearData[countYear][dayIndex] = season;
+            closeYearData[countYear][dayIndex] = parseFloat(chartData[i]["close"]);
+
+            dayIndex--;
+            if (dayIndex == -1) {
+                dayIndex = 251;
+                countYear++;
+            }
+        }
+
+        for (i = 0; i < 252; i++) {
+            season = 0;
+            season5Year = 0;
+            for (y = 0; y < 10; y++) {
+                season = season + seasonYearData[y][i];
+                if (y < 5) season5Year = season5Year + seasonYearData[y][i];
+            }
+            seasonTenYearData[i] = season;
+            seasonFiveYearData[i] = season5Year;
+        }
+        //debugger;
+       
+        /*
         dayIndex = parseInt(chartData[0]["seasonCount"]);
         countYear = 0;
 
@@ -448,17 +608,123 @@
             }
         }
         //debugger;
+
+
+        */
+
+        //chartData.reverse();
+
+        //dayIndex = 0;
+
+
         // PLOT DATA ///////////////////////////////////////////////////////////////////////////////////////
         // 1. plotData is the last six months (126 days) of the chartData plus six months future data
         // 2. The seasonality of the future data of the plotData is taken from the historial seasonData
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        var futureDate = new Date((new Date(chartData[0]["date"])).add(1).days());
+        for (i = 0; i < 252; i++) {
+            if (i > 125) {
+                if (new Date(futureDate).getDay() == 0 || new Date(futureDate).getDay() == 6) {
+                    i--;
+                } else {
+                    plotData.push({
+                        date: new Date(futureDate),
+                        season: (seasonTenYearData[i] / 10).toFixed(2),
+                        season5Year: (seasonFiveYearData[i] / 5).toFixed(2),
+                        seasonCount: i+1,
+                        seasonY0: seasonYearData[0][i].toFixed(2),
+                        seasonY1: seasonYearData[1][i].toFixed(2),
+                        seasonY2: seasonYearData[2][i].toFixed(2),
+                        seasonY3: seasonYearData[3][i].toFixed(2),
+                        seasonY4: seasonYearData[4][i].toFixed(2),
+                        seasonY5: seasonYearData[5][i].toFixed(2),
+                        seasonY6: seasonYearData[6][i].toFixed(2),
+                        seasonY7: seasonYearData[7][i].toFixed(2),
+                        seasonY8: seasonYearData[8][i].toFixed(2),
+                        seasonY9: seasonYearData[9][i].toFixed(2)
+                    });
+                }
+                futureDate = futureDate.add(1).day();
+            } else {
+                plotData.push({
+                    date: chartData[125 - i]["date"],
+                    open: chartData[125 - i]["open"],
+                    high: chartData[125 - i]["high"],
+                    low: chartData[125 - i]["low"],
+                    close: chartData[125 - i]["close"],
+                    season: (seasonTenYearData[i] / 10).toFixed(2),
+                    season5Year: (seasonFiveYearData[i] / 5).toFixed(2),
+                    seasonCount: i+1,
+                    seasonY0: seasonYearData[0][i].toFixed(2),
+                    seasonY1: seasonYearData[1][i].toFixed(2),
+                    seasonY2: seasonYearData[2][i].toFixed(2),
+                    seasonY3: seasonYearData[3][i].toFixed(2),
+                    seasonY4: seasonYearData[4][i].toFixed(2),
+                    seasonY5: seasonYearData[5][i].toFixed(2),
+                    seasonY6: seasonYearData[6][i].toFixed(2),
+                    seasonY7: seasonYearData[7][i].toFixed(2),
+                    seasonY8: seasonYearData[8][i].toFixed(2),
+                    seasonY9: seasonYearData[9][i].toFixed(2),
+                    volume: chartData[125 - i]["volume"]
+                });
+            }
+        }
+        //debugger;
+        
+        //for (var i = chartData.length - 126; i < chartData.length + 126; i++) {
+        //    if (i >= chartData.length) {
+        //        if (new Date(futureDate).getDay() == 0 || new Date(futureDate).getDay() == 6) {
+        //            dayIndex--;
+        //            i--;
+        //        } else {
+        //            plotData.push({
+        //                date: new Date(futureDate),
+        //                season: (seasonTenYearData[dayIndex] / 10).toFixed(2),
+        //                season5Year: (seasonFiveYearData[dayIndex] / 5).toFixed(2),
+        //                seasonCount: dayIndex,
+        //                seasonY0: seasonYearData[0][dayIndex].toFixed(2),
+        //                seasonY1: seasonYearData[1][dayIndex].toFixed(2),
+        //                seasonY2: seasonYearData[2][dayIndex].toFixed(2),
+        //                seasonY3: seasonYearData[3][dayIndex].toFixed(2),
+        //                seasonY4: seasonYearData[4][dayIndex].toFixed(2),
+        //                seasonY5: seasonYearData[5][dayIndex].toFixed(2),
+        //                seasonY6: seasonYearData[6][dayIndex].toFixed(2),
+        //                seasonY7: seasonYearData[7][dayIndex].toFixed(2),
+        //                seasonY8: seasonYearData[8][dayIndex].toFixed(2),
+        //                seasonY9: seasonYearData[9][dayIndex].toFixed(2)
+        //            });
+        //        }
+        //        futureDate = futureDate.add(1).day();
+        //    } else {
+        //        plotData.push({
+        //            date: chartData[i]["date"],
+        //            open: chartData[i]["open"],
+        //            high: chartData[i]["high"],
+        //            low: chartData[i]["low"],
+        //            close: chartData[i]["close"],
+        //            season: (seasonTenYearData[dayIndex] / 10).toFixed(2),
+        //            season5Year: (seasonFiveYearData[dayIndex] / 5).toFixed(2),
+        //            seasonCount: dayIndex,
+        //            seasonY0: seasonYearData[0][dayIndex].toFixed(2),
+        //            seasonY1: seasonYearData[1][dayIndex].toFixed(2),
+        //            seasonY2: seasonYearData[2][dayIndex].toFixed(2),
+        //            seasonY3: seasonYearData[3][dayIndex].toFixed(2),
+        //            seasonY4: seasonYearData[4][dayIndex].toFixed(2),
+        //            seasonY5: seasonYearData[5][dayIndex].toFixed(2),
+        //            seasonY6: seasonYearData[6][dayIndex].toFixed(2),
+        //            seasonY7: seasonYearData[7][dayIndex].toFixed(2),
+        //            seasonY8: seasonYearData[8][dayIndex].toFixed(2),
+        //            seasonY9: seasonYearData[9][dayIndex].toFixed(2),
+        //            volume: chartData[i]["volume"]
+        //        });
+        //    }
+        //    dayIndex++;
+        //}
+
+        /**
         dayIndex = 0;
-
         var futureDate = new Date((new Date(chartData[chartData.length - 1]["date"])).add(1).days());
-
-        for (var i = chartData.length - (NumberOfDaysInYear / 2) ;
-                 i < chartData.length + (NumberOfDaysInYear / 2) ;
-                 i++) {
+        for (var i = chartData.length - 126; i < chartData.length + 126; i++) {
             if (i >= chartData.length) {
                 if (new Date(futureDate).getDay() == 0 || new Date(futureDate).getDay() == 6) {
                     dayIndex--;
@@ -507,21 +773,26 @@
             }
             dayIndex++;
         }
+        **/
 
         // MIDPOINT ////////////////////////////////////////////////////////////////////////////////////
-        var midTenYearMultiplier = parseFloat(plotData[125]["season"]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["season"]);
-        var midFiveYearMultiplier = parseFloat(plotData[125]["season5Year"]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["season5Year"]);
-        var midYearMultiplier = [];
-        for (var y = 0; y < 10; y++) {
-            midYearMultiplier[y] = parseFloat(plotData[125]["seasonY" + y]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["seasonY" + y]);
-        }
-        for (var i = 0; i < NumberOfDaysInYear; i++) {
-            plotData[i]["season"] = (parseFloat(plotData[i]["season"]) * midTenYearMultiplier).toFixed(2);
-            plotData[i]["season5Year"] = (parseFloat(plotData[i]["season5Year"]) * midFiveYearMultiplier).toFixed(2);
-            for (var y = 0; y < 10; y++) {
-                plotData[i]["seasonY" + y] = (parseFloat(plotData[i]["seasonY" + y]) * midYearMultiplier[y]).toFixed(2);
-            }
-        }
+        //var midTenYearMultiplier = parseFloat(plotData[125]["season"]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["season"]);
+        //var midFiveYearMultiplier = parseFloat(plotData[125]["season5Year"]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["season5Year"]);
+
+        //var midYearMultiplier = [];
+        //for (var y = 0; y < 10; y++) {
+        //    midYearMultiplier[y] = parseFloat(plotData[125]["seasonY" + y]) == 0 ? 0 : parseFloat(plotData[125]["close"]) / parseFloat(plotData[125]["seasonY" + y]);
+        //}
+
+        //for (var i = 0; i < 252; i++) {
+        //    plotData[i]["season"] = (parseFloat(plotData[i]["season"]) * midTenYearMultiplier).toFixed(2);
+        //    plotData[i]["season5Year"] = (parseFloat(plotData[i]["season5Year"]) * midFiveYearMultiplier).toFixed(2);
+        //    for (var y = 0; y < 10; y++) {
+        //        plotData[i]["seasonY" + y] = (parseFloat(plotData[i]["seasonY" + y]) * midYearMultiplier[y]).toFixed(2);
+        //    }
+        //}
+
+        //debugger;
 
         // DATASETS ////////////////////////////////////////////////////////////////////////////////////
         var dataSet = new AmCharts.DataSet();
@@ -615,10 +886,10 @@
         //    the 30 days after the current day
         // 5. Save the result to the guideData
         ///////////////////////////////////////////////////////////////////////////////////////////////////
-        seasonYearNo = 12;
+        //seasonYearNo = 12;
 
-        var guideData = [];
-        var daySpan = 30;
+        //var guideData = [];
+        //var daySpan = 30;
 
         //for (var i = 0; i < NumberOfDaysInYear - daySpan ; i++) {
         //    var up = 0;
@@ -689,18 +960,18 @@
         // 2. Get the highes win/up and loss/down value
         // 3. Plot the highest value
         ///////////////////////////////////////////////////////////////////////////////////////
-        var guideScanner = [];
+        //var guideScanner = [];
 
-        var positiveDate = new Date();
-        var positiveToDate = new Date();
-        var positiveLabel = "";
+        //var positiveDate = new Date();
+        //var positiveToDate = new Date();
+        //var positiveLabel = "";
 
-        var negativeDate = new Date();
-        var negativeToDate = new Date();
-        var negativeLabel = "";
+        //var negativeDate = new Date();
+        //var negativeToDate = new Date();
+        //var negativeLabel = "";
 
-        var highestUp = 0;
-        var highestDown = 0;
+        //var highestUp = 0;
+        //var highestDown = 0;
 
         //for (var i = 0 ; i < NumberOfDaysInYear - daySpan ; i++) {
         //    if (i == 0) {
@@ -1001,14 +1272,6 @@
         chartCursorSettings.valueLineEnabled = true;
         chartCursorSettings.valueBalloonsEnabled = true;
         chart.chartCursorSettings = chartCursorSettings;
-
-        //var defaultCursor = new AmCharts.ChartCursor();
-        //defaultCursor.
-        //stockPanel1.addChartCursor(defaultCursor);
-
-        //var rangeCursor = new AmCharts.ChartCursor();
-        //rangeCursor.adjustment = 30;
-        //stockPanel1.addChartCursor(rangeCursor);
 
         // PERIOD SELECTOR /////////////////////////////////////////////////////////////////////////////////
         var periodSelector = new AmCharts.PeriodSelector();
@@ -1356,12 +1619,8 @@
         $("#scannerYearHeading").html("<span>30 Day Scanner:</span><span class='pull-right'>" + dateValue + "</span>");
 
         // Check the no. of years available
-        var noOfYears = 0;
-        for (var i = 0; i < seasonYearData.length; i++) {
-            if (seasonYearData[i][1] != 0) {
-                if (i < 11) noOfYears++;
-            }
-        }
+        var noOfYears = firstClosingPrice.length;
+
         // Display year date
         for (var i = 0 ; i < seasonYearData.length; i++) {
             if (i < noOfYears) {
@@ -1473,7 +1732,10 @@
             var startNoOfDay = parseInt($('#startNoOfDay').val());
             var endNoOfDay = parseInt($('#endNoOfDay').val());
             var process = true;
+            var noOfYears = 0;
 
+            noOfYears = firstClosingPrice.length;
+            
             if (!startNoOfDay) {
                 startNoOfDay = 10;
             } else {
@@ -1546,7 +1808,7 @@
 
                         }
                     }
-
+                    //debugger;
                     // Plot result
                     if (highestUp > 0) {
                         if (!varScannerUp) varScannerUp = new AmCharts.Guide();
@@ -1558,7 +1820,7 @@
                         varScannerUp.fillAlpha = 0.6;
                         //varScannerUp.labelRotation = 90;
                         varScannerUp.inside = true;
-                        varScannerUp.label = "Variable Scanner\nUp: " + highestUp + "/" + (10 - highestUp) + " " + highestUpAverage.toFixed(2) + "%";
+                        varScannerUp.label = "Variable Scanner\nUp: " + highestUp + "/" + (noOfYears - highestUp) + " " + highestUpAverage.toFixed(2) + "%\nRange: " + highestUpDaySpan + " Days";
                         varScannerUp.position = "top";
                         stockPanel1.categoryAxis.addGuide(varScannerUp);
                     }
@@ -1572,7 +1834,7 @@
                         varScannerDown.fillAlpha = 0.6;
                         //varScannerDown.labelRotation = 90;
                         varScannerDown.inside = true;
-                        varScannerDown.label = "Variable Scanner\nDown: " + highestDown + "/" + (10 - highestDown) + " " + highestDownAverage.toFixed(2) + "%";
+                        varScannerDown.label = "Variable Scanner\nDown: " + highestDown + "/" + (noOfYears - highestDown) + " " + highestDownAverage.toFixed(2) + "%\nRange: " + highestDownDaySpan + " Days";
                         varScannerDown.position = "top";
                         stockPanel1.categoryAxis.addGuide(varScannerDown);
                     }

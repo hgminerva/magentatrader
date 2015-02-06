@@ -174,7 +174,9 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\EventController.cs" />
+    <Compile Include="Controllers\FreeWebinarsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductPackageController.cs" />
@@ -182,6 +184,10 @@
     <Compile Include="Controllers\SoftwareController.cs" />
     <Compile Include="Controllers\StockPriceController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\Web99Controller.cs" />
+    <Compile Include="Data\MagentaTradersDB.cs">
+      <DependentUpon>MagentaTradersDB.dbml</DependentUpon>
+    </Compile>
     <Compile Include="Data\MagentaTradersDB.designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -190,6 +196,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="IdentityExtensions\AppUserManager.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -1241,9 +1248,17 @@
     <Content Include="wijmo\styles\themes\wijmo.theme.zen.min.css" />
     <Content Include="wijmo\styles\wijmo.css" />
     <Content Include="wijmo\styles\wijmo.min.css" />
+    <None Include="Properties\PublishProfiles\magentatrader - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\magentatrader - FTP %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\magentatrader - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\magentatrader - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\magentatrader - Web Deploy %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\magentatrader - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\magentatraders - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\magentatraders - FTP %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\magentatraders - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\magentatraders - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\magentatraders - Web Deploy %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\magentatraders - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
@@ -1284,6 +1299,9 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Software\Index.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\FreeWebinars\Index.cshtml" />
+    <Content Include="Views\Web99\Index.cshtml" />
+    <Content Include="Views\Calendar\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -15,5 +15,6 @@ namespace MagentaTrader.Models
         public string EventType { get; set; }
         public bool IsRestricted { get; set; }
         public bool IsArchived { get; set; }
+        public string VideoURL { get; set; }
     }
 }
