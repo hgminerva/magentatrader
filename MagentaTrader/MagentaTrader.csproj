@@ -183,6 +183,7 @@
     <Compile Include="Controllers\SalesController.cs" />
     <Compile Include="Controllers\SoftwareController.cs" />
     <Compile Include="Controllers\StockPriceController.cs" />
+    <Compile Include="Controllers\SymbolController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\Web99Controller.cs" />
     <Compile Include="Data\MagentaTradersDB.cs">
@@ -198,6 +199,7 @@
     </Compile>
     <Compile Include="IdentityExtensions\AppUserManager.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CalendarSymbolWrapper.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Product.cs" />
@@ -205,6 +207,7 @@
     <Compile Include="Models\Sales.cs" />
     <Compile Include="Models\StockPrice.cs" />
     <Compile Include="Models\StockPriceWrapper.cs" />
+    <Compile Include="Models\Symbol.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

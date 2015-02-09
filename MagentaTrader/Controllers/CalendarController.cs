@@ -10,6 +10,7 @@ namespace MagentaTrader.Controllers
     {
         //
         // GET: /Calendar/
+        [Authorize]
         public ActionResult Index()
         {
             return View();

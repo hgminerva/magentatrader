@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Index";
 
-    var Version = "v.Beta.1.20150205";
+    var Version = "v.Beta.1.20150208";
 }
 
 <link href="/wijmo/styles/wijmo.min.css" rel="stylesheet" />
@@ -24,28 +24,105 @@
     </div>
 </nav>
 
-<div id="DivCalendar">
-
-    <div class="container">
-
-        <div class="row">
-
-            <h2 class="section-heading">Calendar</h2>
-
-            <div id="CalendarGrid" class="grid"></div>
-
+<div class="container">
+    <div class="row">
+        <h2 class="section-heading">Calendar</h2>
+        <div class="col-lg-2">
+            <select id="Month" class="form-control">
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
         </div>
-
+        <div class="col-lg-2">
+            <select id="Year" class="form-control">
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+            </select>
+        </div>
+        <div class="col-lg-3">
+            <select id="Delta" class="form-control">
+                <option value="100">Win/Loss (10-0) - 100%</option>
+                <option value="90">Win/Loss (9-1) - 90%</option>
+                <option value="80" selected>Win/Loss (8-2) - 80%</option>
+                <option value="70">Win/Loss (7-3) - 70%</option>
+                <option value="60">Win/Loss (6-4) - 60%</option>
+                <option value="50">Win/Loss (5-5) - 50%</option>
+                <option value="40">Win/Loss (4-6) - 40%</option>
+                <option value="30">Win/Loss (3-7) - 30%</option>
+                <option value="20">Win/Loss (2-8) - 20%</option>
+                <option value="10">Win/Loss (1-9) - 10%</option>
+            </select>
+        </div>
+        <div class="col-lg-2">
+            <input type="text" class="form-control" id="Percentage" placeholder="Percentage - [8%]">
+        </div>
+        <div class="col-lg-2">
+            <button id="CmdGetCalendar" type="submit" class="btn btn-primary" onclick="CmdGetCalendar_OnClick()">Get Calendar</button>
+        </div>
     </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="CalendarGrid" class="grid"></div>
+        </div>
+    </div>
+</div>
 
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="Loading..." aria-hidden="true">
+    <div class="modal-dialog" style="width: 220px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Loading...</h4>
+            </div>
+            <div class="modal-body">
+                <img src="/img/progress_bar.gif" />
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
     var CalendarData;
     var CalendarGrid;
+    var UpData = [];
+    var DownData = [];
 
-    function getCalendarDate(Month, Year) {
-        var Sun="", Mon="", Tue="", Wed="", Thu="", Fri="", Sat="";
+    function GetUpData(Month, Year, Delta, Percentage) {
+        $('#loading').modal('show');
+        $.ajax({
+            url: '/api/SymbolCalendar/' + Month + '/' + Year + '/' + Delta + '/' + Percentage,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                while (UpData.length > 0) UpData.pop();
+                while (DownData.length > 0) DownData.pop();
+
+                UpData = data.UpSymbols;
+                DownData = data.DownSymbols;
+
+                MakeCalendarGrid(Month - 1, Year);
+
+                $('#loading').modal('hide');
+            },
+            statusCode: {
+                404: function () {
+                    alert('Failed');
+                }
+            }
+        });
+    }
+    function GetCalendarDate(Month, Year) {
+        var Sun = "", Mon = "", Tue = "", Wed = "", Thu = "", Fri = "", Sat = "";
         var data = new wijmo.collections.ObservableArray();
 
         // Get the start day, e.g., Monday=1, Tuesday=2, etc.
@@ -65,24 +142,25 @@
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j <= 6; j++) {
                 if (day <= monthLength && (i > 0 || j >= startingDay)) {
-                    switch(j) {
+                    var dateData = "<br><font face='Tahoma' size='1' color='green'>" + FormatUpSymbols(day) + "</font><font face='Tahoma' size='1' color='red'>" + FormatDownSymbols(day) + "</font><br>";
+                    switch (j) {
                         case 0:
-                            Sun = day.toString();
+                            Sun = "<font color='red'>" + day.toString() + "</font>";
                             break;
                         case 1:
-                            Mon = day.toString();
+                            Mon = day.toString() + dateData;
                             break;
                         case 2:
-                            Tue = day.toString();
+                            Tue = day.toString() + dateData;
                             break;
                         case 3:
-                            Wed = day.toString();
+                            Wed = day.toString() + dateData;
                             break;
                         case 4:
-                            Thu = day.toString();
+                            Thu = day.toString() + dateData;
                             break;
                         case 5:
-                            Fri = day.toString();
+                            Fri = day.toString() + dateData;
                             break;
                         case 6:
                             Sat = day.toString();
@@ -91,7 +169,8 @@
                     day++;
                 }
             }
-            if (day > monthLength) {
+            
+            if (day > monthLength) { 
                 data.push({
                     Sunday: Sun,
                     Monday: Mon,
@@ -112,63 +191,73 @@
                     Friday: Fri,
                     Saturday: Sat
                 });
+                Sun = ""; Mon = ""; Tue = ""; Wed = ""; Thu = ""; Fri = ""; Sat = "";
             }
         }
         return data;
     }
-    $(document).ready(function () {
-        CalendarData = new wijmo.collections.CollectionView(getCalendarDate(0,2015));
+    function MakeCalendarGrid(Month, Year) {
+        CalendarData = new wijmo.collections.CollectionView(GetCalendarDate(Month, Year));
+        CalendarData.pageSize = 5;
+
+        CalendarGrid.dispose();
         CalendarGrid = new wijmo.grid.FlexGrid('#CalendarGrid');
         CalendarGrid.initialize({
             columns: [
                         {
                             "header": "Sunday",
                             "binding": "Sunday",
-                            "width": 150,
+                            "width": "7*",
                             "allowSorting": false,
-                            "isContentHtml": true
+                            "isContentHtml": true,
+                            "wordWrap": true
                         },
                         {
                             "header": "Monday",
                             "binding": "Monday",
-                            "width": 150,
+                            "width": "7*",
                             "allowSorting": false,
-                            "isContentHtml": true
+                            "isContentHtml": true,
+                            "wordWrap": true
                         },
                         {
                             "header": "Tuesday",
                             "binding": "Tuesday",
-                            "width": 150,
+                            "width": "7*",
                             "allowSorting": false,
-                            "isContentHtml": true
+                            "isContentHtml": true,
+                            "wordWrap": true
                         },
                         {
                             "header": "Wednesday",
                             "binding": "Wednesday",
-                            "width": 150,
+                            "width": "7*",
                             "allowSorting": false,
-                            "isContentHtml": true
+                            "isContentHtml": true,
+                            "wordWrap": true
                         },
                         {
                             "header": "Thursday",
                             "binding": "Thursday",
-                            "width": 150,
+                            "width": "7*",
                             "allowSorting": false,
                             "isContentHtml": true
                         },
                         {
                             "header": "Friday",
                             "binding": "Friday",
-                            "width": 150,
+                            "width": "7*",
                             "allowSorting": false,
-                            "isContentHtml": true
+                            "isContentHtml": true,
+                            "wordWrap": true
                         },
                         {
                             "header": "Saturday",
                             "binding": "Saturday",
-                            "width": 150,
+                            "width": "7*",
                             "allowSorting": false,
-                            "isContentHtml": true
+                            "isContentHtml": true,
+                            "wordWrap": true
                         }
             ],
             autoGenerateColumns: false,
@@ -177,8 +266,47 @@
             selectionMode: wijmo.grid.SelectionMode.Cell
         });
         CalendarGrid.trackChanges = true;
-        CalendarData.pageSize = 5;
-    })
+        CalendarGrid.itemFormatter = function (panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var flex = panel.grid;
+                flex.rows[r].height = 100;
+            }
+        };
+        
+    }
+    function FormatUpSymbols(Day) {
+        var results = "";
+        for (var i = 0; i < UpData.length; i++) {
+            if (parseInt(UpData[i].CalendarUpDay) == Day) {
+                results = results + " [" + UpData[i].SymbolDescription + "] ";
+            }
+        }
+        return results;
+    }
+    function FormatDownSymbols(Day) {
+        var results = "";
+        for (var i = 0; i < DownData.length; i++) {
+            if (parseInt(DownData[i].CalendarDownDay) == Day) {
+                results = results + " [" + DownData[i].SymbolDescription + "] ";
+            }
+        }
+        return results;
+    }
+
+    function CmdGetCalendar_OnClick() {
+        var $month = parseInt(document.getElementById('Month').value);
+        var $year = parseInt(document.getElementById('Year').value);
+        var $delta = parseInt(document.getElementById('Delta').value);
+        var $percentage = parseInt(document.getElementById('Percentage').value);
+        
+        $percentage = !$percentage ? 8 : $percentage;
+
+        GetUpData(($month+1), $year, $delta, $percentage);
+    }
+
+    $(document).ready(function () {
+        CalendarGrid = new wijmo.grid.FlexGrid('#CalendarGrid');
+    });
 </script>
 
 <script src="/lib/jquery/js/jquery.js"></script>

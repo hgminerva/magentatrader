@@ -16,11 +16,11 @@ namespace MagentaTrader.Controllers
         public Models.StockPriceWrapper Get(string symbol)
         {
             List<Models.StockPrice> prices = new List<Models.StockPrice>();
-            var retryCounter = 0;
+            //var retryCounter = 0;
             string SymbolDescription = "";
 
-            while (true)
-            {
+            //while (true)
+            //{
                 try
                 {
                     //DateTime date2 = (from d in db.TrnStockPrices where d.Symbol == symbol select d.QuoteDate).Max();
@@ -33,7 +33,7 @@ namespace MagentaTrader.Controllers
                     DateTime date2 = Symbols.FirstOrDefault().LatestQuoteDate.Value;
                     DateTime date1 = ((date2.AddDays(1)).AddYears(-10)).AddMonths(-5);
 
-                    var StockPrices = from d in db.TrnStockPrices
+                    var StockPrices = (from d in db.TrnStockPrices
                                       where (d.Symbol == symbol) &&
                                             (d.QuoteDate >= date1 && d.QuoteDate <= date2)
                                       orderby d.QuoteDate descending
@@ -45,7 +45,7 @@ namespace MagentaTrader.Controllers
                                           LowPrice = d.LowPrice,
                                           ClosePrice = d.ClosePrice,
                                           Volume = d.Volume
-                                      };
+                                      }).ToList();
 
                     //var StockPrices = from d in db.TrnStockPrices
                     //                  where (d.Symbol == symbol) &&
@@ -113,20 +113,20 @@ namespace MagentaTrader.Controllers
                     //{
                     //    prices = new List<Models.StockPrice>();
                     //}
-                    break;
+                    //break;
                 }
                 catch
                 {
-                    if (retryCounter == 3)
-                    {
+                    //if (retryCounter == 3)
+                    //{
                         prices = new List<Models.StockPrice>();
-                        break;
-                    }
+                        //break;
+                    //}
 
-                    System.Threading.Thread.Sleep(100);
-                    retryCounter++;
+                    //System.Threading.Thread.Sleep(100);
+                    //retryCounter++;
                 }
-            }
+            //}
 
             var StockPriceWrapper = new Models.StockPriceWrapper();
 

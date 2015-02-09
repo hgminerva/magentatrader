@@ -21,6 +21,7 @@ namespace MagentaTrader
             //);
 
             config.MapHttpAttributeRoutes();
+
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{symbol}/{datestart}/{dateend}",

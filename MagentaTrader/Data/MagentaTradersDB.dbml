@@ -1,5 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="magentatraders" Class="MagentaTradersDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=tcp:szxapf1nan.database.windows.net;Initial Catalog=magentatraders;Persist Security Info=True;User ID=derekpilger@szxapf1nan" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DefaultConnection" Provider="System.Data.SqlClient" />
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="magentatraders_prod" Class="MagentaTradersDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=tcp:g0kgvkdtnf.database.windows.net,1433;Initial Catalog=magentatraders_prod;Persist Security Info=True;User ID=derekpilger@g0kgvkdtnf" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="magentatraders_prodConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.MstEvent" Member="MstEvents">
+    <Type Name="MstEvent">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EventDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="EventDescription" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Particulars" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="URL" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="EventType" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IsRestricted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsArchived" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="VideoURL" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.TrnStockPrice" Member="TrnStockPrices">
     <Type Name="TrnStockPrice">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -37,6 +50,24 @@
       <Association Name="MstProduct_MstProductPackage" Member="MstProduct" ThisKey="ProductId" OtherKey="Id" Type="MstProduct" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.MstSymbol" Member="MstSymbols">
+    <Type Name="MstSymbol">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Symbol" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Exchange" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="LatestQuoteDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CalendarUpDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CalendarUpParticulars" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="CalendarUpDelta" Type="System.Decimal" DbType="Decimal(18,5)" CanBeNull="true" />
+      <Column Name="CalendarUpPercentage" Type="System.Decimal" DbType="Decimal(18,5)" CanBeNull="true" />
+      <Column Name="CalendarDownDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CalendarDownParticulars" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="CalendarDownDelta" Type="System.Decimal" DbType="Decimal(18,5)" CanBeNull="true" />
+      <Column Name="CalendarDownPercentage" Type="System.Decimal" DbType="Decimal(18,5)" CanBeNull="true" />
+      <Association Name="MstSymbol_TrnStockPrice" Member="TrnStockPrices" ThisKey="Id" OtherKey="SymbolId" Type="TrnStockPrice" />
+    </Type>
+  </Table>
   <Table Name="dbo.MstUser" Member="MstUsers">
     <Type Name="MstUser">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -65,29 +96,6 @@
       <Column Name="IsRefunded" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="MstProductPackage_TrnSale" Member="MstProductPackage" ThisKey="ProductPackageId" OtherKey="Id" Type="MstProductPackage" IsForeignKey="true" />
       <Association Name="MstUser_TrnSale" Member="MstUser" ThisKey="UserId" OtherKey="Id" Type="MstUser" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MstSymbol" Member="MstSymbols">
-    <Type Name="MstSymbol">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Symbol" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Description" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="Exchange" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="LatestQuoteDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Association Name="MstSymbol_TrnStockPrice" Member="TrnStockPrices" ThisKey="Id" OtherKey="SymbolId" Type="TrnStockPrice" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MstEvent" Member="MstEvents">
-    <Type Name="MstEvent">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="EventDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="EventDescription" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Particulars" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="URL" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="EventType" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="IsRestricted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="IsArchived" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-      <Column Name="VideoURL" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>
