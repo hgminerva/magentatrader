@@ -278,7 +278,7 @@
         var results = "";
         for (var i = 0; i < UpData.length; i++) {
             if (parseInt(UpData[i].CalendarUpDay) == Day) {
-                results = results + " [" + UpData[i].SymbolDescription + "] ";
+                results = results + " [<a  href='/Software?symbol=" + UpData[i].SymbolDescription + "' target='_blank'><font face='Tahoma' size='1' color='green'>" + UpData[i].SymbolDescription + "</font></a>] ";
             }
         }
         return results;
@@ -287,7 +287,7 @@
         var results = "";
         for (var i = 0; i < DownData.length; i++) {
             if (parseInt(DownData[i].CalendarDownDay) == Day) {
-                results = results + " [" + DownData[i].SymbolDescription + "] ";
+                results = results + " [<a  href='/Software?symbol=" + DownData[i].SymbolDescription + "' target='_blank'><font face='Tahoma' size='1' color='red'>" + DownData[i].SymbolDescription + "</font></a>] ";
             }
         }
         return results;

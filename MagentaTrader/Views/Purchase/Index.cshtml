@@ -1,0 +1,172 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<link href="/wijmo/styles/wijmo.min.css" rel="stylesheet" />
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/knockout-3.2.0.js"></script>
+<script src="/wijmo/controls/wijmo.min.js" type="text/javascript"></script>
+<script src="/wijmo/controls/wijmo.grid.min.js" type="text/javascript"></script>
+
+<nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+    <div class="container topnav">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand topnav" href="/Home"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"></span></a>
+        </div>
+    </div>
+</nav>
+
+<div id="DivPurchases">
+
+    <div class="container">
+
+        <div class="row">
+
+            <h2 class="section-heading">Purchases</h2>
+
+            <div id="PurchaseGrid" class="grid"></div>
+
+        </div>
+
+        <div class="row">
+            @*<img class="img-responsive center-block" src="/img/workshop2.jpg" />*@
+        </div>
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var Purchases;
+    var PurchaseGrid;
+
+    function getPurchases() {
+        var purchases = new wijmo.collections.ObservableArray();
+
+        purchases.push({
+            Product: "<font color='#CC009C'>Monthly Subscriptions</font>",
+            Purchase: ""
+        });
+
+        purchases.push({
+            Product: "Magenta Charts",
+            Price: "US$ 98",
+            Purchase: "<form name='PrePage' method = 'post' action = 'https://Simplecheckout.authorize.net/payment/CatalogPayment.aspx'> <input type = 'hidden' name = 'LinkId' value ='ac14c158-a38a-4af6-898a-71a3e9d0a2fc' /> <input type = 'image' src ='//content.authorize.net/images/buy-now-gold.gif' /> </form>"
+        });
+
+        purchases.push({
+            Product: "Web99",
+            Price: "US$ 99",
+            Purchase: "<form name='PrePage' method = 'post' action = 'https://Simplecheckout.authorize.net/payment/CatalogPayment.aspx'> <input type = 'hidden' name = 'LinkId' value ='f53a6465-07f9-4739-bb9d-048cf29816ec' /> <input type = 'image' src ='//content.authorize.net/images/buy-now-gold.gif' /> </form>"
+        });
+
+        purchases.push({
+            Product: "Realtime",
+            Price: "US$ 97",
+            Purchase: "<form name='PrePage' method = 'post' action = 'https://Simplecheckout.authorize.net/payment/CatalogPayment.aspx'> <input type = 'hidden' name = 'LinkId' value ='bfa29e49-cbc3-4334-b01b-2667d3313990' /> <input type = 'image' src ='//content.authorize.net/images/buy-now-gold.gif' /> </form>"
+        });
+
+        purchases.push({
+            Product: "Web99 and Realtime",
+            Price: "US$ 169",
+            Purchase: "<form name='PrePage' method = 'post' action = 'https://Simplecheckout.authorize.net/payment/CatalogPayment.aspx'> <input type = 'hidden' name = 'LinkId' value ='9f79c301-44c4-4a45-876d-d505e51b631d' /> <input type = 'image' src ='//content.authorize.net/images/buy-now-gold.gif' /> </form>"
+        });
+
+        purchases.push({
+            Product: "<font color='#CC009C'>Annual Subscriptions</font>",
+            Purchase: ""
+        });
+
+        purchases.push({
+            Product: "Annual Realtime",
+            Price: "US$ 700",
+            Purchase: "<form name='PrePage' method = 'post' action = 'https://Simplecheckout.authorize.net/payment/CatalogPayment.aspx'> <input type = 'hidden' name = 'LinkId' value ='3754c8b7-89da-43c9-8dc5-3c2879dd98a2' /> <input type = 'image' src ='//content.authorize.net/images/buy-now-gold.gif' /> </form>"
+        });
+
+        purchases.push({
+            Product: "<font color='#CC009C'>Workshops</font>",
+            Purchase: ""
+        });
+
+        purchases.push({
+            Product: "Web99 Internet Workshop",
+            Price: "US$ 295",
+            Purchase: "<form name='PrePage' method = 'post' action = 'https://Simplecheckout.authorize.net/payment/CatalogPayment.aspx'> <input type = 'hidden' name = 'LinkId' value ='7c830599-199a-4591-bb4b-8732dd001067' /> <input type = 'image' src ='//content.authorize.net/images/buy-now-gold.gif' /> </form>"
+        });
+
+        purchases.push({
+            Product: "Magenta Las Vegas Workshop May 6-8 2015",
+            Price: "US$ 995",
+            Purchase: "<form name='PrePage' method = 'post' action = 'https://Simplecheckout.authorize.net/payment/CatalogPayment.aspx'> <input type = 'hidden' name = 'LinkId' value ='16c583e4-ba7e-4c09-8f53-698490f80d47' /> <input type = 'image' src ='//content.authorize.net/images/buy-now-gold.gif' /> </form>"
+        });
+
+        purchases.push({
+            Product: "Magenta Las Vegas Workshop May 6-8 2015 (If Couple)",
+            Price: "US$ 1,494",
+            Purchase: "<form name='PrePage' method = 'post' action = 'https://Simplecheckout.authorize.net/payment/CatalogPayment.aspx'> <input type = 'hidden' name = 'LinkId' value ='7915f54f-4c28-411d-8c90-2745e3725f20' /> <input type = 'image' src ='//content.authorize.net/images/buy-now-gold.gif' /> </form>"
+        });
+
+        return purchases;
+    }
+
+
+    $(document).ready(function () {
+        Purchases = new wijmo.collections.CollectionView(getPurchases());
+
+        PurchaseGrid = new wijmo.grid.FlexGrid('#PurchaseGrid');
+
+        PurchaseGrid.initialize({
+            columns: [
+                        {
+                            "header": "Purchase",
+                            "binding": "Purchase",
+                            "width": 150,
+                            "allowSorting": false,
+                            "isContentHtml": true
+                        },
+                        {
+                            "header": "Product",
+                            "binding": "Product",
+                            "allowSorting": false,
+                            "isContentHtml": true,
+                            "width": "*"
+                        },
+                        {
+                            "header": "Price",
+                            "binding": "Price",
+                            "allowSorting": false,
+                            "align": "right",
+                            "width": 100
+                        }
+            ],
+            autoGenerateColumns: false,
+            itemsSource: Purchases,
+            isReadOnly: true,
+            selectionMode: wijmo.grid.SelectionMode.Cell
+        });
+
+        PurchaseGrid.trackChanges = true;
+
+        PurchaseGrid.pageSize = 15;
+
+        PurchaseGrid.itemFormatter = function (panel, r, c, cell) {
+            if (panel.cellType == wijmo.grid.CellType.Cell) {
+                var flex = panel.grid;
+                flex.rows[r].height = 30;
+            }
+        };
+
+    });
+
+</script>
+
+<script src="/lib/jquery/js/jquery.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.js"></script>
+<script src="/wijmo/controls/wijmo.input.min.js"></script>
+<script src="/wijmo/interop/knockout/wijmo.knockout.min.js"></script>

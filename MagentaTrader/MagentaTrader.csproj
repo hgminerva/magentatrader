@@ -180,6 +180,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductPackageController.cs" />
+    <Compile Include="Controllers\PurchaseController.cs" />
     <Compile Include="Controllers\SalesController.cs" />
     <Compile Include="Controllers\SoftwareController.cs" />
     <Compile Include="Controllers\StockPriceController.cs" />
@@ -794,9 +795,14 @@
     <Content Include="img\progress_bar.gif" />
     <Content Include="img\software-1.png" />
     <Content Include="img\software.png" />
+    <Content Include="img\te.jpg" />
+    <Content Include="img\te.png" />
+    <Content Include="img\te1.png" />
     <Content Include="img\web99-1.png" />
     <Content Include="img\web99.png" />
     <Content Include="img\webinar.png" />
+    <Content Include="img\workshop1.jpg" />
+    <Content Include="img\workshop2.jpg" />
     <Content Include="js\bootstrap.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\date.js" />
@@ -805,6 +811,7 @@
     <Content Include="js\jquery.js" />
     <Content Include="js\knockout-3.2.0.js" />
     <Content Include="js\morris-data.js" />
+    <Content Include="js\require.js" />
     <Content Include="lib\bootstrap\css\bootstrap-theme.css" />
     <Content Include="lib\bootstrap\css\bootstrap-theme.min.css" />
     <Content Include="lib\bootstrap\css\bootstrap.css" />
@@ -1305,6 +1312,9 @@
     <Content Include="Views\FreeWebinars\Index.cshtml" />
     <Content Include="Views\Web99\Index.cshtml" />
     <Content Include="Views\Calendar\Index.cshtml" />
+    <Content Include="Views\Purchase\Index.cshtml" />
+    <Content Include="Views\Admin\Event.cshtml" />
+    <Content Include="Views\FreeWebinars\Webinar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -6,20 +6,11 @@ using System.Web.Mvc;
 
 namespace MagentaTrader.Controllers
 {
-    public class AdminController : Controller
+    public class PurchaseController : Controller
     {
         //
-        // GET: /Admin/
-        [Authorize]
+        // GET: /Purchase/
         public ActionResult Index()
-        {
-            return View();
-        }
-
-        //
-        // GET: /Admin/Event
-        [Authorize]
-        public ActionResult Event()
         {
             return View();
         }

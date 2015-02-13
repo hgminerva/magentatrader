@@ -80,7 +80,7 @@
                             EventDate: Results[i]["EventDate"],
                             EventDescription: Results[i]["EventDescription"],
                             Particulars: Results[i]["Particulars"],
-                            VideoURL: "<a href='" + Results[i]["VideoURL"] + "'>View Video</a>"
+                            VideoURL: "<a href='" + Results[i]["VideoURL"] + "' class='btn btn-primary btn-xs'>View Video</a>"
                         });
                     }
                 } else {
@@ -136,6 +136,12 @@
         EventGrid.initialize({
             columns: [
                         {
+                            "header": "Video",
+                            "binding": "VideoURL",
+                            "width": 100,
+                            "isContentHtml": true
+                        },
+                        {
                             "header": "Date",
                             "binding": "EventDate",
                             "width": 100
@@ -143,18 +149,12 @@
                         {
                             "header": "Webinar",
                             "binding": "EventDescription",
-                            "width": 300
+                            "width": "2*"
                         },
                         {
                             "header": "Particulars",
                             "binding": "Particulars",
-                            "width": 300
-                        },
-                        {
-                            "header": "Video",
-                            "binding": "VideoURL",
-                            "width": 300,
-                            "isContentHtml": true
+                            "width": "2*"
                         }
             ],
             autoGenerateColumns: false,

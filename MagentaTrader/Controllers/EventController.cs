@@ -24,6 +24,7 @@ namespace MagentaTrader.Controllers
                 try
                 {
                     var Events = from d in db.MstEvents
+                                 orderby d.Id descending
                                  select new Models.Event
                                  {
                                      Id = d.Id,
@@ -281,12 +282,13 @@ namespace MagentaTrader.Controllers
                     UpdatedEvent.IsArchived = value.IsArchived;
 
                     db.SubmitChanges();
+
+                    return Request.CreateResponse(HttpStatusCode.OK);
                 }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.NotFound);
-                }
-                return Request.CreateResponse(HttpStatusCode.OK);
+                }  
             }
             catch (NullReferenceException)
             {

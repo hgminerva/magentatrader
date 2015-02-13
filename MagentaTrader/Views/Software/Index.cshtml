@@ -2,6 +2,7 @@
     ViewBag.Title = "Software";
 
     var Version = "v.Beta.1.20150203";
+    var Symbol = Request.QueryString["symbol"];
 }
 
 <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -227,13 +228,8 @@
         var symbol = $('#searchSymbol').val();
         if (symbol != "") {
             chartSymbol = $('#searchSymbol').val().toUpperCase();
-            $('#searchSymbol').val(null)
             getData(symbol);
-        } else {
-            if (!!chart) {
-                //chart.validateNow();
-            }
-        }
+        } 
     }
     function getData(symbol) {
         $('#loading').modal('show');
@@ -367,7 +363,7 @@
             }
         }
 
-        //debugger;
+     
 
 
         /**
@@ -577,7 +573,8 @@
             seasonTenYearData[i] = season;
             seasonFiveYearData[i] = season5Year;
         }
-        //debugger;
+
+
        
         /*
         dayIndex = parseInt(chartData[0]["seasonCount"]);
@@ -1455,7 +1452,7 @@
             event = event || window.event;
             fixPageXY(event);
 
-            var xValue = stockPanel1.categoryAxis.xToIndex(event.pageX.toFixed() - 228);
+            var xValue = stockPanel1.categoryAxis.xToIndex(event.pageX.toFixed() - 260);
             var currentYear = plotData[125]["date"].getFullYear();
 
             if (xValue >= 0 && xValue <= 251) {
@@ -1635,14 +1632,14 @@
         // Check the no. of years available
         var noOfYears = firstClosingPrice.length;
 
-        // Display year date
+        $("#scannerYear").append("<li id='ChartIndex'><a href='#' style='padding: 2px 20px'>Day: " + (xValue+1) + "</a></li>");
         for (var i = 0 ; i < seasonYearData.length; i++) {
             if (i < noOfYears) {
                 var Year = currentYear - (noOfYears - i);
-                //var startValue = AmCharts.roundTo(seasonYearData[i][xValue], 2);
-                //var endValue = AmCharts.roundTo(seasonYearData[i][xValue + 30], 2);
-                var startValue = AmCharts.roundTo(closeYearData[i][xValue], 2);
-                var endValue = AmCharts.roundTo(closeYearData[i][xValue + scannerRange], 2);
+
+                var startValue = AmCharts.roundTo(closeYearData[noOfYears - i - 1][xValue], 2);
+                var endValue = AmCharts.roundTo(closeYearData[noOfYears - i - 1][xValue + scannerRange], 2);
+
                 var checked = plottedYearGraphs.indexOf(Year) >= 0 ? "checked" : "";
                 var status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><span> " + Year + ":</span><span class='pull-right'>No change.</span>";
                 if (endValue > startValue) {
@@ -1657,7 +1654,7 @@
                     } else {
                         status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='" + RedColor + "'><span> " + Year + "</span><span class='pull-right'>" + AmCharts.roundTo((((startValue - endValue) / endValue) * 100 * sign(endValue)), 2) + "%</span></font>";
                     }
-                }
+                } 
                 $("#scannerYear").append("<li id='scannerYearItem" + Year + "'><a id=Y" + Year + " href='#' style='padding: 2px 20px'>" + status + "</a></li>");
             }
         }
@@ -1869,5 +1866,12 @@
 
             scannerRange = parseInt($(this).data('value'));
         });
+
+        var symbol = "@Symbol";
+        if (symbol != "") {
+            chartSymbol = symbol.toUpperCase();
+            $('#searchSymbol').val(symbol);
+            getData(symbol);
+        }
     });
 </script>

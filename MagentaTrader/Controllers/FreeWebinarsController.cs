@@ -15,5 +15,13 @@ namespace MagentaTrader.Controllers
         {
             return View();
         }
+
+        //
+        // GET: /FreeWebinars/Webinar
+        //[Authorize]
+        public ActionResult Webinar()
+        {
+            return View();
+        }
 	}
 }
