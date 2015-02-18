@@ -1315,6 +1315,10 @@
     <Content Include="Views\Purchase\Index.cshtml" />
     <Content Include="Views\Admin\Event.cshtml" />
     <Content Include="Views\FreeWebinars\Webinar.cshtml" />
+    <Content Include="Views\Admin\User.cshtml" />
+    <Content Include="Views\Admin\Sales.cshtml" />
+    <Content Include="Views\Admin\News.cshtml" />
+    <Content Include="Views\Admin\Product.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

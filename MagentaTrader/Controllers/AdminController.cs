@@ -23,5 +23,38 @@ namespace MagentaTrader.Controllers
         {
             return View();
         }
+
+        //
+        // GET: /Admin/User
+        [Authorize]
+        public ActionResult User()
+        {
+            return View();
+        }
+
+        //
+        // GET: /Admin/News
+        [Authorize]
+        public ActionResult News()
+        {
+            return View();
+        }
+
+
+        //
+        // GET: /Admin/Product
+        [Authorize]
+        public ActionResult Product()
+        {
+            return View();
+        }
+
+        //
+        // GET: /Admin/Product
+        [Authorize]
+        public ActionResult Sales()
+        {
+            return View();
+        }
 	}
 }

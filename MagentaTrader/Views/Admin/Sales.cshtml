@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Sales";
+}
+
+<link href="/css/bootstrap.min.css" rel="stylesheet" />
+
+<script src="/js/jquery.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.js"></script>
+
+<script src="/js/date.js"></script>
+
+<script src="/wijmo/controls/wijmo.min.js" type="text/javascript"></script>
+<script src="/wijmo/controls/wijmo.input.min.js"></script>
+<script src="/wijmo/controls/wijmo.grid.min.js" type="text/javascript"></script>
+<script src="/wijmo/controls/wijmo.chart.min.js"></script>
+
+<link href="/wijmo/styles/wijmo.min.css" rel="stylesheet" />
+
+@*Menu*@
+<nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+    <div class="container topnav">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand topnav" href="/Home"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"></span></a>
+        </div>
+    </div>
+</nav>
+<nav class="navbar navbar-fixed-top top-right" role="navigation">
+    <div>
+        <ul class="nav nav-tabs navbar-right" style="margin-right:50px;margin-top:10px">
+            <li role="presentation"><a href="~/Admin/user" style="width:100px;">Users</a></li>
+            <li role="presentation"><a href="~/Admin/Event" style="width:100px;">Event</a></li>
+            <li role="presentation" class="active"><a href="~/Admin/Sales" style="width:100px;">Sales</a></li>
+            <li role="presentation"><a href="~/Admin/Product" style="width:100px;">Products</a></li>
+            <li role="presentation"><a href="~/Admin/News" style="width:100px;">News</a></li>
+        </ul>
+    </div>
+</nav>
