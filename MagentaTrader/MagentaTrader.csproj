@@ -182,7 +182,6 @@
     <Compile Include="Controllers\ProductPackageController.cs" />
     <Compile Include="Controllers\PurchaseController.cs" />
     <Compile Include="Controllers\SalesController.cs" />
-    <Compile Include="Controllers\ScreenerController.cs" />
     <Compile Include="Controllers\SoftwareController.cs" />
     <Compile Include="Controllers\StockPriceController.cs" />
     <Compile Include="Controllers\SymbolController.cs" />
@@ -799,8 +798,6 @@
     <Content Include="img\te.jpg" />
     <Content Include="img\te.png" />
     <Content Include="img\te1.png" />
-    <Content Include="img\training.png" />
-    <Content Include="img\training1.png" />
     <Content Include="img\web99-1.png" />
     <Content Include="img\web99.png" />
     <Content Include="img\webinar.png" />
@@ -1318,7 +1315,10 @@
     <Content Include="Views\Purchase\Index.cshtml" />
     <Content Include="Views\Admin\Event.cshtml" />
     <Content Include="Views\FreeWebinars\Webinar.cshtml" />
-    <Content Include="Views\Screener\Index.cshtml" />
+    <Content Include="Views\Admin\User.cshtml" />
+    <Content Include="Views\Admin\Sales.cshtml" />
+    <Content Include="Views\Admin\News.cshtml" />
+    <Content Include="Views\Admin\Product.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
