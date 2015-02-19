@@ -29,3 +29,20 @@ textarea {
         padding: 0;
     }
 }
+
+
+.panel-green {
+    border-color: #5cb85c;
+    background-color: #5cb85c;
+}
+
+
+.panel-yellow {
+    border-color: #f0ad4e;
+    background-color: #f0ad4e;
+}
+
+.panel-red {
+    border-color: #d9534f;
+    background-color: #d9534f;
+}
