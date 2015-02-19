@@ -1,0 +1,233 @@
+﻿@{
+    ViewBag.Title = "Index";
+
+    var Version = "v.Beta.1.20150216";
+}
+
+<link href="/wijmo/styles/wijmo.min.css" rel="stylesheet" />
+<script src="/js/jquery-1.10.2.min.js"></script>
+<script src="/js/knockout-3.2.0.js"></script>
+<script src="/wijmo/controls/wijmo.min.js" type="text/javascript"></script>
+<script src="/wijmo/controls/wijmo.grid.min.js" type="text/javascript"></script>
+
+<nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+    <div class="container topnav">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand topnav" href="/Home"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"> - Screener @Version</span></a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <h2 class="section-heading">Screener</h2>
+        <div class="col-lg-2">
+            <p>Exchange</p>
+            <select id="Exchange" class="form-control">
+                <option value="All">All</option>
+                <option value="NASDAQ">NASDAQ</option>
+                <option value="NYSE">NYSE</option>
+            </select>
+        </div>
+        <div class="col-lg-2">
+            <p>Price</p>
+            <input type="text" class="form-control" id="ClosePrice" placeholder="Price - [US $10]">
+        </div>
+        <div class="col-lg-2">
+            <p>Volume</p>
+            <input type="text" class="form-control" id="Volume" placeholder="Volume - [1M]">
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-2">
+            <button id="CmdGetResult" type="submit" class="btn btn-primary btn-block" onclick="CmdGetResult_OnClick()">Get Result</button>
+        </div>
+        <div class="col-lg-2">
+            <button id="CmdSaveXLS" type="submit" class="btn btn-primary btn-block" onclick="CmdSaveXLS_OnClick()">Save Result</button>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="ScreenerGrid" class="grid"></div>
+            <div class="row">
+                <div class="btn-group col-md-7" id="naviagtionPageEvent">
+                    <button type="button" class="btn btn-default" id="btnMoveToFirstPageEvent">
+                        <span class="glyphicon glyphicon-fast-backward"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" id="btnMoveToPreviousPageEvent">
+                        <span class="glyphicon glyphicon-step-backward"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" disabled style="width:100px" id="btnCurrentPageEvent"></button>
+                    <button type="button" class="btn btn-default" id="btnMoveToNextPageEvent">
+                        <span class="glyphicon glyphicon-step-forward"></span>
+                    </button>
+                    <button type="button" class="btn btn-default" id="btnMoveToLastPageEvent">
+                        <span class="glyphicon glyphicon-fast-forward"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+</div>
+
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="Loading..." aria-hidden="true">
+    <div class="modal-dialog" style="width: 220px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Loading...</h4>
+            </div>
+            <div class="modal-body">
+                <img src="/img/progress_bar.gif" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var ScreenerData;
+    var ScreenerGrid;
+
+    var btnFirstPageEvent;
+    var btnPreviousPageEvent;
+    var btnNextPageEvent;
+    var btnLastPageEvent;
+    var btnCurrentPageEvent;
+
+    function GetData(Exchange, Price, Volume) {
+        $('#loading').modal('show');
+        var d = new wijmo.collections.ObservableArray();
+        $.ajax({
+            url: '/api/SymbolScreener/' + Exchange + '/' + Price + '/' + Volume,
+            type: 'GET',
+            dataType: 'json',
+            success: function (result) {
+                for (i = 0; i < result.length; i++) {
+                    d.push({
+                        Symbol: "<a  href='/Software?symbol=" + result[i].SymbolDescription + "' target='_blank'>" + result[i].SymbolDescription + "</a>",
+                        Description: result[i].Description,
+                        Exchange: result[i].Exchange
+                    });
+                }
+                ScreenerData = new wijmo.collections.CollectionView(d);
+                ScreenerData.pageSize = 15;
+                $('#loading').modal('hide');
+                MakeScreenerGrid();
+            },
+            statusCode: {
+                404: function () {
+                    alert('Failed');
+                    $('#loading').modal('hide');
+                }
+            }
+        });
+    }
+    function UpdateNavigateButtonsEvent() {
+        if (ScreenerData.pageSize <= 0) {
+            document.getElementById('naviagtionPageEvent').style.display = 'none';
+            return;
+        }
+        document.getElementById('naviagtionPageEvent').style.display = 'block';
+        if (ScreenerData.pageIndex === 0) {
+            btnFirstPageEvent.setAttribute('disabled', 'disabled');
+            btnPreviousPageEvent.setAttribute('disabled', 'disabled');
+            btnNextPageEvent.removeAttribute('disabled');
+            btnLastPageEvent.removeAttribute('disabled');
+        }
+        else if (ScreenerData.pageIndex === (ScreenerData.pageCount - 1)) {
+            btnFirstPageEvent.removeAttribute('disabled');
+            btnPreviousPageEvent.removeAttribute('disabled');
+            btnLastPageEvent.setAttribute('disabled', 'disabled');
+            btnNextPageEvent.setAttribute('disabled', 'disabled');
+        }
+        else {
+            btnFirstPageEvent.removeAttribute('disabled');
+            btnPreviousPageEvent.removeAttribute('disabled');
+            btnNextPageEvent.removeAttribute('disabled');
+            btnLastPageEvent.removeAttribute('disabled');
+        }
+        btnCurrentPageEvent.innerHTML = (ScreenerData.pageIndex + 1) + ' / ' + ScreenerData.pageCount;
+    }
+    function MakeScreenerGrid() {
+        ScreenerGrid.dispose();
+        ScreenerGrid = new wijmo.grid.FlexGrid('#ScreenerGrid');
+        ScreenerGrid.initialize({
+            columns: [
+                        {
+                            "header": "Symbol",
+                            "binding": "Symbol",
+                            "width": 100,
+                            "allowSorting": false,
+                            "isContentHtml": true,
+                            "wordWrap": true
+                        },
+                        {
+                            "header": "Description",
+                            "binding": "Description",
+                            "width": "*",
+                            "allowSorting": false,
+                            "isContentHtml": true,
+                            "wordWrap": true
+                        }
+            ],
+            autoGenerateColumns: false,
+            itemsSource: ScreenerData,
+            isReadOnly: true,
+            selectionMode: wijmo.grid.SelectionMode.Row
+        });
+        ScreenerGrid.trackChanges = true;
+
+        btnFirstPageEvent = document.getElementById('btnMoveToFirstPageEvent');
+        btnPreviousPageEvent = document.getElementById('btnMoveToPreviousPageEvent');
+        btnNextPageEvent = document.getElementById('btnMoveToNextPageEvent');
+        btnLastPageEvent = document.getElementById('btnMoveToLastPageEvent');
+        btnCurrentPageEvent = document.getElementById('btnCurrentPageEvent');
+
+        UpdateNavigateButtonsEvent();
+
+        btnFirstPageEvent.addEventListener('click', function () {
+            ScreenerData.moveToFirstPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnPreviousPageEvent.addEventListener('click', function () {
+            ScreenerData.moveToPreviousPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnNextPageEvent.addEventListener('click', function () {
+            ScreenerData.moveToNextPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnLastPageEvent.addEventListener('click', function () {
+            ScreenerData.moveToLastPage();
+            UpdateNavigateButtonsEvent();
+        });
+    }
+
+    function CmdGetResult_OnClick() {
+        var $exchange = document.getElementById('Exchange').value;
+        var $closePrice = parseFloat(document.getElementById('ClosePrice').value);
+        var $volume = parseFloat(document.getElementById('Volume').value);
+
+        $closePrice = !$closePrice ? 10 : $closePrice;
+        $volume = !$volume ? 1000000 : $volume;
+
+        GetData($exchange, $closePrice, $volume);
+    }
+
+    $(document).ready(function () {
+        ScreenerGrid = new wijmo.grid.FlexGrid('#ScreenerGrid');
+    });
+</script>
+
+<script src="/lib/jquery/js/jquery.js"></script>
+<script src="/lib/bootstrap/js/bootstrap.js"></script>
+<script src="/wijmo/controls/wijmo.input.min.js"></script>
+<script src="/wijmo/interop/knockout/wijmo.knockout.min.js"></script>

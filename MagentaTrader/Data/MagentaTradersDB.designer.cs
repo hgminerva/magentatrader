@@ -42,15 +42,15 @@ namespace MagentaTrader.Data
     partial void InsertMstProductPackage(MstProductPackage instance);
     partial void UpdateMstProductPackage(MstProductPackage instance);
     partial void DeleteMstProductPackage(MstProductPackage instance);
-    partial void InsertMstSymbol(MstSymbol instance);
-    partial void UpdateMstSymbol(MstSymbol instance);
-    partial void DeleteMstSymbol(MstSymbol instance);
     partial void InsertMstUser(MstUser instance);
     partial void UpdateMstUser(MstUser instance);
     partial void DeleteMstUser(MstUser instance);
     partial void InsertTrnSale(TrnSale instance);
     partial void UpdateTrnSale(TrnSale instance);
     partial void DeleteTrnSale(TrnSale instance);
+    partial void InsertMstSymbol(MstSymbol instance);
+    partial void UpdateMstSymbol(MstSymbol instance);
+    partial void DeleteMstSymbol(MstSymbol instance);
     #endregion
 		
 		public MagentaTradersDBDataContext() : 
@@ -115,14 +115,6 @@ namespace MagentaTrader.Data
 			}
 		}
 		
-		public System.Data.Linq.Table<MstSymbol> MstSymbols
-		{
-			get
-			{
-				return this.GetTable<MstSymbol>();
-			}
-		}
-		
 		public System.Data.Linq.Table<MstUser> MstUsers
 		{
 			get
@@ -136,6 +128,14 @@ namespace MagentaTrader.Data
 			get
 			{
 				return this.GetTable<TrnSale>();
+			}
+		}
+		
+		public System.Data.Linq.Table<MstSymbol> MstSymbols
+		{
+			get
+			{
+				return this.GetTable<MstSymbol>();
 			}
 		}
 	}
@@ -1150,384 +1150,6 @@ namespace MagentaTrader.Data
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstSymbol")]
-	public partial class MstSymbol : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private string _Symbol;
-		
-		private string _Description;
-		
-		private string _Exchange;
-		
-		private System.Nullable<System.DateTime> _LatestQuoteDate;
-		
-		private System.Nullable<System.DateTime> _CalendarUpDate;
-		
-		private string _CalendarUpParticulars;
-		
-		private System.Nullable<decimal> _CalendarUpDelta;
-		
-		private System.Nullable<decimal> _CalendarUpPercentage;
-		
-		private System.Nullable<System.DateTime> _CalendarDownDate;
-		
-		private string _CalendarDownParticulars;
-		
-		private System.Nullable<decimal> _CalendarDownDelta;
-		
-		private System.Nullable<decimal> _CalendarDownPercentage;
-		
-		private EntitySet<TrnStockPrice> _TrnStockPrices;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnSymbolChanging(string value);
-    partial void OnSymbolChanged();
-    partial void OnDescriptionChanging(string value);
-    partial void OnDescriptionChanged();
-    partial void OnExchangeChanging(string value);
-    partial void OnExchangeChanged();
-    partial void OnLatestQuoteDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnLatestQuoteDateChanged();
-    partial void OnCalendarUpDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnCalendarUpDateChanged();
-    partial void OnCalendarUpParticularsChanging(string value);
-    partial void OnCalendarUpParticularsChanged();
-    partial void OnCalendarUpDeltaChanging(System.Nullable<decimal> value);
-    partial void OnCalendarUpDeltaChanged();
-    partial void OnCalendarUpPercentageChanging(System.Nullable<decimal> value);
-    partial void OnCalendarUpPercentageChanged();
-    partial void OnCalendarDownDateChanging(System.Nullable<System.DateTime> value);
-    partial void OnCalendarDownDateChanged();
-    partial void OnCalendarDownParticularsChanging(string value);
-    partial void OnCalendarDownParticularsChanged();
-    partial void OnCalendarDownDeltaChanging(System.Nullable<decimal> value);
-    partial void OnCalendarDownDeltaChanged();
-    partial void OnCalendarDownPercentageChanging(System.Nullable<decimal> value);
-    partial void OnCalendarDownPercentageChanged();
-    #endregion
-		
-		public MstSymbol()
-		{
-			this._TrnStockPrices = new EntitySet<TrnStockPrice>(new Action<TrnStockPrice>(this.attach_TrnStockPrices), new Action<TrnStockPrice>(this.detach_TrnStockPrices));
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Symbol", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string Symbol
-		{
-			get
-			{
-				return this._Symbol;
-			}
-			set
-			{
-				if ((this._Symbol != value))
-				{
-					this.OnSymbolChanging(value);
-					this.SendPropertyChanging();
-					this._Symbol = value;
-					this.SendPropertyChanged("Symbol");
-					this.OnSymbolChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Description
-		{
-			get
-			{
-				return this._Description;
-			}
-			set
-			{
-				if ((this._Description != value))
-				{
-					this.OnDescriptionChanging(value);
-					this.SendPropertyChanging();
-					this._Description = value;
-					this.SendPropertyChanged("Description");
-					this.OnDescriptionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Exchange", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string Exchange
-		{
-			get
-			{
-				return this._Exchange;
-			}
-			set
-			{
-				if ((this._Exchange != value))
-				{
-					this.OnExchangeChanging(value);
-					this.SendPropertyChanging();
-					this._Exchange = value;
-					this.SendPropertyChanged("Exchange");
-					this.OnExchangeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LatestQuoteDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> LatestQuoteDate
-		{
-			get
-			{
-				return this._LatestQuoteDate;
-			}
-			set
-			{
-				if ((this._LatestQuoteDate != value))
-				{
-					this.OnLatestQuoteDateChanging(value);
-					this.SendPropertyChanging();
-					this._LatestQuoteDate = value;
-					this.SendPropertyChanged("LatestQuoteDate");
-					this.OnLatestQuoteDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarUpDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> CalendarUpDate
-		{
-			get
-			{
-				return this._CalendarUpDate;
-			}
-			set
-			{
-				if ((this._CalendarUpDate != value))
-				{
-					this.OnCalendarUpDateChanging(value);
-					this.SendPropertyChanging();
-					this._CalendarUpDate = value;
-					this.SendPropertyChanged("CalendarUpDate");
-					this.OnCalendarUpDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarUpParticulars", DbType="NVarChar(255)")]
-		public string CalendarUpParticulars
-		{
-			get
-			{
-				return this._CalendarUpParticulars;
-			}
-			set
-			{
-				if ((this._CalendarUpParticulars != value))
-				{
-					this.OnCalendarUpParticularsChanging(value);
-					this.SendPropertyChanging();
-					this._CalendarUpParticulars = value;
-					this.SendPropertyChanged("CalendarUpParticulars");
-					this.OnCalendarUpParticularsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarUpDelta", DbType="Decimal(18,5)")]
-		public System.Nullable<decimal> CalendarUpDelta
-		{
-			get
-			{
-				return this._CalendarUpDelta;
-			}
-			set
-			{
-				if ((this._CalendarUpDelta != value))
-				{
-					this.OnCalendarUpDeltaChanging(value);
-					this.SendPropertyChanging();
-					this._CalendarUpDelta = value;
-					this.SendPropertyChanged("CalendarUpDelta");
-					this.OnCalendarUpDeltaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarUpPercentage", DbType="Decimal(18,5)")]
-		public System.Nullable<decimal> CalendarUpPercentage
-		{
-			get
-			{
-				return this._CalendarUpPercentage;
-			}
-			set
-			{
-				if ((this._CalendarUpPercentage != value))
-				{
-					this.OnCalendarUpPercentageChanging(value);
-					this.SendPropertyChanging();
-					this._CalendarUpPercentage = value;
-					this.SendPropertyChanged("CalendarUpPercentage");
-					this.OnCalendarUpPercentageChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarDownDate", DbType="DateTime")]
-		public System.Nullable<System.DateTime> CalendarDownDate
-		{
-			get
-			{
-				return this._CalendarDownDate;
-			}
-			set
-			{
-				if ((this._CalendarDownDate != value))
-				{
-					this.OnCalendarDownDateChanging(value);
-					this.SendPropertyChanging();
-					this._CalendarDownDate = value;
-					this.SendPropertyChanged("CalendarDownDate");
-					this.OnCalendarDownDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarDownParticulars", DbType="NVarChar(255)")]
-		public string CalendarDownParticulars
-		{
-			get
-			{
-				return this._CalendarDownParticulars;
-			}
-			set
-			{
-				if ((this._CalendarDownParticulars != value))
-				{
-					this.OnCalendarDownParticularsChanging(value);
-					this.SendPropertyChanging();
-					this._CalendarDownParticulars = value;
-					this.SendPropertyChanged("CalendarDownParticulars");
-					this.OnCalendarDownParticularsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarDownDelta", DbType="Decimal(18,5)")]
-		public System.Nullable<decimal> CalendarDownDelta
-		{
-			get
-			{
-				return this._CalendarDownDelta;
-			}
-			set
-			{
-				if ((this._CalendarDownDelta != value))
-				{
-					this.OnCalendarDownDeltaChanging(value);
-					this.SendPropertyChanging();
-					this._CalendarDownDelta = value;
-					this.SendPropertyChanged("CalendarDownDelta");
-					this.OnCalendarDownDeltaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarDownPercentage", DbType="Decimal(18,5)")]
-		public System.Nullable<decimal> CalendarDownPercentage
-		{
-			get
-			{
-				return this._CalendarDownPercentage;
-			}
-			set
-			{
-				if ((this._CalendarDownPercentage != value))
-				{
-					this.OnCalendarDownPercentageChanging(value);
-					this.SendPropertyChanging();
-					this._CalendarDownPercentage = value;
-					this.SendPropertyChanged("CalendarDownPercentage");
-					this.OnCalendarDownPercentageChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstSymbol_TrnStockPrice", Storage="_TrnStockPrices", ThisKey="Id", OtherKey="SymbolId")]
-		public EntitySet<TrnStockPrice> TrnStockPrices
-		{
-			get
-			{
-				return this._TrnStockPrices;
-			}
-			set
-			{
-				this._TrnStockPrices.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_TrnStockPrices(TrnStockPrice entity)
-		{
-			this.SendPropertyChanging();
-			entity.MstSymbol = this;
-		}
-		
-		private void detach_TrnStockPrices(TrnStockPrice entity)
-		{
-			this.SendPropertyChanging();
-			entity.MstSymbol = null;
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstUser")]
 	public partial class MstUser : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -2167,6 +1789,432 @@ namespace MagentaTrader.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstSymbol")]
+	public partial class MstSymbol : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _Symbol;
+		
+		private string _Description;
+		
+		private string _Exchange;
+		
+		private System.Nullable<System.DateTime> _LatestQuoteDate;
+		
+		private System.Nullable<System.DateTime> _CalendarUpDate;
+		
+		private string _CalendarUpParticulars;
+		
+		private System.Nullable<decimal> _CalendarUpDelta;
+		
+		private System.Nullable<decimal> _CalendarUpPercentage;
+		
+		private System.Nullable<System.DateTime> _CalendarDownDate;
+		
+		private string _CalendarDownParticulars;
+		
+		private System.Nullable<decimal> _CalendarDownDelta;
+		
+		private System.Nullable<decimal> _CalendarDownPercentage;
+		
+		private System.Nullable<decimal> _ClosePrice;
+		
+		private System.Nullable<decimal> _Volume;
+		
+		private EntitySet<TrnStockPrice> _TrnStockPrices;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnSymbolChanging(string value);
+    partial void OnSymbolChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnExchangeChanging(string value);
+    partial void OnExchangeChanged();
+    partial void OnLatestQuoteDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnLatestQuoteDateChanged();
+    partial void OnCalendarUpDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnCalendarUpDateChanged();
+    partial void OnCalendarUpParticularsChanging(string value);
+    partial void OnCalendarUpParticularsChanged();
+    partial void OnCalendarUpDeltaChanging(System.Nullable<decimal> value);
+    partial void OnCalendarUpDeltaChanged();
+    partial void OnCalendarUpPercentageChanging(System.Nullable<decimal> value);
+    partial void OnCalendarUpPercentageChanged();
+    partial void OnCalendarDownDateChanging(System.Nullable<System.DateTime> value);
+    partial void OnCalendarDownDateChanged();
+    partial void OnCalendarDownParticularsChanging(string value);
+    partial void OnCalendarDownParticularsChanged();
+    partial void OnCalendarDownDeltaChanging(System.Nullable<decimal> value);
+    partial void OnCalendarDownDeltaChanged();
+    partial void OnCalendarDownPercentageChanging(System.Nullable<decimal> value);
+    partial void OnCalendarDownPercentageChanged();
+    partial void OnClosePriceChanging(System.Nullable<decimal> value);
+    partial void OnClosePriceChanged();
+    partial void OnVolumeChanging(System.Nullable<decimal> value);
+    partial void OnVolumeChanged();
+    #endregion
+		
+		public MstSymbol()
+		{
+			this._TrnStockPrices = new EntitySet<TrnStockPrice>(new Action<TrnStockPrice>(this.attach_TrnStockPrices), new Action<TrnStockPrice>(this.detach_TrnStockPrices));
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Symbol", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Symbol
+		{
+			get
+			{
+				return this._Symbol;
+			}
+			set
+			{
+				if ((this._Symbol != value))
+				{
+					this.OnSymbolChanging(value);
+					this.SendPropertyChanging();
+					this._Symbol = value;
+					this.SendPropertyChanged("Symbol");
+					this.OnSymbolChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Exchange", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Exchange
+		{
+			get
+			{
+				return this._Exchange;
+			}
+			set
+			{
+				if ((this._Exchange != value))
+				{
+					this.OnExchangeChanging(value);
+					this.SendPropertyChanging();
+					this._Exchange = value;
+					this.SendPropertyChanged("Exchange");
+					this.OnExchangeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LatestQuoteDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> LatestQuoteDate
+		{
+			get
+			{
+				return this._LatestQuoteDate;
+			}
+			set
+			{
+				if ((this._LatestQuoteDate != value))
+				{
+					this.OnLatestQuoteDateChanging(value);
+					this.SendPropertyChanging();
+					this._LatestQuoteDate = value;
+					this.SendPropertyChanged("LatestQuoteDate");
+					this.OnLatestQuoteDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarUpDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CalendarUpDate
+		{
+			get
+			{
+				return this._CalendarUpDate;
+			}
+			set
+			{
+				if ((this._CalendarUpDate != value))
+				{
+					this.OnCalendarUpDateChanging(value);
+					this.SendPropertyChanging();
+					this._CalendarUpDate = value;
+					this.SendPropertyChanged("CalendarUpDate");
+					this.OnCalendarUpDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarUpParticulars", DbType="NVarChar(255)")]
+		public string CalendarUpParticulars
+		{
+			get
+			{
+				return this._CalendarUpParticulars;
+			}
+			set
+			{
+				if ((this._CalendarUpParticulars != value))
+				{
+					this.OnCalendarUpParticularsChanging(value);
+					this.SendPropertyChanging();
+					this._CalendarUpParticulars = value;
+					this.SendPropertyChanged("CalendarUpParticulars");
+					this.OnCalendarUpParticularsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarUpDelta", DbType="Decimal(18,5)")]
+		public System.Nullable<decimal> CalendarUpDelta
+		{
+			get
+			{
+				return this._CalendarUpDelta;
+			}
+			set
+			{
+				if ((this._CalendarUpDelta != value))
+				{
+					this.OnCalendarUpDeltaChanging(value);
+					this.SendPropertyChanging();
+					this._CalendarUpDelta = value;
+					this.SendPropertyChanged("CalendarUpDelta");
+					this.OnCalendarUpDeltaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarUpPercentage", DbType="Decimal(18,5)")]
+		public System.Nullable<decimal> CalendarUpPercentage
+		{
+			get
+			{
+				return this._CalendarUpPercentage;
+			}
+			set
+			{
+				if ((this._CalendarUpPercentage != value))
+				{
+					this.OnCalendarUpPercentageChanging(value);
+					this.SendPropertyChanging();
+					this._CalendarUpPercentage = value;
+					this.SendPropertyChanged("CalendarUpPercentage");
+					this.OnCalendarUpPercentageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarDownDate", DbType="DateTime")]
+		public System.Nullable<System.DateTime> CalendarDownDate
+		{
+			get
+			{
+				return this._CalendarDownDate;
+			}
+			set
+			{
+				if ((this._CalendarDownDate != value))
+				{
+					this.OnCalendarDownDateChanging(value);
+					this.SendPropertyChanging();
+					this._CalendarDownDate = value;
+					this.SendPropertyChanged("CalendarDownDate");
+					this.OnCalendarDownDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarDownParticulars", DbType="NVarChar(255)")]
+		public string CalendarDownParticulars
+		{
+			get
+			{
+				return this._CalendarDownParticulars;
+			}
+			set
+			{
+				if ((this._CalendarDownParticulars != value))
+				{
+					this.OnCalendarDownParticularsChanging(value);
+					this.SendPropertyChanging();
+					this._CalendarDownParticulars = value;
+					this.SendPropertyChanged("CalendarDownParticulars");
+					this.OnCalendarDownParticularsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarDownDelta", DbType="Decimal(18,5)")]
+		public System.Nullable<decimal> CalendarDownDelta
+		{
+			get
+			{
+				return this._CalendarDownDelta;
+			}
+			set
+			{
+				if ((this._CalendarDownDelta != value))
+				{
+					this.OnCalendarDownDeltaChanging(value);
+					this.SendPropertyChanging();
+					this._CalendarDownDelta = value;
+					this.SendPropertyChanged("CalendarDownDelta");
+					this.OnCalendarDownDeltaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CalendarDownPercentage", DbType="Decimal(18,5)")]
+		public System.Nullable<decimal> CalendarDownPercentage
+		{
+			get
+			{
+				return this._CalendarDownPercentage;
+			}
+			set
+			{
+				if ((this._CalendarDownPercentage != value))
+				{
+					this.OnCalendarDownPercentageChanging(value);
+					this.SendPropertyChanging();
+					this._CalendarDownPercentage = value;
+					this.SendPropertyChanged("CalendarDownPercentage");
+					this.OnCalendarDownPercentageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClosePrice", DbType="Decimal(18,5)")]
+		public System.Nullable<decimal> ClosePrice
+		{
+			get
+			{
+				return this._ClosePrice;
+			}
+			set
+			{
+				if ((this._ClosePrice != value))
+				{
+					this.OnClosePriceChanging(value);
+					this.SendPropertyChanging();
+					this._ClosePrice = value;
+					this.SendPropertyChanged("ClosePrice");
+					this.OnClosePriceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Volume", DbType="Decimal(18,5)")]
+		public System.Nullable<decimal> Volume
+		{
+			get
+			{
+				return this._Volume;
+			}
+			set
+			{
+				if ((this._Volume != value))
+				{
+					this.OnVolumeChanging(value);
+					this.SendPropertyChanging();
+					this._Volume = value;
+					this.SendPropertyChanged("Volume");
+					this.OnVolumeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstSymbol_TrnStockPrice", Storage="_TrnStockPrices", ThisKey="Id", OtherKey="SymbolId")]
+		public EntitySet<TrnStockPrice> TrnStockPrices
+		{
+			get
+			{
+				return this._TrnStockPrices;
+			}
+			set
+			{
+				this._TrnStockPrices.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_TrnStockPrices(TrnStockPrice entity)
+		{
+			this.SendPropertyChanging();
+			entity.MstSymbol = this;
+		}
+		
+		private void detach_TrnStockPrices(TrnStockPrice entity)
+		{
+			this.SendPropertyChanging();
+			entity.MstSymbol = null;
 		}
 	}
 }

@@ -11,10 +11,10 @@ namespace MagentaTrader.Controllers
     {
         private Data.MagentaTradersDBDataContext db = new Data.MagentaTradersDBDataContext();
 
-        // GET api/SymbolCalendar/1/2015/80/10.5
+        // GET api/SymbolCalendar/1/2015/80/10.5/10/1000000
         [Authorize]
-        [Route("api/SymbolCalendar/{Month}/{Year}/{Delta}/{Percentage}")]
-        public Models.CalendarSymbolWrapper GetSymbolCalendar(int Month, int Year, decimal Delta, decimal Percentage)
+        [Route("api/SymbolCalendar/{Month}/{Year}/{Delta}/{Percentage}/{Price}/{Volume}")]
+        public Models.CalendarSymbolWrapper GetSymbolCalendar(int Month, int Year, decimal Delta, decimal Percentage, decimal Price, decimal Volume)
         {
             var retryCounter = 0;
 
@@ -30,11 +30,16 @@ namespace MagentaTrader.Controllers
                                     where (d.CalendarUpDate.Value.Month == Month) &&
                                           (d.CalendarUpDate.Value.Year == Year) &&
                                           (d.CalendarUpDelta >= Delta) &&
-                                          (d.CalendarUpPercentage >= Percentage) 
+                                          (d.CalendarUpPercentage >= Percentage) && 
+                                          (d.ClosePrice >= Price) && 
+                                          (d.Volume >= Volume)
                                     select new Models.Symbol
                                     {
                                        SymbolDescription = d.Symbol,
-                                       CalendarUpDay = d.CalendarUpDate.Value.Day
+                                       CalendarUpDate = d.CalendarUpDate.Value.ToShortDateString(),
+                                       CalendarUpDay = d.CalendarUpDate.Value.Day,
+                                       CalendarUpDelta = d.CalendarUpDelta.Value,
+                                       CalendarUpPercentage = d.CalendarUpPercentage.Value
                                     };
                     if (UpSymbols.Count() > 0) {
                         upValues = UpSymbols.ToList();
@@ -51,7 +56,10 @@ namespace MagentaTrader.Controllers
                                     select new Models.Symbol
                                     {
                                         SymbolDescription = d.Symbol,
-                                        CalendarDownDay = d.CalendarDownDate.Value.Day
+                                        CalendarDownDate = d.CalendarDownDate.Value.ToShortDateString(),
+                                        CalendarDownDay = d.CalendarDownDate.Value.Day,
+                                        CalendarDownDelta = d.CalendarDownDelta.Value,
+                                        CalendarDownPercentage = d.CalendarDownPercentage.Value
                                     };
                     if (DownSymbols.Count() > 0)
                     {
@@ -82,6 +90,55 @@ namespace MagentaTrader.Controllers
             values.UpSymbols = upValues.ToList();
             values.DownSymbols = downValues.ToList();
             return values;
+        }
+
+        // GET api/SymbolCalendar/NYSE/10/1000000
+        [Authorize]
+        [Route("api/SymbolScreener/{Exchange}/{Price}/{Volume}")]
+        public List<Models.Symbol> GetSymbolScreener(string Exchange, decimal Price, decimal Volume)
+        {
+            var retryCounter = 0;
+
+            List<Models.Symbol> Values;
+
+            while (true)
+            {
+                try
+                {
+                    var Symbols = from d in db.MstSymbols
+                                  where (Exchange == "All" ? true : d.Exchange == Exchange) &&
+                                        (d.ClosePrice >= Price) &&
+                                        (d.Volume >= Volume)
+                                  select new Models.Symbol
+                                  {
+                                        SymbolDescription = d.Symbol,
+                                        Description = d.Description,
+                                        Exchange = d.Exchange
+                                  };
+                    if (Symbols.Count() > 0)
+                    {
+                        Values = Symbols.ToList();
+                    }
+                    else
+                    {
+                        Values = new List<Models.Symbol>();
+                    }
+
+                    break;
+                }
+                catch
+                {
+                    if (retryCounter == 3)
+                    {
+                        Values = new List<Models.Symbol>();
+                        break;
+                    }
+
+                    System.Threading.Thread.Sleep(1000);
+                    retryCounter++;
+                }
+            }
+            return Values;
         }
     }
 }

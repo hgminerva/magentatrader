@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Index";
 
-    var Version = "v.Beta.1.20150208";
+    var Version = "v.Beta.1.20150216";
 }
 
 <link href="/wijmo/styles/wijmo.min.css" rel="stylesheet" />
@@ -47,27 +47,42 @@
             <select id="Year" class="form-control">
                 <option value="2015">2015</option>
                 <option value="2016">2016</option>
+                <option value="2016">2017</option>
+                <option value="2016">2018</option>
+                <option value="2016">2019</option>
             </select>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-2">
             <select id="Delta" class="form-control">
-                <option value="100">Win/Loss (10-0) - 100%</option>
-                <option value="90">Win/Loss (9-1) - 90%</option>
-                <option value="80" selected>Win/Loss (8-2) - 80%</option>
-                <option value="70">Win/Loss (7-3) - 70%</option>
-                <option value="60">Win/Loss (6-4) - 60%</option>
-                <option value="50">Win/Loss (5-5) - 50%</option>
-                <option value="40">Win/Loss (4-6) - 40%</option>
-                <option value="30">Win/Loss (3-7) - 30%</option>
-                <option value="20">Win/Loss (2-8) - 20%</option>
-                <option value="10">Win/Loss (1-9) - 10%</option>
+                <option value="100">W/L (10-0) - 100%</option>
+                <option value="90">W/L (9-1) - 90%</option>
+                <option value="80" selected>W/L (8-2) - 80%</option>
+                <option value="70">W/L (7-3) - 70%</option>
+                <option value="60">W/L (6-4) - 60%</option>
+                <option value="50">W/L (5-5) - 50%</option>
+                <option value="40">W/L (4-6) - 40%</option>
+                <option value="30">W/L (3-7) - 30%</option>
+                <option value="20">W/L (2-8) - 20%</option>
+                <option value="10">W/L (1-9) - 10%</option>
             </select>
         </div>
         <div class="col-lg-2">
             <input type="text" class="form-control" id="Percentage" placeholder="Percentage - [8%]">
         </div>
         <div class="col-lg-2">
-            <button id="CmdGetCalendar" type="submit" class="btn btn-primary" onclick="CmdGetCalendar_OnClick()">Get Calendar</button>
+            <input type="text" class="form-control" id="ClosePrice" placeholder="Price - [US $10]">
+        </div>
+        <div class="col-lg-2">
+            <input type="text" class="form-control" id="Volume" placeholder="Volume - [1M]">
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-lg-2">
+            <button id="CmdGetCalendar" type="submit" class="btn btn-primary btn-block" onclick="CmdGetCalendar_OnClick()">Get Calendar</button>
+        </div>
+        <div class="col-lg-2">
+            <button id="CmdSaveXLS" type="submit" class="btn btn-primary btn-block" onclick="CmdSaveXLS_OnClick()">Save Calendar</button>
         </div>
     </div>
     <br />
@@ -91,16 +106,67 @@
     </div>
 </div>
 
+<div class="modal" id="DateDetail">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 id="DateTitle" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="CalendarDateGrid" class="grid"></div>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="btn-group col-md-7" id="naviagtionPageEvent">
+                        <button type="button" class="btn btn-default" id="btnMoveToFirstPageEvent">
+                            <span class="glyphicon glyphicon-fast-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnMoveToPreviousPageEvent">
+                            <span class="glyphicon glyphicon-step-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" disabled style="width:100px" id="btnCurrentPageEvent"></button>
+                        <button type="button" class="btn btn-default" id="btnMoveToNextPageEvent">
+                            <span class="glyphicon glyphicon-step-forward"></span>
+                        </button>
+                        <button type="button" class="btn btn-default" id="btnMoveToLastPageEvent">
+                            <span class="glyphicon glyphicon-fast-forward"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     var CalendarData;
     var CalendarGrid;
+    var CalendarDateData;
+    var CalendarDateGrid;
     var UpData = [];
     var DownData = [];
 
-    function GetUpData(Month, Year, Delta, Percentage) {
+    var btnFirstPageEvent;
+    var btnPreviousPageEvent;
+    var btnNextPageEvent;
+    var btnLastPageEvent;
+    var btnCurrentPageEvent;
+
+    function GetData(Month, Year, Delta, Percentage, Price, Volume) {
         $('#loading').modal('show');
         $.ajax({
-            url: '/api/SymbolCalendar/' + Month + '/' + Year + '/' + Delta + '/' + Percentage,
+            url: '/api/SymbolCalendar/' + Month + '/' + Year + '/' + Delta + '/' + Percentage + '/' + Price + '/' + Volume,
             type: 'GET',
             dataType: 'json',
             success: function (data) {
@@ -142,25 +208,25 @@
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j <= 6; j++) {
                 if (day <= monthLength && (i > 0 || j >= startingDay)) {
-                    var dateData = "<br><font face='Tahoma' size='1' color='green'>" + FormatUpSymbols(day) + "</font><font face='Tahoma' size='1' color='red'>" + FormatDownSymbols(day) + "</font><br>";
+                    var dateData = "<br><font face='Arial Narrow' size=1 color='green'>" + FormatUpSymbols(day) + "</font><font face='Arial Narrow' size=1 color='red'>" + FormatDownSymbols(day) + "</font><br>";
                     switch (j) {
                         case 0:
                             Sun = "<font color='red'>" + day.toString() + "</font>";
                             break;
                         case 1:
-                            Mon = day.toString() + dateData;
+                            Mon = "<a href='#' onclick='Date_OnClick(" + day.toString() + ")'>" + day.toString() + "</a>" + dateData;
                             break;
                         case 2:
-                            Tue = day.toString() + dateData;
+                            Tue = "<a href='#' onclick='Date_OnClick(" + day.toString() + ")'>" + day.toString() + "</a>" + dateData;
                             break;
                         case 3:
-                            Wed = day.toString() + dateData;
+                            Wed = "<a href='#' onclick='Date_OnClick(" + day.toString() + ")'>" + day.toString() + "</a>" + dateData;
                             break;
                         case 4:
-                            Thu = day.toString() + dateData;
+                            Thu = "<a href='#' onclick='Date_OnClick(" + day.toString() + ")'>" + day.toString() + "</a>" + dateData;
                             break;
                         case 5:
-                            Fri = day.toString() + dateData;
+                            Fri = "<a href='#' onclick='Date_OnClick(" + day.toString() + ")'>" + day.toString() + "</a>" + dateData;
                             break;
                         case 6:
                             Sat = day.toString();
@@ -278,7 +344,7 @@
         var results = "";
         for (var i = 0; i < UpData.length; i++) {
             if (parseInt(UpData[i].CalendarUpDay) == Day) {
-                results = results + " [<a  href='/Software?symbol=" + UpData[i].SymbolDescription + "' target='_blank'><font face='Tahoma' size='1' color='green'>" + UpData[i].SymbolDescription + "</font></a>] ";
+                results = results + " [<a  href='/Software?symbol=" + UpData[i].SymbolDescription + "' target='_blank'><font face='Arial Narrow' size=1 color='green'>" + UpData[i].SymbolDescription + "</font></a>] ";
             }
         }
         return results;
@@ -287,25 +353,248 @@
         var results = "";
         for (var i = 0; i < DownData.length; i++) {
             if (parseInt(DownData[i].CalendarDownDay) == Day) {
-                results = results + " [<a  href='/Software?symbol=" + DownData[i].SymbolDescription + "' target='_blank'><font face='Tahoma' size='1' color='red'>" + DownData[i].SymbolDescription + "</font></a>] ";
+                results = results + " [<a  href='/Software?symbol=" + DownData[i].SymbolDescription + "' target='_blank'><font face='Arial Narrow' size=1 color='red'>" + DownData[i].SymbolDescription + "</font></a>] ";
             }
         }
         return results;
     }
+    function UpdateNavigateButtonsEvent() {
+        if (CalendarDateData.pageSize <= 0) {
+            document.getElementById('naviagtionPageEvent').style.display = 'none';
+            return;
+        }
+        document.getElementById('naviagtionPageEvent').style.display = 'block';
+        if (CalendarDateData.pageIndex === 0) {
+            btnFirstPageEvent.setAttribute('disabled', 'disabled');
+            btnPreviousPageEvent.setAttribute('disabled', 'disabled');
+            btnNextPageEvent.removeAttribute('disabled');
+            btnLastPageEvent.removeAttribute('disabled');
+        }
+        else if (CalendarDateData.pageIndex === (CalendarDateData.pageCount - 1)) {
+            btnFirstPageEvent.removeAttribute('disabled');
+            btnPreviousPageEvent.removeAttribute('disabled');
+            btnLastPageEvent.setAttribute('disabled', 'disabled');
+            btnNextPageEvent.setAttribute('disabled', 'disabled');
+        }
+        else {
+            btnFirstPageEvent.removeAttribute('disabled');
+            btnPreviousPageEvent.removeAttribute('disabled');
+            btnNextPageEvent.removeAttribute('disabled');
+            btnLastPageEvent.removeAttribute('disabled');
+        }
+        btnCurrentPageEvent.innerHTML = (CalendarDateData.pageIndex + 1) + ' / ' + CalendarDateData.pageCount;
+    }
 
+    function Date_OnClick(Day) {
+        var $month = parseInt(document.getElementById('Month').value);
+        var $year = parseInt(document.getElementById('Year').value);
+
+        var CalendarDate = ($month+1) + "/" + Day + "/" + $year;
+
+        $("#DateTitle").text(CalendarDate);
+
+        var data = new wijmo.collections.ObservableArray();
+
+        for (i = 0; i < UpData.length; i++) {
+            if (parseInt(UpData[i].CalendarUpDay) == parseInt(Day)) {
+                data.push({
+                    Symbol: "<a  href='/Software?symbol=" + UpData[i].SymbolDescription + "' target='_blank'><font color='green'>" + UpData[i].SymbolDescription + "</font></a>",
+                    Particulars: "<font color='green'>" + "WIN/LOSS: " + (parseInt(UpData[i].CalendarUpDelta) / 10).toString() + "/" + (10 - (parseInt(UpData[i].CalendarUpDelta) / 10)).toString() + " " + UpData[i].CalendarUpPercentage.toFixed(2).toString() + "%" + "</font>"
+                });
+            }
+        }
+        for (i = 0; i < DownData.length; i++) {
+            if (parseInt(DownData[i].CalendarDownDay) == parseInt(Day)) {
+                data.push({
+                    Symbol: "<a  href='/Software?symbol=" + DownData[i].SymbolDescription + "' target='_blank'><font color='red'>" + DownData[i].SymbolDescription + "</font>",
+                    Particulars: "<font color='red'>" + "WIN/LOSS: " + (parseInt(DownData[i].CalendarDownDelta) / 10).toString() + "/" + (10 - (parseInt(DownData[i].CalendarDownDelta) / 10)).toString() + " " + (DownData[i].CalendarDownPercentage).toFixed(2).toString() + "%" + "</font>"
+                });
+            }
+        }
+
+        CalendarDateData = new wijmo.collections.CollectionView(data);
+        CalendarDateData.pageSize = 10;
+
+        CalendarDateGrid.dispose();
+        CalendarDateGrid = new wijmo.grid.FlexGrid('#CalendarDateGrid');
+        CalendarDateGrid.initialize({
+            columns: [
+                        {
+                            "header": "Symbol",
+                            "binding": "Symbol",
+                            "width": 100,
+                            "allowSorting": false,
+                            "isContentHtml": true,
+                            "wordWrap": true
+                        },
+                        {
+                            "header": "Particulars",
+                            "binding": "Particulars",
+                            "width": "*",
+                            "allowSorting": false,
+                            "isContentHtml": true,
+                            "wordWrap": true
+                        }
+            ],
+            autoGenerateColumns: false,
+            itemsSource: CalendarDateData,
+            isReadOnly: true,
+            selectionMode: wijmo.grid.SelectionMode.Row
+        });
+        CalendarDateGrid.trackChanges = true;
+
+        btnFirstPageEvent = document.getElementById('btnMoveToFirstPageEvent');
+        btnPreviousPageEvent = document.getElementById('btnMoveToPreviousPageEvent');
+        btnNextPageEvent = document.getElementById('btnMoveToNextPageEvent');
+        btnLastPageEvent = document.getElementById('btnMoveToLastPageEvent');
+        btnCurrentPageEvent = document.getElementById('btnCurrentPageEvent');
+
+        UpdateNavigateButtonsEvent();
+
+        btnFirstPageEvent.addEventListener('click', function () {
+            CalendarDateData.moveToFirstPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnPreviousPageEvent.addEventListener('click', function () {
+            CalendarDateData.moveToPreviousPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnNextPageEvent.addEventListener('click', function () {
+            CalendarDateData.moveToNextPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnLastPageEvent.addEventListener('click', function () {
+            CalendarDateData.moveToLastPage();
+            UpdateNavigateButtonsEvent();
+        });
+
+        $('#DateDetail').modal('show');
+
+    }
     function CmdGetCalendar_OnClick() {
         var $month = parseInt(document.getElementById('Month').value);
         var $year = parseInt(document.getElementById('Year').value);
         var $delta = parseInt(document.getElementById('Delta').value);
-        var $percentage = parseInt(document.getElementById('Percentage').value);
+        var $percentage = parseFloat(document.getElementById('Percentage').value);
+        var $closePrice = parseFloat(document.getElementById('ClosePrice').value);
+        var $volume = parseFloat(document.getElementById('Volume').value);
         
         $percentage = !$percentage ? 8 : $percentage;
+        $closePrice = !$closePrice ? 10 : $closePrice;
+        $volume = !$volume ? 1000000 : $volume;
 
-        GetUpData(($month+1), $year, $delta, $percentage);
+        GetData(($month + 1), $year, $delta, $percentage, $closePrice, $volume);
+    }
+    function CmdSaveXLS_OnClick() {
+        var CSV = '';
+        var up = [];
+        var down = [];
+
+        for (i = 0; i < UpData.length; i++) {
+            up.push({
+                Symbol: UpData[i].SymbolDescription,
+                Date: UpData[i].CalendarUpDate,
+                Win: (parseInt(UpData[i].CalendarUpDelta) / 10),
+                Percentage: UpData[i].CalendarUpPercentage.toFixed(2),
+                Particulars: "WIN/LOSS: " + (parseInt(UpData[i].CalendarUpDelta) / 10).toString() + "/" + (10 - (parseInt(UpData[i].CalendarUpDelta) / 10)).toString() + " " + UpData[i].CalendarUpPercentage.toFixed(2).toString() + "%" 
+            });
+        }
+        for (i = 0; i < DownData.length; i++) {
+            down.push({
+                Symbol: DownData[i].SymbolDescription,
+                Date: DownData[i].CalendarDownDate,
+                Win: (parseInt(DownData[i].CalendarDownDelta) / 10),
+                Percentage: DownData[i].CalendarDownPercentage.toFixed(2),
+                Particulars: "WIN/LOSS: " + (parseInt(DownData[i].CalendarDownDelta) / 10).toString() + "/" + (10 - (parseInt(DownData[i].CalendarDownDelta) / 10)).toString() + " " + (DownData[i].CalendarDownPercentage).toFixed(2).toString() + "%"
+            });
+        }
+
+        CSV += 'Up Data' + '\r\n\n';
+
+        var UpLabelRow = '';
+        for (var u in up[0]) {
+            UpLabelRow += u + ',';
+        }
+        UpLabelRow = UpLabelRow.slice(0, -1);
+        CSV += UpLabelRow + '\r\n';
+
+        for (var i = 0; i < up.length; i++) {
+            var UpRow = '';
+            for (var u in up[i]) {
+                UpRow += '"' + up[i][u] + '",';
+            }
+            UpRow.slice(0, UpRow.length - 1);
+            CSV += UpRow + '\r\n';
+        }
+
+        CSV += '\nDown Data' + '\r\n\n';
+
+        var DownLabelRow = '';
+        for (var d in down[0]) {
+            DownLabelRow += d + ',';
+        }
+        DownLabelRow = DownLabelRow.slice(0, -1);
+        CSV += DownLabelRow + '\r\n';
+
+        for (var i = 0; i < down.length; i++) {
+            var DownRow = '';
+            for (var d in down[i]) {
+                DownRow += '"' + down[i][d] + '",';
+            }
+            DownRow.slice(0, DownRow.length - 1);
+            CSV += DownRow + '\r\n';
+        }
+
+        if (CSV == '') {
+            alert("No data");
+            return;
+        }
+
+        // Create filename
+
+        var $month = parseInt(document.getElementById('Month').value);
+        var $year = parseInt(document.getElementById('Year').value);
+        var $delta = parseInt(document.getElementById('Delta').value);
+        var $percentage = parseInt(document.getElementById('Percentage').value);
+        var $closePrice = parseInt(document.getElementById('ClosePrice').value);
+        var $volume = parseInt(document.getElementById('Volume').value);
+        
+        $percentage = !$percentage ? 8 : $percentage;
+        $closePrice = !$closePrice ? 10 : $closePrice;
+        $volume = !$volume ? 1000000 : $volume;
+
+        var fileName = 'magenta_calendar_' + $month + '_' + $year + '_' + $delta + '_' + $percentage + '_' + $closePrice + '_' + $volume + '.CSV';
+
+        // Download via <a> link
+
+        var link = document.createElement("a");
+
+        if (link.download !== undefined) { 
+            var blob = new Blob([CSV], { type: 'text/csv;charset=utf-8;' });
+            var url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", fileName);
+            link.style = "visibility:hidden";
+        }
+
+        if (navigator.msSaveBlob) { 
+            link.addEventListener("click", function (event) {
+                var blob = new Blob([CSV], {
+                    "type": "text/csv;charset=utf-8;"
+                });
+                navigator.msSaveBlob(blob, fileName);
+            }, false);
+        }
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
     }
 
     $(document).ready(function () {
         CalendarGrid = new wijmo.grid.FlexGrid('#CalendarGrid');
+        CalendarDateGrid = new wijmo.grid.FlexGrid('#CalendarDateGrid');
     });
 </script>
 
