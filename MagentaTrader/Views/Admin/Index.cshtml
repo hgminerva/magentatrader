@@ -32,8 +32,23 @@
     </div>
 </nav>
 
-<div class="page-wrapper" style="margin-top:70px;margin-left:40px;">
+<div class="page-wrapper" style="margin-top:20px;margin-left:40px;">
     <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-3 col-md-4">
+                <div style="background-color: lightgray; font-size: 9px;">Last&nbsp;Updated:</div>
+                <div id="LastUpdate"><i class="fa fa-spinner fa-spin"></i></div>
+            </div>
+            <div class="col-xs-3 col-md-4">
+                <div>&nbsp;</div>
+            </div>
+            <div class="col-xs-3 col-md-4">
+                <div>&nbsp;</div>
+            </div>
+        </div>
+        <div class="row">
+            <hr size="1" />
+        </div>
         <div class="row">
             <div class="col-lg-3 col-md-4">
                 <div class="panel panel-primary">
@@ -43,7 +58,7 @@
                                 <i class="fa fa-user fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div class="huge">Count:[6]</div>
+                                <div class="huge" id="UsersCounts">&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
                                 <div>Registered Users</div>
                             </div>
                         </div>
@@ -65,7 +80,7 @@
                                 <i class="fa fa-tasks fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div class="huge">Count:[12]</div>
+                                <div class="huge" id="EventsCounts">&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
                                 <div>Events</div>
                             </div>
                         </div>
@@ -87,7 +102,7 @@
                                 <i class="fa fa-shopping-cart fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div class="huge">124</div>
+                                <div class="huge" id="SalesCounts">&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
                                 <div>Purchases</div>
                             </div>
                         </div>
@@ -111,7 +126,7 @@
                                 <i class="fa fa-support fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div class="huge">13</div>
+                                <div class="huge" id="ProductsCounts">&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
                                 <div>Products</div>
                             </div>
                         </div>
@@ -133,7 +148,7 @@
                                 <i class="fa fa-newspaper-o fa-5x"></i>
                             </div>
                             <div class="col-xs-9 text-right">
-                                <div class="huge">Count:[12]</div>
+                                <div class="huge" id="NewsCounts">&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
                                 <div>News</div>
                             </div>
                         </div>
@@ -152,3 +167,112 @@
     </div>
 </div>
 
+@*Module*@
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var uid = setInterval(myUsers, 10000);
+        var eid = setInterval(myEvents, 10000);
+        var sid = setInterval(mySales, 10000);
+        var pid = setInterval(myProducts, 10000);
+        var nid = setInterval(myNews, 10000);
+
+        myUsers();
+        myEvents();
+        mySales();
+        //myProducts();
+        //myNews();
+
+        function myUsers() {
+            $.ajax({
+                url: '/api/User',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("UsersCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("UsersCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
+        }
+
+        function myEvents() {
+            $.ajax({
+                url: '/api/Event',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("EventsCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("EventsCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
+        }
+
+        function mySales() {
+            $.ajax({
+                url: '/api/Sales',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("SalesCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("SalesCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
+        }
+
+        function myProducts() {
+            document.getElementById("ProductsCounts").innerHTML = "0";
+            mySync();
+        }
+
+        function myNews() {
+            document.getElementById("NewsCounts").innerHTML = "0";
+            mySync();
+        }
+
+        function mySync() {
+            document.getElementById("LastUpdate").innerHTML = "" + new Date().today() + " " + new Date().timeNow();
+        }
+
+    });
+
+    Date.prototype.today = function () {
+        return ((this.getDate() < 10) ? "0" : "") + this.getDate() + "/" + (((this.getMonth() + 1) < 10) ? "0" : "") + (this.getMonth() + 1) + "/" + this.getFullYear();
+    }
+
+    Date.prototype.timeNow = function () {
+        return ((this.getHours() < 10) ? "0" : "") + this.getHours() + ":" + ((this.getMinutes() < 10) ? "0" : "") + this.getMinutes() + ":" + ((this.getSeconds() < 10) ? "0" : "") + this.getSeconds();
+    }
+
+
+</script>
