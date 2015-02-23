@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Event";
 }
 
@@ -38,6 +37,7 @@
             <li role="presentation" class="active"><a href="~/Admin/Event" style="width:100px;">Event</a></li>
             <li role="presentation"><a href="~/Admin/Sales" style="width:100px;">Sales</a></li>
             <li role="presentation"><a href="~/Admin/Product" style="width:100px;">Products</a></li>
+            <li role="presentation"><a href="~/Admin/News" style="width:100px;">News</a></li>
             <li role="presentation"><a href="~/Admin/"><i class="fa fa-home"></i></a></li>
         </ul>
     </div>
@@ -294,7 +294,7 @@
                     }
                 });
 
-            // Edit
+                // Edit
             } else {
                 $.ajax({
                     type: "PUT",
@@ -448,6 +448,12 @@
                             "width": "4*"
                         },
                         {
+                            "header": "Type",
+                            "binding": "EventType",
+                            "allowSorting": false,
+                            "width": "4*"
+                        },
+                        {
                             "header": "URL",
                             "binding": "URL",
                             "allowSorting": false,
@@ -497,4 +503,3 @@
 
     });
 </script>
-

@@ -37,7 +37,725 @@
             <li role="presentation"><a href="~/Admin/Event" style="width:100px;">Event</a></li>
             <li role="presentation" class="active"><a href="~/Admin/Sales" style="width:100px;">Sales</a></li>
             <li role="presentation"><a href="~/Admin/Product" style="width:100px;">Products</a></li>
+            <li role="presentation"><a href="~/Admin/News" style="width:100px;">News</a></li>
             <li role="presentation"><a href="~/Admin/"><i class="fa fa-home"></i></a></li>
         </ul>
     </div>
 </nav>
+
+@*List*@
+<div id="DivSales">
+    <div class="container">
+
+        <div class="row">
+            <h2 class="section-heading">Sale</h2>
+            <div class="col-lg-11">
+                <h4>Sales</h4>
+            </div>
+            <div class="col-lg-1">
+                <button id="CmdAddSale" type="submit" class="btn btn-primary" onclick="CmdSaleAdd_OnClick()">Add</button>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="SalesGrid" class="grid"></div>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="btn-group col-md-7" id="naviagtionPageSale">
+                <button type="button" class="btn btn-default" id="btnMoveToFirstPageSale">
+                    <span class="glyphicon glyphicon-fast-backward"></span>
+                </button>
+                <button type="button" class="btn btn-default" id="btnMoveToPreviousPageSale">
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-default" disabled style="width:100px" id="btnCurrentPageSale"></button>
+                <button type="button" class="btn btn-default" id="btnMoveToNextPageSale">
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+                <button type="button" class="btn btn-default" id="btnMoveToLastPageSale">
+                    <span class="glyphicon glyphicon-fast-forward"></span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Edit Detail*@
+<div class="modal fade" id="SaleEdit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">Sale Edit</h4>
+            </div>
+            <div class="modal-body">
+                <dl class="dl-horizontal">
+                    <dt>Product Package</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_Id" type="hidden" />
+                        <div id="cboSaleEdit_ProductPackageId"></div>
+                        <input class="form-control" id="SaleEdit_ProductPackageId" type="hidden" readonly="true" />
+                    </dd>
+                    <dt>User Name</dt>
+                    <dd>
+                        <div id="cboSaleEdit_UserId"></div>
+                        <input class="form-control" id="SaleEdit_UserId" type="hidden" readonly="true" />
+                    </dd>
+                    <dt>Sales Number</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_SalesNumber" type="text" />
+                    </dd>
+                    <dt>Sales Date</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_SaleDate" type="text" />
+                        <input class="form-control" id="SaleEdit_SaleDate_Data" type="hidden" />
+                    </dd>
+                    <dt>Renewal Date</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_RenewalDate" type="text" />
+                        <input class="form-control" id="SaleEdit_RenewalDate_Data" type="hidden" />
+                    </dd>
+                    <dt>Expiry Date</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_ExpiryDate" type="text" />
+                        <input class="form-control" id="SaleEdit_ExpiryDate_Data" type="hidden" />
+                    </dd>
+                    <dt>Particulars</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_Particulars" type="text" />
+                    </dd>
+                    <dt>Quantity</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_Quantity" type="text" />
+                    </dd>
+                    <dt>Price</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_Price" type="text" />
+                    </dd>
+                    <dt>Amount</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_Amount" type="text" />
+                    </dd>
+                    <dt>Active</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_IsActive" type="checkbox" />
+                    </dd>
+                    <dt>Refunded</dt>
+                    <dd>
+                        <input class="form-control" id="SaleEdit_IsRefunded" type="checkbox" />
+                    </dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="CmdSaleEditOk" onclick="CmdSaleEditOk_OnClick()">
+                    Ok
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" id="CmdSaleEditCancel">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Loading*@
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="Loading..." aria-hidden="true">
+    <div class="modal-dialog" style="width: 220px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Loading...</h4>
+            </div>
+            <div class="modal-body">
+                <img src="/img/progress_bar.gif" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Module*@
+<script type="text/javascript">
+
+    var Sales;
+
+    var SalesGrid;
+
+    var SaleDate;
+    var SaleRenewalDate;
+    var SaleExpiryDate;
+
+    var ax;
+    var ac;;
+
+    var btnFirstPageSale;
+    var btnPreviousPageSale;
+    var btnNextPageSale;
+    var btnLastPageSale;
+    var btnCurrentPageSale;
+
+    var UserList;
+    var ProductPackageList;
+
+    function CmdSaleEdit_OnClick() {
+        Sales.editItem(Sales.currentItem);
+
+        $('#SaleEdit').modal('show');
+
+        var Sale = Sales.currentEditItem;
+        document.getElementById('SaleEdit_Id').value = Sale.Id !== null && typeof (Sale.Id) != 'undefined' ? wijmo.Globalize.format(Sale.Id) : '';
+        document.getElementById('SaleEdit_ProductPackageId').value = Sale.ProductPackageId ? Sale.ProductPackageId : '';
+        document.getElementById('SaleEdit_UserId').value = Sale.UserId ? Sale.UserId : '';
+        document.getElementById('SaleEdit_SalesNumber').value = Sale.SalesNumber ? Sale.SalesNumber : '';
+        document.getElementById('SaleEdit_SaleDate').value = Sale.SalesDate ? Sale.SalesDate : '';
+        document.getElementById('SaleEdit_SaleDate_Data').value = Sale.SalesDate ? Sale.SalesDate : '';
+        document.getElementById('SaleEdit_RenewalDate').value = Sale.RenewalDate ? Sale.RenewalDate : '';
+        document.getElementById('SaleEdit_RenewalDate_Data').value = Sale.RenewalDate ? Sale.RenewalDate : '';
+        document.getElementById('SaleEdit_ExpiryDate').value = Sale.ExpiryDate ? Sale.ExpiryDate : '';
+        document.getElementById('SaleEdit_ExpiryDate_Data').value = Sale.ExpiryDate ? Sale.ExpiryDate : '';
+        document.getElementById('SaleEdit_Particulars').value = Sale.Particulars ? Sale.Particulars : '';
+        document.getElementById('SaleEdit_Quantity').value = Sale.Quantity ? Sale.Quantity : '';
+        document.getElementById('SaleEdit_Price').value = Sale.Price ? Sale.Price : '';
+        document.getElementById('SaleEdit_Amount').value = Sale.Amount ? Sale.Amount : '';
+        document.getElementById('SaleEdit_IsActive').checked = Sale.IsActive;
+        document.getElementById('SaleEdit_IsRefunded').checked = Sale.IsRefunded;
+
+
+        SaleDate.dispose();
+        SaleDate = new wijmo.input.InputDate('#SaleEdit_SaleDate', {
+            format: 'M/d/yyyy',
+            value: new Date(Sale.SaleDate),
+            onValueChanged: function () {
+                document.getElementById('SaleEdit_SaleDate_Data').value = this.value.toString("M/d/yyyy");
+            }
+        });
+
+        RenewalDate.dispose();
+        RenewalDate = new wijmo.input.InputDate('#SaleEdit_RenewalDate', {
+            format: 'M/d/yyyy',
+            value: new Date(Sale.RenewalDate),
+            onValueChanged: function () {
+                document.getElementById('SaleEdit_RenewalDate_Data').value = this.value.toString("M/d/yyyy");
+            }
+        });
+
+        ExpiryDate.dispose();
+        ExpiryDate = new wijmo.input.InputDate('#SaleEdit_ExpiryDate', {
+            format: 'M/d/yyyy',
+            value: new Date(Sale.ExpiryDate),
+            onValueChanged: function () {
+                document.getElementById('SaleEdit_ExpiryDate_Data').value = this.value.toString("M/d/yyyy");
+            }
+        });
+
+        ac.dispose();
+        ac = new wijmo.input.AutoComplete('#cboSaleEdit_UserId', {
+            itemsSource: getUsersList(UserList.items),
+            selectedValue: Sale.FirstName + " " + Sale.LastName,
+            onSelectedIndexChanged: function () {
+                $("#SaleEdit_UserId").val(UserList.items[this.selectedIndex].Id);
+            }
+        });
+        ax.dispose();
+        ax = new wijmo.input.AutoComplete('#cboSaleEdit_ProductPackageId', {
+            itemsSource: getProductPackageList(ProductPackageList.items),
+            selectedValue: Sale.ProductPackage,
+            onSelectedIndexChanged: function () {
+                $("#SaleEdit_ProductPackageId").val(ProductPackageList.items[this.selectedIndex].Id);
+            }
+        });
+    }
+    function CmdSaleAdd_OnClick() {
+        $('#SaleEdit').modal('show');
+
+        var CurrentDate = new Date();
+
+        document.getElementById('SaleEdit_Id').value = 0;
+        document.getElementById('SaleEdit_ProductPackageId').value = '';
+        document.getElementById('SaleEdit_UserId').value = '';
+        document.getElementById('SaleEdit_SalesNumber').value = '';
+        document.getElementById('SaleEdit_SaleDate').value = '';
+        document.getElementById('SaleEdit_SaleDate_Data').value = '';
+        document.getElementById('SaleEdit_RenewalDate').value = '';
+        document.getElementById('SaleEdit_RenewalDate_Data').value = '';
+        document.getElementById('SaleEdit_ExpiryDate').value = '';
+        document.getElementById('SaleEdit_ExpiryDate_Data').value = '';
+        document.getElementById('SaleEdit_Particulars').value = '';
+        document.getElementById('SaleEdit_Quantity').value = '';
+        document.getElementById('SaleEdit_Price').value = '';
+        document.getElementById('SaleEdit_Amount').value = '';
+        document.getElementById('SaleEdit_IsActive').checked = false;
+        document.getElementById('SaleEdit_IsRefunded').checked = false;
+
+
+        SaleDate.dispose();
+        SaleDate = new wijmo.input.InputDate('#SaleEdit_SaleDate', {
+            format: 'M/d/yyyy',
+            value: new Date(Sales.SaleDate),
+            onValueChanged: function () {
+                document.getElementById('SaleEdit_SaleDate_Data').value = this.value.toString("M/d/yyyy");
+            }
+        });
+
+        RenewalDate.dispose();
+        RenewalDate = new wijmo.input.InputDate('#SaleEdit_RenewalDate', {
+            format: 'M/d/yyyy',
+            value: new Date(Sales.RenewalDate),
+            onValueChanged: function () {
+                document.getElementById('SaleEdit_RenewalDate_Data').value = this.value.toString("M/d/yyyy");
+            }
+        });
+
+        ExpiryDate.dispose();
+        ExpiryDate = new wijmo.input.InputDate('#SaleEdit_ExpiryDate', {
+            format: 'M/d/yyyy',
+            value: new Date(Sales.ExpiryDate),
+            onValueChanged: function () {
+                document.getElementById('SaleEdit_ExpiryDate_Data').value = this.value.toString("M/d/yyyy");
+            }
+        });
+
+        ac.dispose();
+        ac = new wijmo.input.AutoComplete('#cboSaleEdit_UserId', {
+            itemsSource: getUsersList(UserList.items),
+            placeholder: 'Select User ',
+            onSelectedIndexChanged: function () {
+
+                $("#SaleEdit_UserId").val(UserList.items[this.selectedIndex].Id);
+            }
+        });
+        ax.dispose();
+        ax = new wijmo.input.AutoComplete('#cboSaleEdit_ProductPackageId', {
+            itemsSource: getProductPackageList(ProductPackageList.items),
+            placeholder: 'Select Product Package ',
+            onSelectedIndexChanged: function () {
+
+                $("#SaleEdit_ProductPackageId").val(ProductPackageList.items[this.selectedIndex].Id);
+            }
+        });
+
+    }
+    function CmdSaleDelete_OnClick() {
+        Sales.editItem(Sales.currentItem);
+
+        var Id = Sales.currentEditItem.Id;
+        var SalesNumber = Sales.currentEditItem.SalesNumber;
+
+        if (confirm("Delete Sales Number: " + SalesNumber + "?") == true) {
+            $.ajax({
+                type: "DELETE",
+                url: "/api/DeleteSales/" + Id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                statusCode: {
+                    200: function () {
+                        window.location.reload();
+                    },
+                    404: function () {
+                        alert("Not found");
+                    },
+                    400: function () {
+                        alert("Bad request");
+                    }
+                }
+            });
+        }
+    }
+    function CmdSaleEditOk_OnClick() {
+        if (confirm("Save Sales?") == true) {
+
+            var Sale = new Object();
+
+            Sale.Id = document.getElementById('SaleEdit_Id').value;
+            Sale.ProductPackageId = document.getElementById('SaleEdit_ProductPackageId').value;
+            Sale.UserId = document.getElementById('SaleEdit_UserId').value;
+            Sale.SalesNumber = document.getElementById('SaleEdit_SalesNumber').value;
+            Sale.SalesDate = document.getElementById('SaleEdit_SaleDate_Data').value;
+            Sale.RenewalDate = document.getElementById('SaleEdit_RenewalDate_Data').value;
+            Sale.ExpiryDate = document.getElementById('SaleEdit_ExpiryDate_Data').value;
+            Sale.Particulars = document.getElementById('SaleEdit_Particulars').value;
+            Sale.Quantity = document.getElementById('SaleEdit_Quantity').value;
+            Sale.Price = document.getElementById('SaleEdit_Price').value;
+            Sale.Amount = document.getElementById('SaleEdit_Amount').value;
+            Sale.IsActive = document.getElementById('SaleEdit_IsActive').checked;
+            Sale.IsRefunded = document.getElementById('SaleEdit_IsRefunded').checked;
+
+
+            var data = JSON.stringify(Sale)
+            // Add New
+            if (Sale.Id == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/AddSales",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: data,
+                    success: function (id) {
+                        if (id > 0) {
+                            window.location.reload();
+                        } else {
+                            alert("Not added");
+                        }
+                    }
+                });
+
+                // Edit
+            } else {
+                $.ajax({
+                    type: "PUT",
+                    url: "/api/UpdateSales/" + Sale.Id,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: data,
+                    statusCode: {
+                        200: function () {
+                            window.location.reload();
+                        },
+                        404: function () {
+                            alert("Not found");
+                        },
+                        400: function () {
+                            alert("Bad request");
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function GetSales() {
+        var sales = new wijmo.collections.ObservableArray();
+        $('#loading').modal('show');
+        $.ajax({
+            url: '/api/Sales',
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (Results) {
+                $('#loading').modal('hide');
+                if (Results.length > 0) {
+                    for (i = 0; i < Results.length; i++) {
+                        sales.push({
+                            EditId: "<button class='btn btn-primary btn-xs' data-toggle='modal' id='CmdEditSale' onclick='CmdSaleEdit_OnClick()'>Edit</button>",
+                            DeleteId: "<button class='btn btn-danger btn-xs' data-toggle='modal' id='CmdDeleteSale' onclick='CmdSaleDelete_OnClick()'>Delete</button>",
+                            Id: Results[i]["Id"],
+                            ProductPackageId: Results[i]["ProductPackageId"],
+                            ProductPackage: Results[i]["ProductPackage"],
+                            UserId: Results[i]["UserId"],
+                            User: Results[i]["User"],
+                            FirstName: Results[i]["FirstName"],
+                            LastName: Results[i]["LastName"],
+                            SalesNumber: Results[i]["SalesNumber"],
+                            SalesDate: Results[i]["SalesDate"],
+                            RenewalDate: Results[i]["RenewalDate"],
+                            ExpiryDate: Results[i]["ExpiryDate"],
+                            Particulars: Results[i]["Particulars"],
+                            Quantity: Results[i]["Quantity"],
+                            Price: Results[i]["Price"],
+                            Amount: Results[i]["Amount"],
+                            IsActive: Results[i]["IsActive"],
+                            IsRefunded: Results[i]["IsRefunded"]
+                        });
+                    }
+                } else {
+                    alert("No data.");
+                }
+            }
+        }).fail(
+            function (xhr, textStatus, err) {
+                alert(err);
+            }
+        );
+        return sales;
+    }
+    function getUsersInfo(id) {
+        var retItem;
+
+        for (var i = 0; i < UserList.items.length; i++) {
+            if (UserList.items[i].Id == id)
+                retItem = UserList.items[i].FirstName + " " + UserList.items[i].LastName;
+        }
+        return retItem;
+    }
+    function getProductPackageInfo(id) {
+        var retItem;
+
+        for (var i = 0; i < ProductPackageList.items.length; i++) {
+            if (ProductPackageList.items[i].Id == id)
+                retItem = ProductPackageList.items[i].ProductPackageDescription;
+        }
+
+        return retItem;
+    }
+    function getUsersList(items) {
+        var retList = new Array();
+
+        for (var i = 0; i < items.length; i++) {
+            retList.push(items[i].FirstName + " " + items[i].LastName);
+        }
+
+        return retList;
+    }
+    function getProductPackageList(items) {
+
+        var retList = new Array();
+
+        for (var i = 0; i < items.length; i++) {
+            retList.push(items[i].ProductPackageDescription);
+        }
+
+        return retList;
+    }
+    function getUsers() {
+        var users = new wijmo.collections.ObservableArray();
+        $.ajax({
+            url: '/api/User',
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (Results) {
+                if (Results.length > 0) {
+                    for (i = 0; i < Results.length; i++) {
+                        users.push({
+                            Id: Results[i]["Id"],
+                            UserName: Results[i]["UserName"],
+                            FirstName: Results[i]["FirstName"],
+                            LastName: Results[i]["LastName"],
+                            EmailAddress: Results[i]["EmailAddress"],
+                            PhoneNumber: Results[i]["PhoneNumber"]
+                        });
+                    }
+                } else {
+                    // alert("No data.");
+                }
+            }
+        }).fail(
+            function (xhr, textStatus, err) {
+                alert(err);
+            }
+        );
+        return users;
+    }
+    function getProductPackage() {
+        var productPackage = new wijmo.collections.ObservableArray();
+        $.ajax({
+            url: '/api/ProductPackage',
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (Results) {
+                if (Results.length > 0) {
+                    for (i = 0; i < Results.length; i++) {
+                        productPackage.push({
+                            Id: Results[i]["Id"],
+                            ProductPackageDescription: Results[i]["ProductPackageDescription"]
+                        });
+                    }
+                } else {
+                    // alert("No data.");
+                }
+            }
+        }).fail(
+            function (xhr, textStatus, err) {
+                alert(err);
+            }
+        );
+        return productPackage;
+    }
+
+    function UpdateNavigateButtonsSale() {
+        if (Sales.pageSize <= 0) {
+            document.getElementById('naviagtionPageSale').style.display = 'none';
+            return;
+        }
+        document.getElementById('naviagtionPageSale').style.display = 'block';
+        if (Sales.pageIndex === 0) {
+            btnFirstPageSale.setAttribute('disabled', 'disabled');
+            btnPreviousPageSale.setAttribute('disabled', 'disabled');
+            btnNextPageSale.removeAttribute('disabled');
+            btnLastPageSale.removeAttribute('disabled');
+        }
+        else if (Sales.pageIndex === (Sales.pageCount - 1)) {
+            btnFirstPageSale.removeAttribute('disabled');
+            btnPreviousPageSale.removeAttribute('disabled');
+            btnLastPageSale.setAttribute('disabled', 'disabled');
+            btnNextPageSale.setAttribute('disabled', 'disabled');
+        }
+        else {
+            btnFirstPageSale.removeAttribute('disabled');
+            btnPreviousPageSale.removeAttribute('disabled');
+            btnNextPageSale.removeAttribute('disabled');
+            btnLastPageSale.removeAttribute('disabled');
+        }
+        btnCurrentPageSale.innerHTML = (Sales.pageIndex + 1) + ' / ' + Sales.pageCount;
+    }
+
+    $(document).ready(function () {
+        btnFirstPageSale = document.getElementById('btnMoveToFirstPageSale');
+        btnPreviousPageSale = document.getElementById('btnMoveToPreviousPageSale');
+        btnNextPageSale = document.getElementById('btnMoveToNextPageSale');
+        btnLastPageSale = document.getElementById('btnMoveToLastPageSale');
+        btnCurrentPageSale = document.getElementById('btnCurrentPageSale');
+
+        Sales = new wijmo.collections.CollectionView(GetSales());
+
+        UserList = new wijmo.collections.CollectionView(getUsers());
+        ProductPackageList = new wijmo.collections.CollectionView(getProductPackage());
+
+        SalesGrid = new wijmo.grid.FlexGrid('#SalesGrid');
+
+
+        SalesGrid.initialize({
+            columns: [
+                {
+                    "header": "Edit",
+                    "binding": "EditId",
+                    "width": 60,
+                    "allowSorting": false,
+                    "isContentHtml": true
+                },
+                {
+                    "header": "Delete",
+                    "binding": "DeleteId",
+                    "width": 60,
+                    "allowSorting": false,
+                    "isContentHtml": true
+                },
+                {
+                    "header": "Sales Number",
+                    "binding": "SalesNumber",
+                    "allowSorting": false,
+                    "width": "4*"
+                },
+                 {
+                     "header": "Username",
+                     "binding": "User",
+                     "allowSorting": false,
+                     "width": "4*"
+                 },
+                {
+                    "header": "Product Package",
+                    "binding": "ProductPackage",
+                    "allowSorting": false,
+                    "width": "4*"
+                },
+                {
+                    "header": "Sale Date",
+                    "binding": "SalesDate",
+                    "allowSorting": false,
+                    "width": 100
+                },
+                {
+                    "header": "Renewal Date",
+                    "binding": "RenewalDate",
+                    "allowSorting": false,
+                    "width": 100
+                },
+                {
+                    "header": "Expiry Date",
+                    "binding": "ExpiryDate",
+                    "allowSorting": false,
+                    "width": 100
+                },
+                 {
+                     "header": "Particulars",
+                     "binding": "Particulars",
+                     "allowSorting": false,
+                     "width": "4*"
+                 },
+
+                {
+                    "header": "Quantity",
+                    "binding": "Quantity",
+                    "allowSorting": false,
+                    "width": "4*"
+                },
+                {
+                    "header": "Price",
+                    "binding": "Price",
+                    "allowSorting": false,
+                    "width": "4*"
+                },
+                 {
+                     "header": "Amount",
+                     "binding": "Amount",
+                     "allowSorting": false,
+                     "width": "4*"
+                 }
+            ],
+            autoGenerateColumns: false,
+            itemsSource: Sales,
+            isReadOnly: true,
+            selectionMode: wijmo.grid.SelectionMode.Row
+        });
+
+        SalesGrid.trackChanges = true;
+
+        Sales.pageSize = 15;
+
+        SaleDate = new wijmo.input.InputDate('#SaleEdit_SaleDate', {
+            format: 'M/d/yyyy',
+            value: new Date()
+        });
+
+        RenewalDate = new wijmo.input.InputDate('#SaleEdit_RenewalDate', {
+            format: 'M/d/yyyy',
+            value: new Date()
+        });
+
+        ExpiryDate = new wijmo.input.InputDate('#SaleEdit_ExpiryDate', {
+            format: 'M/d/yyyy',
+            value: new Date()
+        });
+
+        ac = new wijmo.input.AutoComplete('#cboSaleEdit_UserId', {
+            itemsSource: getUsersList(UserList.items),
+            placeholder: 'Select User ',
+            onSelectedIndexChanged: function (e, data) {
+                $("#SaleEdit_UserId").val(UserList.items[this.selectedIndex].Id);
+            }
+        });
+
+        ax = new wijmo.input.AutoComplete('#cboSaleEdit_ProductPackageId', {
+            itemsSource: getProductPackageList(ProductPackageList.items),
+            placeholder: 'Select Product Package ',
+            onSelectedIndexChanged: function (e, data) {
+                $("#SaleEdit_ProductPackageId").val(ProductPackageList.items[this.selectedIndex].Id);
+            }
+        });
+
+
+        UpdateNavigateButtonsSale();
+
+        // Page Button Events
+        btnFirstPageSale.addEventListener('click', function () {
+            Sales.moveToFirstPage();
+            UpdateNavigateButtonsSale();
+        });
+        btnPreviousPageSale.addEventListener('click', function () {
+            Sales.moveToPreviousPage();
+            UpdateNavigateButtonsSale();
+        });
+        btnNextPageSale.addEventListener('click', function () {
+            Sales.moveToNextPage();
+            UpdateNavigateButtonsSale();
+        });
+        btnLastPageSale.addEventListener('click', function () {
+            Sales.moveToLastPage();
+            UpdateNavigateButtonsSale();
+        });
+
+    });
+</script>
+

@@ -12,6 +12,8 @@ namespace MagentaTrader.Models
         public string ProductPackage { get; set; }
         public int UserId { get; set; }
         public string User { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string SalesNumber { get; set; }
         public string SalesDate { get; set; }
         public string RenewalDate { get; set; }
