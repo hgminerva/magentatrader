@@ -29,7 +29,7 @@ namespace MagentaTrader.Controllers
                                {
                                     Id = d.Id,
                                     NewsDate = d.NewsDate.ToShortDateString(),
-                                    News = d.News,
+                                    NewsDescription = d.News,
                                     Particulars = d.Particulars
                                };
                     if (News.Count() > 0)
@@ -73,7 +73,7 @@ namespace MagentaTrader.Controllers
 
 
                 NewNews.NewsDate = NewsDate.Value;
-                NewNews.News = value.News;
+                NewNews.News = value.NewsDescription;
                 NewNews.Particulars = value.Particulars;
 
                 db.MstNews.InsertOnSubmit(NewNews);
@@ -105,7 +105,7 @@ namespace MagentaTrader.Controllers
                                                                         Convert.ToDateTime(value.NewsDate).Day));
 
                     UpdatedNews.NewsDate = NewsDate.Value;
-                    UpdatedNews.News = value.News;
+                    UpdatedNews.News = value.NewsDescription;
                     UpdatedNews.Particulars = value.Particulars;
 
                     db.SubmitChanges();

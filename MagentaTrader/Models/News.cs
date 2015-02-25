@@ -9,7 +9,7 @@ namespace MagentaTrader.Models
     {
         public int Id { get; set; }
         public string NewsDate { get; set; }
-        public string News { get; set; }
+        public string NewsDescription { get; set; }
         public string Particulars { get; set; }
     }
 }
