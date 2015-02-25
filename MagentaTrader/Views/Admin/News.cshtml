@@ -38,6 +38,380 @@
             <li role="presentation"><a href="~/Admin/Sales" style="width:100px;">Sales</a></li>
             <li role="presentation"><a href="~/Admin/Product" style="width:100px;">Products</a></li>
             <li role="presentation" class="active"><a href="~/Admin/News" style="width:100px;">News</a></li>
+            <li role="presentation"><a href="~/Admin/"><i class="fa fa-home"></i></a></li>
         </ul>
     </div>
 </nav>
+
+@*List*@
+<div id="DivNews">
+    <div class="container">
+
+        <div class="row">
+            <h2 class="section-heading">News</h2>
+            <div class="col-lg-11">
+                <h4>News</h4>
+            </div>
+            <div class="col-lg-1">
+                <button id="CmdAddNews" type="submit" class="btn btn-primary" onclick="CmdNewsAdd_OnClick()">Add</button>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="NewsGrid" class="grid"></div>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="btn-group col-md-7" id="naviagtionPageNews">
+                <button type="button" class="btn btn-default" id="btnMoveToFirstPageNews">
+                    <span class="glyphicon glyphicon-fast-backward"></span>
+                </button>
+                <button type="button" class="btn btn-default" id="btnMoveToPreviousPageNews">
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-default" disabled style="width:100px" id="btnCurrentPageNews"></button>
+                <button type="button" class="btn btn-default" id="btnMoveToNextPageNews">
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+                <button type="button" class="btn btn-default" id="btnMoveToLastPageNews">
+                    <span class="glyphicon glyphicon-fast-forward"></span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Edit Detail*@
+<div class="modal fade" id="NewsEdit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">News Edit</h4>
+            </div>
+            <div class="modal-body">
+                <dl class="dl-horizontal">
+                    <dt>Date</dt>
+                    <dd>
+                        <input class="form-control" id="NewsEdit_Id" type="hidden" />
+                        <input class="form-control" id="NewsEdit_NewsDate" type="text" />
+                        <input class="form-control" id="NewsEdit_NewsDate_Data" type="hidden" />
+                    </dd>
+                    <dt>News</dt>
+                    <dd>
+                        <input class="form-control" id="NewsEdit_NewsNews" type="text" />
+                    </dd>
+                    <dt>Active</dt>
+                    <dd>
+                        <input class="form-control" id="NewsEdit_IsActive" type="checkbox" />
+                    </dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="CmdNewsEditOk" onclick="CmdNewsEditOk_OnClick()">
+                    Ok
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" id="CmdNewsEditCancel">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Loading*@
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="Loading..." aria-hidden="true">
+    <div class="modal-dialog" style="width: 220px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Loading...</h4>
+            </div>
+            <div class="modal-body">
+                <img src="/img/progress_bar.gif" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Module*@
+<script type="text/javascript">
+    var News;
+
+    var NewsGrid;
+
+    var NewsDate;
+
+    var btnFirstPageNews;
+    var btnPreviousPageNews;
+    var btnNextPageNews;
+    var btnLastPageNews;
+    var btnCurrentPageNews;
+
+    function CmdNewsEdit_OnClick() {
+        News.editItem(News.currentItem);
+
+        $('#NewsEdit').modal('show');
+
+        var Newss = News.currentEditItem;
+        document.getElementById('NewsEdit_Id').value = Newss.Id !== null && typeof (Newss.Id) != 'undefined' ? wijmo.Globalize.format(Newss.Id) : '';
+        document.getElementById('NewsEdit_NewsDate').value = Newss.EventDate ? Newss.NewsDate : '';
+        document.getElementById('NewsEdit_NewsDate_Data').value = Newss.NewsDate ? Newss.NewsDate : '';
+        document.getElementById('NewsEdit_NewsNews').value = Newss.News ? Newss.News : '';
+        document.getElementById('NewsEdit_IsActive').checked = Newss.IsActive;
+
+        NewsDate.dispose();
+        NewsDate = new wijmo.input.InputDate('#NewsEdit_NewsDate', {
+            format: 'M/d/yyyy',
+            value: new Date(Newss.NewsDate),
+            onValueChanged: function () {
+                document.getElementById('NewsEdit_NewsDate_Data').value = this.value.toString("M/d/yyyy");
+            }
+        });
+    }
+    function CmdNewsAdd_OnClick() {
+        $('#NewsEdit').modal('show');
+
+        var CurrentDate = new Date();
+
+        document.getElementById('NewsEdit_Id').value = 0;
+        document.getElementById('NewsEdit_NewsDate').value = CurrentDate.toString("M/d/yyyy");
+        document.getElementById('NewsEdit_NewsDate_Data').value = CurrentDate.toString("M/d/yyyy");
+        document.getElementById('NewsEdit_NewsNews').value = "";
+        document.getElementById('NewsEdit_IsActive').checked = false;
+
+        NewsDate.dispose();
+        NewsDate = new wijmo.input.InputDate('#NewsEdit_NewsDate', {
+            format: 'M/d/yyyy',
+            value: new Date(News.NewsDate),
+            onValueChanged: function () {
+                document.getElementById('NewsEdit_NewsDate_Data').value = this.value.toString("M/d/yyyy");
+            }
+        });
+    }
+    function CmdNewsDelete_OnClick() {
+        News.editItem(News.currentItem);
+
+        var Id = News.currentEditItem.Id;
+        var news = News.currentEditItem.News;
+
+        if (confirm("Delete " + news + "?") == true) {
+            $.ajax({
+                type: "DELETE",
+                url: "/api/DeleteNews/" + Id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                statusCode: {
+                    200: function () {
+                        window.location.reload();
+                    },
+                    404: function () {
+                        alert("Not found");
+                    },
+                    400: function () {
+                        alert("Bad request");
+                    }
+                }
+            });
+        }
+    }
+    function CmdNewsEditOk_OnClick() {
+        if (confirm("Save Event?") == true) {
+
+            var Newss = new Object();
+
+            Newss.Id = document.getElementById('NewsEdit_Id').value;
+            Newss.EventDate = document.getElementById('NewsEdit_NewsDate_Data').value;
+            Newss.NewsNews = document.getElementById('NewsEdit_NewsNews').value;
+            Newss.IsActive = document.getElementById('NewsEdit_IsActive').checked;
+
+            var data = JSON.stringify(Newss);
+
+            // Add New
+            if (News.Id == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/AddNews",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: data,
+                    success: function (id) {
+                        if (id > 0) {
+                            window.location.reload();
+                        } else {
+                            alert("Not added");
+                        }
+                    }
+                });
+
+                // Edit
+            } else {
+                $.ajax({
+                    type: "PUT",
+                    url: "/api/UpdateNews/" + Newss.Id,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: data,
+                    statusCode: {
+                        200: function () {
+                            window.location.reload();
+                        },
+                        404: function () {
+                            alert("Not found");
+                        },
+                        400: function () {
+                            alert("Bad request");
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function GetNews() {
+        var news = new wijmo.collections.ObservableArray();
+        $('#loading').modal('show');
+        $.ajax({
+            url: '/api/News',
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (Results) {
+                $('#loading').modal('hide');
+                if (Results.length > 0) {
+                    for (i = 0; i < Results.length; i++) {
+                        events.push({
+                            EditId: "<button class='btn btn-primary btn-xs' data-toggle='modal' id='CmdEditNews' onclick='CmdNewsEdit_OnClick()'>Edit</button>",
+                            DeleteId: "<button class='btn btn-danger btn-xs' data-toggle='modal' id='CmdDeleteNews' onclick='CmdNewsDelete_OnClick()'>Delete</button>",
+                            Id: Results[i]["Id"],
+                            NewsDate: Results[i]["NewsDate"],
+                            News: Results[i]["News"],
+                            IsActive: Results[i]["IsActive"]
+                        });
+                    }
+                } else {
+                    alert("No data.");
+                }
+            }
+        }).fail(
+            function (xhr, textStatus, err) {
+                alert(err);
+            }
+        );
+        return news;
+    }
+
+    function UpdateNavigateButtonsNews() {
+        if (News.pageSize <= 0) {
+            document.getElementById('naviagtionPageNews').style.display = 'none';
+            return;
+        }
+        document.getElementById('naviagtionPageNews').style.display = 'block';
+        if (News.pageIndex === 0) {
+            btnFirstPageNews.setAttribute('disabled', 'disabled');
+            btnPreviousPageNews.setAttribute('disabled', 'disabled');
+            btnNextPageNews.removeAttribute('disabled');
+            btnLastPageNews.removeAttribute('disabled');
+        }
+        else if (News.pageIndex === (News.pageCount - 1)) {
+            btnFirstPageNews.removeAttribute('disabled');
+            btnPreviousPageNews.removeAttribute('disabled');
+            btnLastPageNews.setAttribute('disabled', 'disabled');
+            btnNextPageNews.setAttribute('disabled', 'disabled');
+        }
+        else {
+            btnFirstPageNews.removeAttribute('disabled');
+            btnPreviousPageNews.removeAttribute('disabled');
+            btnNextPageNews.removeAttribute('disabled');
+            btnLastPageNews.removeAttribute('disabled');
+        }
+        btnCurrentPageNews.innerHTML = (News.pageIndex + 1) + ' / ' + News.pageCount;
+    }
+
+    $(document).ready(function () {
+        btnFirstPageNews = document.getElementById('btnMoveToFirstPageNews');
+        btnPreviousPageNews = document.getElementById('btnMoveToPreviousPageNews');
+        btnNextPageNews = document.getElementById('btnMoveToNextPageNews');
+        btnLastPageNews = document.getElementById('btnMoveToLastPageNews');
+        btnCurrentPageNews = document.getElementById('btnCurrentPageNews');
+
+        News = new wijmo.collections.CollectionView(GetNews());
+
+        NewsGrid = new wijmo.grid.FlexGrid('#NewsGrid');
+
+        NewsGrid.initialize({
+            columns: [
+                        {
+                            "header": "Edit",
+                            "binding": "EditId",
+                            "width": 60,
+                            "allowSorting": false,
+                            "isContentHtml": true
+                        },
+                        {
+                            "header": "Delete",
+                            "binding": "DeleteId",
+                            "width": 60,
+                            "allowSorting": false,
+                            "isContentHtml": true
+                        },
+                        {
+                            "header": "Date",
+                            "binding": "NewsDate",
+                            "allowSorting": false,
+                            "width": 100
+                        },
+                        {
+                            "header": "News",
+                            "binding": "News",
+                            "allowSorting": false,
+                            "width": "4*"
+                        }
+            ],
+            autoGenerateColumns: false,
+            itemsSource: News,
+            isReadOnly: true,
+            selectionMode: wijmo.grid.SelectionMode.Row
+        });
+
+        NewsGrid.trackChanges = true;
+
+        News.pageSize = 15;
+
+        NewsDate = new wijmo.input.InputDate('#NewsEdit_NewsDate', {
+            format: 'M/d/yyyy',
+            value: new Date()
+        });
+
+        UpdateNavigateButtonsNews();
+
+        // Page Button News
+        btnFirstPageNews.addEventListener('click', function () {
+            News.moveToFirstPage();
+            UpdateNavigateButtonsNews();
+        });
+        btnPreviousPageNews.addEventListener('click', function () {
+            News.moveToPreviousPage();
+            UpdateNavigateButtonsNews();
+        });
+        btnNextPageNews.addEventListener('click', function () {
+            News.moveToNextPage();
+            UpdateNavigateButtonsNews();
+        });
+        btnLastPageNews.addEventListener('click', function () {
+            News.moveToLastPage();
+            UpdateNavigateButtonsNews();
+        });
+
+    });
+</script>
+

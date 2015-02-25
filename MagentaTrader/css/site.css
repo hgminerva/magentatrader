@@ -31,26 +31,27 @@ textarea {
 }
 
 
-/* Admin Page Consol Colors */
 .panel-green {
     border-color: #5cb85c;
     background-color: #5cb85c;
+    color: #ffffff;
 }
 
 
 .panel-yellow {
     border-color: #f0ad4e;
     background-color: #f0ad4e;
+    color: #ffffff;
 }
 
 .panel-red {
     border-color: #d9534f;
     background-color: #d9534f;
+    color: #ffffff;
 }
 
-/* Video Tags */
-.video1
-{
-    width: 100%;
-    height: 100%;
-}  
+.panel-violet {
+    border-color: #990099;
+    background-color: #990099;
+    color: #ffffff;
+}
