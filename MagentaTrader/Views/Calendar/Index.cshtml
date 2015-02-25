@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Index";
 
-    var Version = "v.Beta.1.20150216";
+    var Version = "v.Beta.1.20150222";
 }
 
 <link href="/wijmo/styles/wijmo.min.css" rel="stylesheet" />
@@ -152,8 +152,10 @@
 <script type="text/javascript">
     var CalendarData;
     var CalendarGrid;
+
     var CalendarDateData;
     var CalendarDateGrid;
+
     var UpData = [];
     var DownData = [];
 
@@ -358,7 +360,7 @@
         }
         return results;
     }
-    function UpdateNavigateButtonsEvent() {
+    function UpdateNavigateButtonsEvent() {   
         if (CalendarDateData.pageSize <= 0) {
             document.getElementById('naviagtionPageEvent').style.display = 'none';
             return;
@@ -414,6 +416,7 @@
 
         CalendarDateData = new wijmo.collections.CollectionView(data);
         CalendarDateData.pageSize = 10;
+        CalendarDateData.moveToFirstPage();
 
         CalendarDateGrid.dispose();
         CalendarDateGrid = new wijmo.grid.FlexGrid('#CalendarDateGrid');
@@ -443,33 +446,9 @@
         });
         CalendarDateGrid.trackChanges = true;
 
-        btnFirstPageEvent = document.getElementById('btnMoveToFirstPageEvent');
-        btnPreviousPageEvent = document.getElementById('btnMoveToPreviousPageEvent');
-        btnNextPageEvent = document.getElementById('btnMoveToNextPageEvent');
-        btnLastPageEvent = document.getElementById('btnMoveToLastPageEvent');
-        btnCurrentPageEvent = document.getElementById('btnCurrentPageEvent');
-
         UpdateNavigateButtonsEvent();
 
-        btnFirstPageEvent.addEventListener('click', function () {
-            CalendarDateData.moveToFirstPage();
-            UpdateNavigateButtonsEvent();
-        });
-        btnPreviousPageEvent.addEventListener('click', function () {
-            CalendarDateData.moveToPreviousPage();
-            UpdateNavigateButtonsEvent();
-        });
-        btnNextPageEvent.addEventListener('click', function () {
-            CalendarDateData.moveToNextPage();
-            UpdateNavigateButtonsEvent();
-        });
-        btnLastPageEvent.addEventListener('click', function () {
-            CalendarDateData.moveToLastPage();
-            UpdateNavigateButtonsEvent();
-        });
-
         $('#DateDetail').modal('show');
-
     }
     function CmdGetCalendar_OnClick() {
         var $month = parseInt(document.getElementById('Month').value);
@@ -595,6 +574,29 @@
     $(document).ready(function () {
         CalendarGrid = new wijmo.grid.FlexGrid('#CalendarGrid');
         CalendarDateGrid = new wijmo.grid.FlexGrid('#CalendarDateGrid');
+
+        btnFirstPageEvent = document.getElementById('btnMoveToFirstPageEvent');
+        btnPreviousPageEvent = document.getElementById('btnMoveToPreviousPageEvent');
+        btnNextPageEvent = document.getElementById('btnMoveToNextPageEvent');
+        btnLastPageEvent = document.getElementById('btnMoveToLastPageEvent');
+        btnCurrentPageEvent = document.getElementById('btnCurrentPageEvent');
+
+        btnFirstPageEvent.addEventListener('click', function () {
+            CalendarDateData.moveToFirstPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnPreviousPageEvent.addEventListener('click', function () {
+            CalendarDateData.moveToPreviousPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnNextPageEvent.addEventListener('click', function () {
+            CalendarDateData.moveToNextPage();
+            UpdateNavigateButtonsEvent();
+        });
+        btnLastPageEvent.addEventListener('click', function () {
+            CalendarDateData.moveToLastPage();
+            UpdateNavigateButtonsEvent();
+        });
     });
 </script>
 
@@ -602,5 +604,3 @@
 <script src="/lib/bootstrap/js/bootstrap.js"></script>
 <script src="/wijmo/controls/wijmo.input.min.js"></script>
 <script src="/wijmo/interop/knockout/wijmo.knockout.min.js"></script>
-
-

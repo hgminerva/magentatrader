@@ -52,7 +52,9 @@ namespace MagentaTrader.Controllers
                                     where (d.CalendarDownDate.Value.Month == Month) &&
                                           (d.CalendarDownDate.Value.Year == Year) &&
                                           (d.CalendarDownDelta >= Delta) &&
-                                          (d.CalendarDownPercentage >= Percentage)
+                                          (d.CalendarDownPercentage >= Percentage) &&
+                                          (d.ClosePrice >= Price) &&
+                                          (d.Volume >= Volume)
                                     select new Models.Symbol
                                     {
                                         SymbolDescription = d.Symbol,

@@ -187,6 +187,7 @@
     <Compile Include="Controllers\StockPriceController.cs" />
     <Compile Include="Controllers\SymbolController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\VideoController.cs" />
     <Compile Include="Controllers\Web99Controller.cs" />
     <Compile Include="Data\MagentaTradersDB.cs">
       <DependentUpon>MagentaTradersDB.dbml</DependentUpon>
@@ -1323,6 +1324,7 @@
     <Content Include="Views\Admin\Product.cshtml" />
     <Content Include="Views\Admin\Sales.cshtml" />
     <Content Include="Views\Admin\User.cshtml" />
+    <Content Include="Views\Video\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
