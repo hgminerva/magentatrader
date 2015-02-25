@@ -51,6 +51,9 @@ namespace MagentaTrader.Data
     partial void InsertMstSymbol(MstSymbol instance);
     partial void UpdateMstSymbol(MstSymbol instance);
     partial void DeleteMstSymbol(MstSymbol instance);
+    partial void InsertMstNew(MstNew instance);
+    partial void UpdateMstNew(MstNew instance);
+    partial void DeleteMstNew(MstNew instance);
     #endregion
 		
 		public MagentaTradersDBDataContext() : 
@@ -136,6 +139,14 @@ namespace MagentaTrader.Data
 			get
 			{
 				return this.GetTable<MstSymbol>();
+			}
+		}
+		
+		public System.Data.Linq.Table<MstNew> MstNews
+		{
+			get
+			{
+				return this.GetTable<MstNew>();
 			}
 		}
 	}
@@ -2215,6 +2226,140 @@ namespace MagentaTrader.Data
 		{
 			this.SendPropertyChanging();
 			entity.MstSymbol = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstNews")]
+	public partial class MstNew : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private System.DateTime _NewsDate;
+		
+		private string _News;
+		
+		private string _Particulars;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnNewsDateChanging(System.DateTime value);
+    partial void OnNewsDateChanged();
+    partial void OnNewsChanging(string value);
+    partial void OnNewsChanged();
+    partial void OnParticularsChanging(string value);
+    partial void OnParticularsChanged();
+    #endregion
+		
+		public MstNew()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NewsDate", DbType="DateTime NOT NULL")]
+		public System.DateTime NewsDate
+		{
+			get
+			{
+				return this._NewsDate;
+			}
+			set
+			{
+				if ((this._NewsDate != value))
+				{
+					this.OnNewsDateChanging(value);
+					this.SendPropertyChanging();
+					this._NewsDate = value;
+					this.SendPropertyChanged("NewsDate");
+					this.OnNewsDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_News", DbType="NVarChar(255)")]
+		public string News
+		{
+			get
+			{
+				return this._News;
+			}
+			set
+			{
+				if ((this._News != value))
+				{
+					this.OnNewsChanging(value);
+					this.SendPropertyChanging();
+					this._News = value;
+					this.SendPropertyChanged("News");
+					this.OnNewsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Particulars", DbType="NVarChar(MAX)")]
+		public string Particulars
+		{
+			get
+			{
+				return this._Particulars;
+			}
+			set
+			{
+				if ((this._Particulars != value))
+				{
+					this.OnParticularsChanging(value);
+					this.SendPropertyChanging();
+					this._Particulars = value;
+					this.SendPropertyChanged("Particulars");
+					this.OnParticularsChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 }

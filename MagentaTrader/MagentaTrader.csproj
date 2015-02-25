@@ -178,6 +178,7 @@
     <Compile Include="Controllers\EventController.cs" />
     <Compile Include="Controllers\FreeWebinarsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ProductPackageController.cs" />
     <Compile Include="Controllers\PurchaseController.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Models\CalendarSymbolWrapper.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\News.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductPackage.cs" />
     <Compile Include="Models\Sales.cs" />
