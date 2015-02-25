@@ -141,6 +141,28 @@
                 </div>
             </div>
             <div class="col-lg-3 col-md-4">
+                <div class="panel panel-brown">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-archive fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge" id="PackagesCounts">&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
+                                <div>Package</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="~/Admin/Package">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4">
                 <div class="panel panel-violet">
                     <div class="panel-heading">
                         <div class="row">
@@ -176,12 +198,14 @@
         var eid = setInterval(myEvents, 10000);
         var sid = setInterval(mySales, 10000);
         var pid = setInterval(myProducts, 10000);
+        var mid = setInterval(myPackages, 10000);
         var nid = setInterval(myNews, 10000);
 
         myUsers();
         myEvents();
         mySales();
         //myProducts();
+        //myPackages();
         //myNews();
 
         function myUsers() {
@@ -252,6 +276,11 @@
 
         function myProducts() {
             document.getElementById("ProductsCounts").innerHTML = "0";
+            mySync();
+        }
+
+        function myPackages() {
+            document.getElementById("PackagesCounts").innerHTML = "0";
             mySync();
         }
 
