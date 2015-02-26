@@ -50,7 +50,15 @@ namespace MagentaTrader.Controllers
         }
 
         //
-        // GET: /Admin/Product
+        // GET: /Admin/Package
+        [Authorize]
+        public ActionResult Package()
+        {
+            return View();
+        }
+
+        //
+        // GET: /Admin/Sales
         [Authorize]
         public ActionResult Sales()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -67,9 +68,11 @@ namespace MagentaTrader.Controllers
 
                 Data.MstNew NewNews = new Data.MstNew();
 
-                SqlDateTime NewsDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.NewsDate).Year, +
-                                                                    Convert.ToDateTime(value.NewsDate).Month, +
-                                                                    Convert.ToDateTime(value.NewsDate).Day));
+                DateTime myDate = Convert.ToDateTime(value.NewsDate, new CultureInfo("en-US"));
+
+                SqlDateTime NewsDate = new SqlDateTime(new DateTime(Convert.ToDateTime(myDate).Year, +
+                                                                    Convert.ToDateTime(myDate).Month, +
+                                                                    Convert.ToDateTime(myDate).Day));
 
 
                 NewNews.NewsDate = NewsDate.Value;

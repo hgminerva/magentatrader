@@ -141,6 +141,28 @@
                 </div>
             </div>
             <div class="col-lg-3 col-md-4">
+                <div class="panel panel-brown">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-archive fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge" id="PackagesCounts">&nbsp;<i class="fa fa-spinner fa-spin"></i></div>
+                                <div>Package</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="~/Admin/Package">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Details</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4">
                 <div class="panel panel-violet">
                     <div class="panel-heading">
                         <div class="row">
@@ -176,13 +198,15 @@
         var eid = setInterval(myEvents, 10000);
         var sid = setInterval(mySales, 10000);
         var pid = setInterval(myProducts, 10000);
+        var mid = setInterval(myPackages, 10000);
         var nid = setInterval(myNews, 10000);
 
         myUsers();
         myEvents();
         mySales();
-        //myProducts();
-        //myNews();
+        myProducts();
+        myPackages();
+        myNews();
 
         function myUsers() {
             $.ajax({
@@ -251,13 +275,69 @@
         }
 
         function myProducts() {
-            document.getElementById("ProductsCounts").innerHTML = "0";
-            mySync();
+            $.ajax({
+                url: '/api/Product',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("ProductsCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("ProductsCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
+        }
+
+        function myPackages() {
+            $.ajax({
+                url: '/api/ProductPackage',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("PackagesCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("PackagesCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
         }
 
         function myNews() {
-            document.getElementById("NewsCounts").innerHTML = "0";
-            mySync();
+            $.ajax({
+                url: '/api/News',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("NewsCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("NewsCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
         }
 
         function mySync() {
