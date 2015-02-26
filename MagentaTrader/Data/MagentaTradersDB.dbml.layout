@@ -72,10 +72,10 @@
         <classShapeMoniker Id="70bb7cb7-e27d-4ae8-ad5d-d92fe15bc864" />
       </nodes>
     </associationConnector>
-    <classShape Id="9f7a8091-5c23-4377-9234-f1a928508977" absoluteBounds="1.125, 3.875, 2, 1.5785953776041666">
+    <classShape Id="5a4bb2df-a2ab-4a3e-80df-a1b1774f21de" absoluteBounds="1, 4, 2, 1.5785953776041666">
       <DataClassMoniker Name="/MagentaTradersDBDataContext/MstNew" />
       <nestedChildShapes>
-        <elementListCompartment Id="b5fc87db-8fbc-45b6-8ea1-819283684882" absoluteBounds="1.1400000000000001, 4.335, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="f63553dd-17b0-4741-8d8c-f0c0e4ae2b62" absoluteBounds="1.0150000000000001, 4.46, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
   </nestedChildShapes>
