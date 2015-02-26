@@ -280,8 +280,8 @@
         var CurrentDate = new Date();
 
         document.getElementById('SaleEdit_Id').value = 0;
-        document.getElementById('SaleEdit_ProductPackageId').value = '';
-        document.getElementById('SaleEdit_UserId').value = '';
+        document.getElementById('SaleEdit_ProductPackageId').value = ProductPackageList.items[0].Id;
+        document.getElementById('SaleEdit_UserId').value = UserList.items[0].Id;
         document.getElementById('SaleEdit_SalesNumber').value = '';
         document.getElementById('SaleEdit_SaleDate').value = '';
         document.getElementById('SaleEdit_SaleDate_Data').value = '';
@@ -295,7 +295,6 @@
         document.getElementById('SaleEdit_Amount').value = '';
         document.getElementById('SaleEdit_IsActive').checked = false;
         document.getElementById('SaleEdit_IsRefunded').checked = false;
-
 
         SaleDate.dispose();
         SaleDate = new wijmo.input.InputDate('#SaleEdit_SaleDate', {
@@ -336,13 +335,12 @@
         ax.dispose();
         ax = new wijmo.input.AutoComplete('#cboSaleEdit_ProductPackageId', {
             itemsSource: getProductPackageList(ProductPackageList.items),
-            placeholder: 'Select Product Package ',
+            placeholder: 'Select Product Package',
             onSelectedIndexChanged: function () {
 
                 $("#SaleEdit_ProductPackageId").val(ProductPackageList.items[this.selectedIndex].Id);
             }
         });
-
     }
     function CmdSaleDelete_OnClick() {
         Sales.editItem(Sales.currentItem);

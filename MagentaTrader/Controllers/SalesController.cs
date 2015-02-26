@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -126,15 +127,19 @@ namespace MagentaTrader.Controllers
                 {
                     var UpdatedSale = Sales.FirstOrDefault();
 
-                    SqlDateTime SalesDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.SalesDate).Year, +
-                                                                         Convert.ToDateTime(value.SalesDate).Month, +
-                                                                         Convert.ToDateTime(value.SalesDate).Day));
-                    SqlDateTime RenewalDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.RenewalDate).Year, +
-                                                                           Convert.ToDateTime(value.RenewalDate).Month, +
-                                                                           Convert.ToDateTime(value.RenewalDate).Day));
-                    SqlDateTime ExpiryDate = new SqlDateTime(new DateTime(Convert.ToDateTime(value.ExpiryDate).Year, +
-                                                                          Convert.ToDateTime(value.ExpiryDate).Month, +
-                                                                          Convert.ToDateTime(value.ExpiryDate).Day));
+                    DateTime salesDate = Convert.ToDateTime(value.SalesDate, new CultureInfo("en-US"));
+                    DateTime renewalDate = Convert.ToDateTime(value.RenewalDate, new CultureInfo("en-US"));
+                    DateTime expiryDate = Convert.ToDateTime(value.ExpiryDate, new CultureInfo("en-US"));
+
+                    SqlDateTime SalesDate = new SqlDateTime(new DateTime(Convert.ToDateTime(salesDate).Year, +
+                                                                         Convert.ToDateTime(salesDate).Month, +
+                                                                         Convert.ToDateTime(salesDate).Day));
+                    SqlDateTime RenewalDate = new SqlDateTime(new DateTime(Convert.ToDateTime(renewalDate).Year, +
+                                                                           Convert.ToDateTime(renewalDate).Month, +
+                                                                           Convert.ToDateTime(renewalDate).Day));
+                    SqlDateTime ExpiryDate = new SqlDateTime(new DateTime(Convert.ToDateTime(expiryDate).Year, +
+                                                                          Convert.ToDateTime(expiryDate).Month, +
+                                                                          Convert.ToDateTime(expiryDate).Day));
 
                     UpdatedSale.ProductPackageId = value.ProductPackageId;
                     UpdatedSale.UserId = value.UserId;
