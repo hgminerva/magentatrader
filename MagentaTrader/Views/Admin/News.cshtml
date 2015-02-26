@@ -107,13 +107,13 @@
                         <input class="form-control" id="NewsEdit_NewsDate" type="text" />
                         <input class="form-control" id="NewsEdit_NewsDate_Data" type="hidden" />
                     </dd>
-                    <dt>News</dt>
+                    <dt>News Description</dt>
                     <dd>
-                        <input class="form-control" id="NewsEdit_NewsNews" type="text" />
+                        <input class="form-control" id="NewsEdit_NewsDescription" type="text" />
                     </dd>
-                    <dt>Active</dt>
+                    <dt>Particulars</dt>
                     <dd>
-                        <input class="form-control" id="NewsEdit_IsActive" type="checkbox" />
+                        <input class="form-control" id="NewsEdit_Particulars" type="text" />
                     </dd>
                 </dl>
             </div>
@@ -166,8 +166,8 @@
         document.getElementById('NewsEdit_Id').value = Newss.Id !== null && typeof (Newss.Id) != 'undefined' ? wijmo.Globalize.format(Newss.Id) : '';
         document.getElementById('NewsEdit_NewsDate').value = Newss.EventDate ? Newss.NewsDate : '';
         document.getElementById('NewsEdit_NewsDate_Data').value = Newss.NewsDate ? Newss.NewsDate : '';
-        document.getElementById('NewsEdit_NewsNews').value = Newss.News ? Newss.News : '';
-        document.getElementById('NewsEdit_IsActive').checked = Newss.IsActive;
+        document.getElementById('NewsEdit_NewsDescription').value = Newss.NewsDescription ? Newss.NewsDescription : '';
+        document.getElementById('NewsEdit_Particulars').value = Newss.Particulars ? Newss.Particulars : '';
 
         NewsDate.dispose();
         NewsDate = new wijmo.input.InputDate('#NewsEdit_NewsDate', {
@@ -186,8 +186,8 @@
         document.getElementById('NewsEdit_Id').value = 0;
         document.getElementById('NewsEdit_NewsDate').value = CurrentDate.toString("M/d/yyyy");
         document.getElementById('NewsEdit_NewsDate_Data').value = CurrentDate.toString("M/d/yyyy");
-        document.getElementById('NewsEdit_NewsNews').value = "";
-        document.getElementById('NewsEdit_IsActive').checked = false;
+        document.getElementById('NewsEdit_NewsDescription').value = "";
+        document.getElementById('NewsEdit_Particulars').value = "";
 
         NewsDate.dispose();
         NewsDate = new wijmo.input.InputDate('#NewsEdit_NewsDate', {
@@ -225,19 +225,20 @@
         }
     }
     function CmdNewsEditOk_OnClick() {
-        if (confirm("Save Event?") == true) {
+        if (confirm("Save News?") == true) {
 
             var Newss = new Object();
 
             Newss.Id = document.getElementById('NewsEdit_Id').value;
-            Newss.EventDate = document.getElementById('NewsEdit_NewsDate_Data').value;
-            Newss.NewsNews = document.getElementById('NewsEdit_NewsNews').value;
-            Newss.IsActive = document.getElementById('NewsEdit_IsActive').checked;
+            Newss.NewsDate = document.getElementById('NewsEdit_NewsDate_Data').value;
+            Newss.NewsDescription = document.getElementById('NewsEdit_NewsDescription').value;
+            Newss.Particulars = document.getElementById('NewsEdit_Particulars').value;
 
             var data = JSON.stringify(Newss);
 
+
             // Add New
-            if (News.Id == 0) {
+            if (Newss.Id == 0) {
                 $.ajax({
                     type: "POST",
                     url: "/api/AddNews",
@@ -290,13 +291,13 @@
                 $('#loading').modal('hide');
                 if (Results.length > 0) {
                     for (i = 0; i < Results.length; i++) {
-                        events.push({
+                        news.push({
                             EditId: "<button class='btn btn-primary btn-xs' data-toggle='modal' id='CmdEditNews' onclick='CmdNewsEdit_OnClick()'>Edit</button>",
                             DeleteId: "<button class='btn btn-danger btn-xs' data-toggle='modal' id='CmdDeleteNews' onclick='CmdNewsDelete_OnClick()'>Delete</button>",
                             Id: Results[i]["Id"],
                             NewsDate: Results[i]["NewsDate"],
-                            News: Results[i]["News"],
-                            IsActive: Results[i]["IsActive"]
+                            NewsDescription: Results[i]["NewsDescription"],
+                            Particulars: Results[i]["Particulars"]
                         });
                     }
                 } else {
@@ -372,8 +373,14 @@
                             "width": 100
                         },
                         {
-                            "header": "News",
-                            "binding": "News",
+                            "header": "News Description",
+                            "binding": "NewsDescription",
+                            "allowSorting": false,
+                            "width": "4*"
+                        },
+                        {
+                            "header": "Particulars",
+                            "binding": "Particulars",
                             "allowSorting": false,
                             "width": "4*"
                         }

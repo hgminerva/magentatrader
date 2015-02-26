@@ -204,9 +204,9 @@
         myUsers();
         myEvents();
         mySales();
-        //myProducts();
-        //myPackages();
-        //myNews();
+        myProducts();
+        myPackages();
+        myNews();
 
         function myUsers() {
             $.ajax({
@@ -275,18 +275,69 @@
         }
 
         function myProducts() {
-            document.getElementById("ProductsCounts").innerHTML = "0";
-            mySync();
+            $.ajax({
+                url: '/api/Product',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("ProductsCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("ProductsCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
         }
 
         function myPackages() {
-            document.getElementById("PackagesCounts").innerHTML = "0";
-            mySync();
+            $.ajax({
+                url: '/api/ProductPackage',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("PackagesCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("PackagesCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
         }
 
         function myNews() {
-            document.getElementById("NewsCounts").innerHTML = "0";
-            mySync();
+            $.ajax({
+                url: '/api/News',
+                cache: false,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                data: {},
+                success: function (Results) {
+                    if (Results.length > 0) {
+                        document.getElementById("NewsCounts").innerHTML = "" + Results.length;
+                    } else {
+                        document.getElementById("NewsCounts").innerHTML = "0";
+                    }
+                    mySync();
+                }
+            }).fail(
+                function (xhr, textStatus, err) {
+                    alert(err);
+                }
+            );
         }
 
         function mySync() {

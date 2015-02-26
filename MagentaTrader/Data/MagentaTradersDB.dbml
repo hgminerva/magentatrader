@@ -102,7 +102,7 @@
   </Table>
   <Table Name="dbo.MstNews" Member="MstNews">
     <Type Name="MstNew">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="NewsDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="News" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="Particulars" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />

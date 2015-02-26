@@ -43,3 +43,326 @@
         </ul>
     </div>
 </nav>
+
+@*List*@
+<div id="DivProduct">
+    <div class="container">
+
+        <div class="row">
+            <h2 class="section-heading">Event</h2>
+            <div class="col-lg-11">
+                <h4>Products</h4>
+            </div>
+            <div class="col-lg-1">
+                <button id="CmdAddProduct" type="submit" class="btn btn-primary" onclick="CmdProductAdd_OnClick()">Add</button>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="ProductGrid" class="grid"></div>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+            <div class="btn-group col-md-7" id="naviagtionPageProduct">
+                <button type="button" class="btn btn-default" id="btnMoveToFirstPageProduct">
+                    <span class="glyphicon glyphicon-fast-backward"></span>
+                </button>
+                <button type="button" class="btn btn-default" id="btnMoveToPreviousPageProduct">
+                    <span class="glyphicon glyphicon-step-backward"></span>
+                </button>
+                <button type="button" class="btn btn-default" disabled style="width:100px" id="btnCurrentPageProduct"></button>
+                <button type="button" class="btn btn-default" id="btnMoveToNextPageProduct">
+                    <span class="glyphicon glyphicon-step-forward"></span>
+                </button>
+                <button type="button" class="btn btn-default" id="btnMoveToLastPageProduct">
+                    <span class="glyphicon glyphicon-fast-forward"></span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Edit Detail*@
+<div class="modal fade" id="ProductEdit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">Product Edit</h4>
+            </div>
+            <div class="modal-body">
+                <dl class="dl-horizontal">
+                    <dt>Product Description</dt>
+                    <dd>
+                        <input class="form-control" id="ProductEdit_Id" type="hidden" />
+                        <input class="form-control" id="ProductEdit_ProductDescription" type="text" />
+                    </dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="CmdProductEditOk" onclick="CmdProductEditOk_OnClick()">
+                    Ok
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" id="CmdProductEditCancel">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Loading*@
+<div class="modal fade" id="loading" tabindex="-1" role="dialog" aria-labelledby="Loading..." aria-hidden="true">
+    <div class="modal-dialog" style="width: 220px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Loading...</h4>
+            </div>
+            <div class="modal-body">
+                <img src="/img/progress_bar.gif" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@*Module*@
+<script type="text/javascript">
+    var Products;
+
+    var ProductGrid;
+
+    var btnFirstPageProduct;
+    var btnPreviousPageProduct;
+    var btnNextPageProduct;
+    var btnLastPageProduct;
+    var btnCurrentPageProduct;
+
+    function CmdProductEdit_OnClick() {
+        Products.editItem(Products.currentItem);
+
+        $('#ProductEdit').modal('show');
+
+        var Product = Products.currentEditItem;
+        document.getElementById('ProductEdit_Id').value = Product.Id !== null && typeof (Product.Id) != 'undefined' ? wijmo.Globalize.format(Product.Id) : '';
+        document.getElementById('ProductEdit_ProductDescription').value = Product.ProductDescription ? Product.ProductDescription : '';
+
+    }
+    function CmdProductAdd_OnClick() {
+        $('#ProductEdit').modal('show');
+
+        document.getElementById('ProductEdit_Id').value = 0;
+        document.getElementById('ProductEdit_ProductDescription').value = "";
+
+    }
+    function CmdProductDelete_OnClick() {
+        Products.editItem(Products.currentItem);
+
+        var Id = Products.currentEditItem.Id;
+        var ProductDescription = Products.currentEditItem.ProductDescription;
+
+        if (confirm("Delete " + ProductDescription + "?") == true) {
+            $.ajax({
+                type: "DELETE",
+                url: "/api/DeleteProduct/" + Id,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                statusCode: {
+                    200: function () {
+                        window.location.reload();
+                    },
+                    404: function () {
+                        alert("Not found");
+                    },
+                    400: function () {
+                        alert("Bad request");
+                    }
+                }
+            });
+        }
+    }
+    function CmdProductEditOk_OnClick() {
+        if (confirm("Save Product?") == true) {
+
+            var Product = new Object();
+
+            Product.Id = document.getElementById('ProductEdit_Id').value;
+            Product.ProductDescription = document.getElementById('ProductEdit_ProductDescription').value;
+
+            var data = JSON.stringify(Product);
+
+            // Add New
+            if (Product.Id == 0) {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/AddProduct",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: data,
+                    success: function (id) {
+                        if (id > 0) {
+                            window.location.reload();
+                        } else {
+                            alert("Not added");
+                        }
+                    }
+                });
+
+                // Edit
+            } else {
+                $.ajax({
+                    type: "PUT",
+                    url: "/api/UpdateProduct/" + Product.Id,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: data,
+                    statusCode: {
+                        200: function () {
+                            window.location.reload();
+                        },
+                        404: function () {
+                            alert("Not found");
+                        },
+                        400: function () {
+                            alert("Bad request");
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function GetProducts() {
+        var products = new wijmo.collections.ObservableArray();
+        $('#loading').modal('show');
+        $.ajax({
+            url: '/api/Product',
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (Results) {
+                $('#loading').modal('hide');
+                if (Results.length > 0) {
+                    for (i = 0; i < Results.length; i++) {
+                        products.push({
+                            EditId: "<button class='btn btn-primary btn-xs' data-toggle='modal' id='CmdEditProduct' onclick='CmdProductEdit_OnClick()'>Edit</button>",
+                            DeleteId: "<button class='btn btn-danger btn-xs' data-toggle='modal' id='CmdDeleteProduct' onclick='CmdProductDelete_OnClick()'>Delete</button>",
+                            Id: Results[i]["Id"],
+                            ProductDescription: Results[i]["ProductDescription"]
+                        });
+                    }
+                } else {
+                    alert("No data.");
+                }
+            }
+        }).fail(
+            function (xhr, textStatus, err) {
+                alert(err);
+            }
+        );
+        return products;
+    }
+
+    function UpdateNavigateButtonsProduct() {
+        if (Products.pageSize <= 0) {
+            document.getElementById('naviagtionPageProduct').style.display = 'none';
+            return;
+        }
+        document.getElementById('naviagtionPageProduct').style.display = 'block';
+        if (Products.pageIndex === 0) {
+            btnFirstPageProduct.setAttribute('disabled', 'disabled');
+            btnPreviousPageProduct.setAttribute('disabled', 'disabled');
+            btnNextPageProduct.removeAttribute('disabled');
+            btnLastPageProduct.removeAttribute('disabled');
+        }
+        else if (Products.pageIndex === (Products.pageCount - 1)) {
+            btnFirstPageProduct.removeAttribute('disabled');
+            btnPreviousPageProduct.removeAttribute('disabled');
+            btnLastPageProduct.setAttribute('disabled', 'disabled');
+            btnNextPageProduct.setAttribute('disabled', 'disabled');
+        }
+        else {
+            btnFirstPageProduct.removeAttribute('disabled');
+            btnPreviousPageProduct.removeAttribute('disabled');
+            btnNextPageProduct.removeAttribute('disabled');
+            btnLastPageProduct.removeAttribute('disabled');
+        }
+        btnCurrentPageProduct.innerHTML = (Products.pageIndex + 1) + ' / ' + Products.pageCount;
+    }
+
+    $(document).ready(function () {
+        btnFirstPageProduct = document.getElementById('btnMoveToFirstPageProduct');
+        btnPreviousPageProduct = document.getElementById('btnMoveToPreviousPageProduct');
+        btnNextPageProduct = document.getElementById('btnMoveToNextPageProduct');
+        btnLastPageProduct = document.getElementById('btnMoveToLastPageProduct');
+        btnCurrentPageProduct = document.getElementById('btnCurrentPageProduct');
+
+        Products = new wijmo.collections.CollectionView(GetProducts());
+
+        ProductGrid = new wijmo.grid.FlexGrid('#ProductGrid');
+
+        ProductGrid.initialize({
+            columns: [
+                        {
+                            "header": "Edit",
+                            "binding": "EditId",
+                            "width": 60,
+                            "allowSorting": false,
+                            "isContentHtml": true
+                        },
+                        {
+                            "header": "Delete",
+                            "binding": "DeleteId",
+                            "width": 60,
+                            "allowSorting": false,
+                            "isContentHtml": true
+                        },
+                        {
+                            "header": "Product",
+                            "binding": "ProductDescription",
+                            "allowSorting": false,
+                            "width": "4*"
+                        }
+            ],
+            autoGenerateColumns: false,
+            itemsSource: Products,
+            isReadOnly: true,
+            selectionMode: wijmo.grid.SelectionMode.Row
+        });
+
+        ProductGrid.trackChanges = true;
+
+        Products.pageSize = 15;
+
+        UpdateNavigateButtonsProduct();
+
+        // Page Button Products
+        btnFirstPageProduct.addEventListener('click', function () {
+            Products.moveToFirstPage();
+            UpdateNavigateButtonsProduct();
+        });
+        btnPreviousPageProduct.addEventListener('click', function () {
+            Products.moveToPreviousPage();
+            UpdateNavigateButtonsProduct();
+        });
+        btnNextPageProduct.addEventListener('click', function () {
+            Products.moveToNextPage();
+            UpdateNavigateButtonsProduct();
+        });
+        btnLastPageProduct.addEventListener('click', function () {
+            Products.moveToLastPage();
+            UpdateNavigateButtonsProduct();
+        });
+
+    });
+</script>
+
