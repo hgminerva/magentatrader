@@ -125,6 +125,9 @@
                         <ul id="scannerYear" class="nav nav-second-level"></ul>
                     </li>
                     <li class="sidebar-item">
+                        <a id="averageScannerTotal" href="#" style="padding: 2px 15px; color:black; text-align:center"><span>Average</span></a>
+                    </li>
+                    <li class="sidebar-item">
                         <a id="varScannerYearHeading" href="#" style="padding: 2px 15px; color:black; text-align:center"><span>Variable Scanner</span></a>
                     </li>
                     <li class="sidebar-search">
@@ -230,6 +233,8 @@
     var chartCoefficient = 0;
     var chartChannelRange = 0;
 
+    // Stock Chart
+
     function getSymbol() {
         var symbol = $('#searchSymbol').val();
         if (symbol != "") {
@@ -265,10 +270,6 @@
                 }
         );
     }
-    function parseDate(input) {
-        var parts = input.split('-');
-        return new Date(parts[0], parts[1] - 1, parts[2]);
-    }
     function createStockChart(symbol, stockPrice) {
         chart = new AmCharts.AmStockChart();
 
@@ -289,6 +290,9 @@
         // Hidden season yearly data
         while (scannerYearGraph.length > 0) scannerYearGraph.pop();
 
+        // Hidden plotted season yearly data
+        while (plottedYearGraphs.length > 0) plottedYearGraphs.pop();
+        
         // 10-Years Seasonality data (average)
         while (seasonTenYearData.length > 0) seasonTenYearData.pop();
         for (var i = 0; i < NumberOfDaysInYear; i++) seasonTenYearData.push(0);
@@ -950,6 +954,9 @@
         });
 
     }
+
+    // Trend Lines (Magenta Channel)
+
     function getCorrelation(plotData, startIndex, endIndex) {
         var X = 0;
         var Y = 0;
@@ -1071,6 +1078,9 @@
 
         stockPanel.validateNow();
     }
+
+    // Sidebar Chart Information
+
     function displayChartInfo() {
         var GreenColor = "#0FB203";
         var RedColor = "#A80008";
@@ -1106,15 +1116,22 @@
         $("#symbolInfoRange").html("<a href='#' style='padding: 2px 20px'><span>Range:</span><span class='pull-right'>" + chartChannelRange.toFixed(2) + "%</span></a>");
 
     }
+
+    // Scanner Years
+
     function displayScannerYears(seasonYearData, currentYear, xValue, dateValue) {
         var GreenColor = "#0FB203";
         var RedColor = "#A80008";
 
+        var noOfYears = firstClosingPrice.length;
+
+        var win = 0;
+        var loss = 0;
+        var winTotal = 0;
+        var lossTotal = 0;
+
         $("#scannerYearHeading").empty();
         $("#scannerYearHeading").html("<span>30 Day Scanner:</span><span class='pull-right'>" + dateValue + "</span>");
-
-        // Check the no. of years available
-        var noOfYears = firstClosingPrice.length;
 
         $("#scannerYear").append("<li id='ChartIndex'><a href='#' style='padding: 2px 20px'>Day: " + (xValue+1) + "</a></li>");
         for (var i = 0 ; i < seasonYearData.length; i++) {
@@ -1126,20 +1143,35 @@
 
                 var checked = plottedYearGraphs.indexOf(Year) >= 0 ? "checked" : "";
                 var status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><span> " + Year + ":</span><span class='pull-right'>No change.</span>";
+
                 if (endValue > startValue) {
+                    if (checked == "") win++;
                     if (startValue == 0) {
-                        status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='#" + GreenColor + "'><span> " + Year + "</span><span class='pull-right'>100.00%</span></font>";
+                        status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='" + GreenColor + "'><span> " + Year + "</span><span class='pull-right'>100.00%</span></font>";
                     } else {
+                        if (checked == "") winTotal = winTotal + AmCharts.roundTo((((endValue - startValue) / startValue) * 100 * sign(startValue)), 2);
                         status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='" + GreenColor + "'><span> " + Year + "</span><span class='pull-right'>" + AmCharts.roundTo((((endValue - startValue) / startValue) * 100 * sign(startValue)), 2) + "%</span></font>";
                     }
                 } else if (startValue > endValue) {
+                    if (checked == "") loss++;
                     if (endValue == 0) {
                         status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='" + RedColor + "'><span> " + Year + "</span><span class='pull-right'>100.00%</span></font>";
                     } else {
+                        if (checked == "") lossTotal = lossTotal + AmCharts.roundTo((((startValue - endValue) / endValue) * 100 * sign(endValue)), 2);
                         status = "<span><input id='checked" + Year + "' type='checkbox' value='' " + checked + " onclick='checkYear(" + Year + "," + i + ")'></span><font color='" + RedColor + "'><span> " + Year + "</span><span class='pull-right'>" + AmCharts.roundTo((((startValue - endValue) / endValue) * 100 * sign(endValue)), 2) + "%</span></font>";
                     }
                 } 
                 $("#scannerYear").append("<li id='scannerYearItem" + Year + "'><a id=Y" + Year + " href='#' style='padding: 2px 20px'>" + status + "</a></li>");
+            }
+        }
+        $("#averageScannerTotal").empty();
+        if (win >= loss) {
+            if (win > 0) {
+                $("#averageScannerTotal").html("<span>&nbsp;</span><font color='" + GreenColor + "'><span class='pull-right'>" + win + "/" + loss + " - " + AmCharts.roundTo(winTotal / win, 2) + "%</span></font>");
+            }
+        } else {
+            if (loss > 0) {
+                $("#averageScannerTotal").html("<span>&nbsp;</span><font color='" + RedColor + "'><span class='pull-right'>" + loss + "/" + win + " - " + AmCharts.roundTo(lossTotal / loss, 2) + "%</span></font>");
             }
         }
     }
@@ -1161,6 +1193,9 @@
             }
         }
     }
+
+    // Utilities
+
     function sign(x) {
         return typeof x === 'number' ? x ? x < 0 ? -1 : 1 : x === x ? 0 : NaN : NaN;
     }
@@ -1176,6 +1211,13 @@
             e.pageY -= html.clientTop || 0
         }
     }
+    function parseDate(input) {
+        var parts = input.split('-');
+        return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+
+    // Variable Scanner
+
     function scanYearlyData(yearlyData, noOfYears, index, daySpan, direction) {
         var result = [];
         var up = 0;
@@ -1189,7 +1231,7 @@
                 if (endData > startData) {
                     up++;
                     if (startData != 0) {
-                        averageUp = averageUp + ((((endData - startData) / startData) * sign(startData)) * 100);
+                        averageUp = averageUp + AmCharts.roundTo(((((endData - startData) / startData) * sign(startData)) * 100),2);
                     }
                 }
             }
@@ -1207,7 +1249,7 @@
                 if (startData > endData) {
                     down++;
                     if (endData != 0) {
-                        averageDown = averageDown + ((((startData - endData) / endData) * sign(endData)) * 100);
+                        averageDown = averageDown + AmCharts.roundTo(((((startData - endData) / endData) * sign(endData)) * 100),2);
                     }
                 }
             }
