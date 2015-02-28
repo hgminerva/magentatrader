@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="magentatraders_prod" Class="MagentaTradersDBDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="WebSettings" ConnectionString="Data Source=tcp:g0kgvkdtnf.database.windows.net,1433;Initial Catalog=magentatraders_prod;Persist Security Info=True;User ID=derekpilger@g0kgvkdtnf" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="magentatraders_prodConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="WebSettings" ConnectionString="Data Source=tcp:g0kgvkdtnf.database.windows.net,1433;Initial Catalog=magentatraders_prod;Persist Security Info=True;User ID=derekpilger@g0kgvkdtnf" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="DefaultConnection" Provider="System.Data.SqlClient" />
   <Table Name="dbo.MstEvent" Member="MstEvents">
     <Type Name="MstEvent">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -98,6 +98,7 @@
       <Column Name="ClosePrice" Type="System.Decimal" DbType="Decimal(18,5)" CanBeNull="true" />
       <Column Name="Volume" Type="System.Decimal" DbType="Decimal(18,5)" CanBeNull="true" />
       <Association Name="MstSymbol_TrnStockPrice" Member="TrnStockPrices" ThisKey="Id" OtherKey="SymbolId" Type="TrnStockPrice" />
+      <Association Name="MstSymbol_TrnStockEarning" Member="TrnStockEarnings" ThisKey="Id" OtherKey="SymbolId" Type="TrnStockEarning" />
     </Type>
   </Table>
   <Table Name="dbo.MstNews" Member="MstNews">
@@ -106,6 +107,15 @@
       <Column Name="NewsDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="News" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
       <Column Name="Particulars" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TrnStockEarning" Member="TrnStockEarnings">
+    <Type Name="TrnStockEarning">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SymbolId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Symbol" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="EarningDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="MstSymbol_TrnStockEarning" Member="MstSymbol" ThisKey="SymbolId" OtherKey="Id" Type="MstSymbol" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

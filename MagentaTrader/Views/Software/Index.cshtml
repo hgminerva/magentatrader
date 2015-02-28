@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Software";
 
-    var Version = "v.Beta.1.20150215";
+    var Version = "v.Beta.1.20150301";
     var Symbol = Request.QueryString["symbol"];
 }
 
@@ -141,6 +141,12 @@
                                 </button>
                             </span>
                         </div>
+                    </li>
+                    <li class="sidebar-item">
+                        <a id="earningScheduleLabel" href="#" style="padding: 2px 15px; color:black; text-align:center"><span>Earnings Schedule</span></a>
+                        <ul id="earningSchedule" class="nav nav-second-level">
+                            @*<li id='earningScheduleItem'><a href='#' style='padding: 2px 20px; text-align: center'>1/1/2015</a></li>*@
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -793,6 +799,10 @@
 
         displayChartInfo();
 
+        // Display Earnings
+
+        displayEarningsSchedule(symbol);
+
         // Zoom event
 
         chart.addListener("zoomed", function (event) {
@@ -1192,6 +1202,26 @@
                 }
             }
         }
+    }
+
+    // Earnings Schedule
+
+    function displayEarningsSchedule(symbol) {
+        $.ajax({
+            url: '/api/StockEarning/' + symbol,
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (result) {
+                $("#earningSchedule").empty();
+                if (result.length > 0) {
+                    for (var i=0; i<result.length;i++) {
+                        $("#earningSchedule").append("<li id='earningScheduleItem'><a href='#' style='padding: 2px 20px; text-align: center'>" + result[i].EarningDate + "</a></li>");
+                    }
+                }
+            }
+        });
     }
 
     // Utilities

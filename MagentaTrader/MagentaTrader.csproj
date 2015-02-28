@@ -185,6 +185,7 @@
     <Compile Include="Controllers\SalesController.cs" />
     <Compile Include="Controllers\ScreenerController.cs" />
     <Compile Include="Controllers\SoftwareController.cs" />
+    <Compile Include="Controllers\StockEarningController.cs" />
     <Compile Include="Controllers\StockPriceController.cs" />
     <Compile Include="Controllers\SymbolController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductPackage.cs" />
     <Compile Include="Models\Sales.cs" />
+    <Compile Include="Models\StockEarning.cs" />
     <Compile Include="Models\StockPrice.cs" />
     <Compile Include="Models\StockPriceWrapper.cs" />
     <Compile Include="Models\Symbol.cs" />
