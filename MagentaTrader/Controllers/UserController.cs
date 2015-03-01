@@ -23,6 +23,7 @@ namespace MagentaTrader.Controllers
                 try
                 {
                     var Users = from d in db.MstUsers
+                                where d.AspNetUserId != null
                                 select new Models.User
                                 {
                                     Id = d.Id,

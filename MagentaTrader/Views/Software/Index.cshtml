@@ -48,6 +48,12 @@
                             <div>Symbol Screener and Filter</div>
                         </a>
                     </li>
+                    <li>
+                        <a href="#" onclick="openEarnings()">
+                            <div><strong>Earnings</strong></div>
+                            <div>Price movements on earnings.</div>
+                        </a>
+                    </li>
                 </ul>
                 <!-- /.dropdown-messages -->
             </li>
@@ -145,7 +151,6 @@
                     <li class="sidebar-item">
                         <a id="earningScheduleLabel" href="#" style="padding: 2px 15px; color:black; text-align:center"><span>Earnings Schedule</span></a>
                         <ul id="earningSchedule" class="nav nav-second-level">
-                            @*<li id='earningScheduleItem'><a href='#' style='padding: 2px 20px; text-align: center'>1/1/2015</a></li>*@
                         </ul>
                     </li>
                 </ul>
@@ -165,6 +170,27 @@
             </div>
             <div class="modal-body">
                 <img src="/img/progress_bar.gif" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="Earnings">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 id="EarningsTitle" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="earningChartdiv" style="width: 100%; height: 400px; padding: 20px 10px 10px 10px; "></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Close
+                </button>
             </div>
         </div>
     </div>
@@ -239,13 +265,70 @@
     var chartCoefficient = 0;
     var chartChannelRange = 0;
 
+    // Earning variables
+
+    var earningDates = []; 
+
+    // Earnings
+
+    function openEarnings() {
+        var GreenColor = "#0FB203";
+        var RedColor = "#A80008";
+
+        $("#EarningsTitle").text(dataSymbol + " Earnings");
+        $('#Earnings').modal('show');
+
+        var earningDatesPlotted = [];
+        for (var i = 0; i < earningDates.length; i++) {
+
+            earningDatesPlotted.push({
+                date: earningDates[i],
+                start: 0,
+                value: i % 2 == 0 ? 100 : -100,
+                color: i % 2 == 0 ? GreenColor : RedColor
+            })
+        }
+        debugger;
+        var earningChart = new AmCharts.AmSerialChart();
+        earningChart.theme = "none";
+        earningChart.dataProvider = earningDatesPlotted;
+        earningChart.categoryField = "date";
+        earningChart.rotate = true;
+        earningChart.columnWidth = 1;
+        earningChart.categoryAxis = {
+            "gridPosition": "start",
+            "axisAlpha": 0,
+            "gridAlpha": 0.1,
+            "position": "left"
+        };
+        earningChart.valueAxes = [{
+            "unit": ":00",
+            "axisAlpha": 0,
+            "gridAlpha": 0.1
+        }];
+        earningChart.startDuration = 1;
+
+        var graphEarnings = new AmCharts.AmGraph();
+        graphEarnings.valueField = "value";
+        graphEarnings.type = "column";
+        graphEarnings.colorField = "color";
+        graphEarnings.fillAlphas = 0.8;
+        graphEarnings.lineAlpha = 0;
+        graphEarnings.openField = "start";
+
+        earningChart.addGraph(graphEarnings);
+        earningChart.write('earningChartdiv');
+    }
+
     // Stock Chart
 
     function getSymbol() {
         var symbol = $('#searchSymbol').val();
         if (symbol != "") {
             chartSymbol = $('#searchSymbol').val().toUpperCase();
+            getEarningsSchedule(symbol);
             getData(symbol);
+            
         } 
     }
     function getData(symbol) {
@@ -415,13 +498,21 @@
         }
 
         // Fill the Plot Data     
-       
         var futureDate = new Date((new Date(chartData[0]["date"])).add(1).days());
+        var earningValue = parseFloat(chartData[0]["close"]); // The earning value is set to the latest price.
         for (i = 0; i < 252; i++) {
+            var earning = 0;
             if (i > 125) {
                 if (new Date(futureDate).getDay() == 0 || new Date(futureDate).getDay() == 6) {
                     i--;
                 } else {
+                    for (e = 0; e < earningDates.length; e++) {
+                        var categoryDate = new Date(futureDate);
+                        var earningDate = new Date(parseDate(earningDates[e]));
+                        if (categoryDate.equals(earningDate) == true) {
+                            earning = earningValue;
+                        }
+                    }
                     plotData.push({
                         date: new Date(futureDate),
                         season: (seasonTenYearData[i] / 10).toFixed(2),
@@ -436,11 +527,19 @@
                         seasonY6: seasonYearData[6][i].toFixed(2),
                         seasonY7: seasonYearData[7][i].toFixed(2),
                         seasonY8: seasonYearData[8][i].toFixed(2),
-                        seasonY9: seasonYearData[9][i].toFixed(2)
+                        seasonY9: seasonYearData[9][i].toFixed(2),
+                        earnings: earning == 0 ? 'NaN' : earning
                     });
                 }
                 futureDate = futureDate.add(1).day();
             } else {
+                for (e = 0; e < earningDates.length; e++) {
+                    var categoryDate = new Date(chartData[125 - i]["date"]);
+                    var earningDate = new Date(parseDate(earningDates[e]));
+                    if (categoryDate.equals(earningDate) == true) {
+                        earning = earningValue;
+                    }
+                }
                 plotData.push({
                     date: chartData[125 - i]["date"],
                     open: chartData[125 - i]["open"],
@@ -460,6 +559,7 @@
                     seasonY7: seasonYearData[7][i].toFixed(2),
                     seasonY8: seasonYearData[8][i].toFixed(2),
                     seasonY9: seasonYearData[9][i].toFixed(2),
+                    earnings: earning == 0 ? 'NaN' : earning,
                     volume: chartData[125 - i]["volume"]
                 });
             }
@@ -521,6 +621,9 @@
         }, {
             fromField: "volume",
             toField: "volume"
+        }, {
+            fromField: "earnings",
+            toField: "earnings"
         }];
         dataSet.dataProvider = plotData;
         dataSet.categoryField = "date";
@@ -659,6 +762,18 @@
         graphPrice.proCandlesticks = false;
         graphPrice.valueAxis = valueAxisPrice;
 
+        var graphEarnings = new AmCharts.AmGraph();
+        graphEarnings.valueField = 'earnings';
+        graphEarnings.valueAxis = valueAxisPrice;
+        graphEarnings.type = 'line';
+        graphEarnings.fillAlphas = 0;
+        graphEarnings.balloonText = 'Earnings'
+        graphEarnings.bullet =  'round';
+        graphEarnings.bulletSize = 10;
+        graphEarnings.bulletBorderAlpha = 1;
+        graphEarnings.lineThickness = 0;
+        graphEarnings.visibleInLegend = false;
+
         var graphSeason = new AmCharts.StockGraph();
         graphSeason.id = "graphSeason";
         graphSeason.title = "10-Years Seasonality";
@@ -739,6 +854,7 @@
         // Plot the graphs in the panels
 
         stockPanel1.addStockGraph(graphPrice);
+        stockPanel1.addStockGraph(graphEarnings);
         stockPanel1.addStockGraph(graphSeason);
         stockPanel1.addStockGraph(graphSeason5Year);
         stockPanel1.stockLegend = new AmCharts.StockLegend();
@@ -798,10 +914,6 @@
         // Sidebar information
 
         displayChartInfo();
-
-        // Display Earnings
-
-        displayEarningsSchedule(symbol);
 
         // Zoom event
 
@@ -868,8 +980,20 @@
                         if (parseFloat(plotData[i]["close"]) > maxValue) maxValue = parseFloat(plotData[i]["close"]);
                     }
                 }
-                valueAxisPrice.maximum = maxValue;
-                valueAxisPrice.minimum = minValue;
+                if (end > 124) {
+                    upDistance = maxValue - parseFloat(plotData[125]["close"]);
+                    downDistance = parseFloat(plotData[125]["close"]) - minValue;
+                    if (upDistance > downDistance) {
+                        valueAxisPrice.maximum = maxValue;
+                        valueAxisPrice.minimum = minValue - (upDistance - downDistance);
+                    } else if (upDistance < downDistance) {
+                        valueAxisPrice.maximum = maxValue + (downDistance - upDistance);
+                        valueAxisPrice.minimum = minValue;
+                    }
+                } else {
+                    valueAxisPrice.maximum = maxValue;
+                    valueAxisPrice.minimum = minValue;
+                }
             }
 
             if (start == 0 && end == 0) {
@@ -901,8 +1025,20 @@
                         if (parseFloat(plotData[i]["season"]) > maxValue) maxValue = parseFloat(plotData[i]["season"]);
                     }
                 }
-                valueAxisTenYearSeasonality.maximum = maxValue;
-                valueAxisTenYearSeasonality.minimum = minValue;
+                if (end > 124) {
+                    upDistance = maxValue - parseFloat(plotData[125]["season"]);
+                    downDistance = parseFloat(plotData[125]["season"]) - minValue;
+                    if (upDistance > downDistance) {
+                        valueAxisTenYearSeasonality.maximum = maxValue;
+                        valueAxisTenYearSeasonality.minimum = minValue - (upDistance - downDistance);
+                    } else if (upDistance < downDistance) {
+                        valueAxisTenYearSeasonality.maximum = maxValue + (downDistance - upDistance);
+                        valueAxisTenYearSeasonality.minimum = minValue;
+                    }
+                } else {
+                    valueAxisTenYearSeasonality.maximum = maxValue;
+                    valueAxisTenYearSeasonality.minimum = minValue;
+                }
             }
 
             if (start == 0 && end == 0) {
@@ -934,8 +1070,20 @@
                         if (parseFloat(plotData[i]["season5Year"]) > maxValue) maxValue = parseFloat(plotData[i]["season5Year"]);
                     }
                 }
-                valueAxisFiveYearSeasonality.maximum = maxValue;
-                valueAxisFiveYearSeasonality.minimum = minValue;
+                if (end > 124) {
+                    upDistance = maxValue - parseFloat(plotData[125]["season5Year"]);
+                    downDistance = parseFloat(plotData[125]["season5Year"]) - minValue;
+                    if (upDistance > downDistance) {
+                        valueAxisFiveYearSeasonality.maximum = maxValue;
+                        valueAxisFiveYearSeasonality.minimum = minValue - (upDistance - downDistance);
+                    } else if (upDistance < downDistance) {
+                        valueAxisFiveYearSeasonality.maximum = maxValue + (downDistance - upDistance);
+                        valueAxisFiveYearSeasonality.minimum = minValue;
+                    }
+                } else {
+                    valueAxisFiveYearSeasonality.maximum = maxValue;
+                    valueAxisFiveYearSeasonality.minimum = minValue;
+                }
             }
 
             // Refresh panel
@@ -1206,7 +1354,7 @@
 
     // Earnings Schedule
 
-    function displayEarningsSchedule(symbol) {
+    function getEarningsSchedule(symbol) {
         $.ajax({
             url: '/api/StockEarning/' + symbol,
             cache: false,
@@ -1216,8 +1364,11 @@
             success: function (result) {
                 $("#earningSchedule").empty();
                 if (result.length > 0) {
-                    for (var i=0; i<result.length;i++) {
-                        $("#earningSchedule").append("<li id='earningScheduleItem'><a href='#' style='padding: 2px 20px; text-align: center'>" + result[i].EarningDate + "</a></li>");
+                    while (earningDates.length > 0) earningDates.pop();
+                    for (var i = 0; i < result.length; i++) {
+                        var earningDate = result[i].EarningDate;
+                        $("#earningSchedule").append("<li id='earningScheduleItem'><a href='#' style='padding: 2px 20px; text-align: center'>" + earningDate + "</a></li>");
+                        earningDates.push(earningDate);
                     }
                 }
             }

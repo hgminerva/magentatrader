@@ -97,6 +97,35 @@ namespace MagentaTrader.Controllers
                 if (result.Succeeded)
                 {
                     await SignInAsync(user, isPersistent: false);
+
+                    // Add or update MstUser table
+                    Data.MagentaTradersDBDataContext db = new Data.MagentaTradersDBDataContext();
+
+                    var Users = from d in db.MstUsers where d.UserName == model.UserName select d;
+
+                    if (Users.Any())
+                    {
+                        var UpdatedUser = Users.FirstOrDefault();
+
+                        UpdatedUser.AspNetUserId = db.AspNetUsers.Where(d => d.UserName == model.UserName).FirstOrDefault().Id;
+
+                        db.SubmitChanges();
+                    }
+                    else
+                    {
+                        Data.MstUser NewUser = new Data.MstUser();
+
+                        NewUser.UserName = model.UserName;
+                        NewUser.FirstName = "NA";
+                        NewUser.LastName = "NA";
+                        NewUser.EmailAddress = "NA";
+                        NewUser.PhoneNumber = "NA";
+                        NewUser.AspNetUserId = db.AspNetUsers.Where(d => d.UserName == model.UserName).FirstOrDefault().Id;
+
+                        db.MstUsers.InsertOnSubmit(NewUser);
+                        db.SubmitChanges();
+                    }
+
                     return RedirectToAction("Index", "Home");
                 }
                 else
