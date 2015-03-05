@@ -3,6 +3,7 @@
 }
 
 <link href="/css/bootstrap.min.css" rel="stylesheet" />
+<link href="/css/styles.css" rel="stylesheet" />
 
 <script src="/js/jquery.js"></script>
 <script src="/lib/bootstrap/js/bootstrap.js"></script>
@@ -18,29 +19,27 @@
 
 @*Menu*@
 <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
-    <div class="container topnav">
+    <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand topnav" href="/Home"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"></span></a>
+            <a class="navbar-brand topnav" href="~/Home"><span><img src="/img/logo-1.png" /></span><span class="hidden-xs"></span></a>
         </div>
-    </div>
-</nav>
-<nav class="navbar navbar-fixed-top top-right" role="navigation">
-    <div>
-        <ul class="nav nav-tabs navbar-right" style="margin-right:50px;margin-top:10px">
-            <li role="presentation"><a href="~/Admin/user" style="width:100px;">Users</a></li>
-            <li role="presentation"><a href="~/Admin/Event" style="width:100px;">Event</a></li>
-            <li role="presentation"><a href="~/Admin/Sales" style="width:100px;">Sales</a></li>
-            <li role="presentation" class="active"><a href="~/Admin/Product" style="width:100px;">Products</a></li>
-            <li role="presentation"><a href="~/Admin/Package" style="width:100px;">Packages</a></li>
-            <li role="presentation"><a href="~/Admin/News" style="width:100px;">News</a></li>
-            <li role="presentation"><a href="~/Admin/"><i class="fa fa-home"></i></a></li>
-        </ul>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li role="presentation"><a href="~/Admin/user">Users</a></li>
+                <li role="presentation"><a href="~/Admin/Event">Event</a></li>
+                <li role="presentation"><a href="~/Admin/Sales">Sales</a></li>
+                <li role="presentation" class="active"><a href="~/Admin/Product">Products</a></li>
+                <li role="presentation"><a href="~/Admin/Package">Packages</a></li>
+                <li role="presentation"><a href="~/Admin/News">News</a></li>
+                <li role="presentation"><a href="~/Admin/"><i class="fa fa-home"></i></a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 
