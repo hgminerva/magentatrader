@@ -1330,6 +1330,7 @@
     <Content Include="Views\Admin\User.cshtml" />
     <Content Include="Views\Video\Index.cshtml" />
     <Content Include="Views\Admin\Package.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

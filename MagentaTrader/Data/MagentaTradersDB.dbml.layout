@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 13.25, 9" name="MagentaTradersDB">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 14.25, 9" name="MagentaTradersDB">
   <DataContextMoniker Name="/MagentaTradersDBDataContext" />
   <nestedChildShapes>
     <classShape Id="138faa78-2db7-4abb-981e-d28dda667250" absoluteBounds="8.75, 0.75, 2, 2.5401025390625005">
@@ -65,19 +65,6 @@
         <elementListCompartment Id="f63553dd-17b0-4741-8d8c-f0c0e4ae2b62" absoluteBounds="1.0150000000000001, 4.46, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="05e46683-51bc-44ef-988a-a342253383e8" absoluteBounds="11, 2.5, 2, 1.5785953776041666">
-      <DataClassMoniker Name="/MagentaTradersDBDataContext/TrnStockEarning" />
-      <nestedChildShapes>
-        <elementListCompartment Id="f5c556c7-397e-49d6-b555-d4ecaaebf6f7" absoluteBounds="11.015, 2.96, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
-    <associationConnector edgePoints="[(11.5625 : 5); (11.5625 : 4.07859537760417)]" fixedFrom="NotFixed" fixedTo="NotFixed">
-      <AssociationMoniker Name="/MagentaTradersDBDataContext/MstSymbol/MstSymbol_TrnStockEarning" />
-      <nodes>
-        <classShapeMoniker Id="e4f1be52-f502-49d2-a843-9ce3b6c6542e" />
-        <classShapeMoniker Id="05e46683-51bc-44ef-988a-a342253383e8" />
-      </nodes>
-    </associationConnector>
     <classShape Id="91aa080f-e546-43b2-a5ac-c2af4e52933a" absoluteBounds="3.5, 6.625, 2, 2.1554996744791666">
       <DataClassMoniker Name="/MagentaTradersDBDataContext/MstUser" />
       <nestedChildShapes>
@@ -90,18 +77,31 @@
         <elementListCompartment Id="eac0b964-9bc7-4dd3-b9b3-1ffee7dd3c79" absoluteBounds="0.765, 7.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5.5 : 8.50405110677083); (6.90625 : 8.50405110677083); (6.90625 : 4.30930826822917)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(5.5 : 8.50405110677083); (6.90625 : 8.50405110677083); (6.90625 : 4.30930826822917)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/MagentaTradersDBDataContext/MstUser/MstUser_TrnSale" />
       <nodes>
         <classShapeMoniker Id="91aa080f-e546-43b2-a5ac-c2af4e52933a" />
         <classShapeMoniker Id="5d8522d3-7bce-480a-adae-32440ffdf1b8" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(2.75 : 7.63544840494792); (3.5 : 7.63544840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(2.75 : 7.63544840494792); (3.5 : 7.63544840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/MagentaTradersDBDataContext/AspNetUser/AspNetUser_MstUser" />
       <nodes>
         <classShapeMoniker Id="b86037c7-9d3b-4724-a555-a654a8cb0033" />
         <classShapeMoniker Id="91aa080f-e546-43b2-a5ac-c2af4e52933a" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="265194fa-f63a-439a-9f96-390eed11071e" absoluteBounds="12, 1.75, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/MagentaTradersDBDataContext/TrnStockEarning" />
+      <nestedChildShapes>
+        <elementListCompartment Id="a6fbc1ac-6582-464d-812e-0f8be9d38afe" absoluteBounds="12.015, 2.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(11.4062495 : 5); (11.4062495 : 3.43674967447917); (12 : 3.43674967447917)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/MagentaTradersDBDataContext/MstSymbol/MstSymbol_TrnStockEarning" />
+      <nodes>
+        <classShapeMoniker Id="e4f1be52-f502-49d2-a843-9ce3b6c6542e" />
+        <classShapeMoniker Id="265194fa-f63a-439a-9f96-390eed11071e" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

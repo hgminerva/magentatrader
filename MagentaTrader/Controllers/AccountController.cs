@@ -39,6 +39,13 @@ namespace MagentaTrader.Controllers
 
         //public AppUserManager UserManager { get; private set; }
 
+        // GET: /Account/
+        [Authorize]
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         //
         // GET: /Account/Login
         [AllowAnonymous]

@@ -51,15 +51,15 @@ namespace MagentaTrader.Data
     partial void InsertMstNew(MstNew instance);
     partial void UpdateMstNew(MstNew instance);
     partial void DeleteMstNew(MstNew instance);
-    partial void InsertTrnStockEarning(TrnStockEarning instance);
-    partial void UpdateTrnStockEarning(TrnStockEarning instance);
-    partial void DeleteTrnStockEarning(TrnStockEarning instance);
     partial void InsertMstUser(MstUser instance);
     partial void UpdateMstUser(MstUser instance);
     partial void DeleteMstUser(MstUser instance);
     partial void InsertAspNetUser(AspNetUser instance);
     partial void UpdateAspNetUser(AspNetUser instance);
     partial void DeleteAspNetUser(AspNetUser instance);
+    partial void InsertTrnStockEarning(TrnStockEarning instance);
+    partial void UpdateTrnStockEarning(TrnStockEarning instance);
+    partial void DeleteTrnStockEarning(TrnStockEarning instance);
     #endregion
 		
 		public MagentaTradersDBDataContext() : 
@@ -148,14 +148,6 @@ namespace MagentaTrader.Data
 			}
 		}
 		
-		public System.Data.Linq.Table<TrnStockEarning> TrnStockEarnings
-		{
-			get
-			{
-				return this.GetTable<TrnStockEarning>();
-			}
-		}
-		
 		public System.Data.Linq.Table<MstUser> MstUsers
 		{
 			get
@@ -169,6 +161,14 @@ namespace MagentaTrader.Data
 			get
 			{
 				return this.GetTable<AspNetUser>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TrnStockEarning> TrnStockEarnings
+		{
+			get
+			{
+				return this.GetTable<TrnStockEarning>();
 			}
 		}
 	}
@@ -2203,181 +2203,6 @@ namespace MagentaTrader.Data
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TrnStockEarning")]
-	public partial class TrnStockEarning : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private int _SymbolId;
-		
-		private string _Symbol;
-		
-		private System.DateTime _EarningDate;
-		
-		private EntityRef<MstSymbol> _MstSymbol;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnSymbolIdChanging(int value);
-    partial void OnSymbolIdChanged();
-    partial void OnSymbolChanging(string value);
-    partial void OnSymbolChanged();
-    partial void OnEarningDateChanging(System.DateTime value);
-    partial void OnEarningDateChanged();
-    #endregion
-		
-		public TrnStockEarning()
-		{
-			this._MstSymbol = default(EntityRef<MstSymbol>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SymbolId", DbType="Int NOT NULL")]
-		public int SymbolId
-		{
-			get
-			{
-				return this._SymbolId;
-			}
-			set
-			{
-				if ((this._SymbolId != value))
-				{
-					if (this._MstSymbol.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnSymbolIdChanging(value);
-					this.SendPropertyChanging();
-					this._SymbolId = value;
-					this.SendPropertyChanged("SymbolId");
-					this.OnSymbolIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Symbol", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string Symbol
-		{
-			get
-			{
-				return this._Symbol;
-			}
-			set
-			{
-				if ((this._Symbol != value))
-				{
-					this.OnSymbolChanging(value);
-					this.SendPropertyChanging();
-					this._Symbol = value;
-					this.SendPropertyChanged("Symbol");
-					this.OnSymbolChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EarningDate", DbType="DateTime NOT NULL")]
-		public System.DateTime EarningDate
-		{
-			get
-			{
-				return this._EarningDate;
-			}
-			set
-			{
-				if ((this._EarningDate != value))
-				{
-					this.OnEarningDateChanging(value);
-					this.SendPropertyChanging();
-					this._EarningDate = value;
-					this.SendPropertyChanged("EarningDate");
-					this.OnEarningDateChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstSymbol_TrnStockEarning", Storage="_MstSymbol", ThisKey="SymbolId", OtherKey="Id", IsForeignKey=true)]
-		public MstSymbol MstSymbol
-		{
-			get
-			{
-				return this._MstSymbol.Entity;
-			}
-			set
-			{
-				MstSymbol previousValue = this._MstSymbol.Entity;
-				if (((previousValue != value) 
-							|| (this._MstSymbol.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._MstSymbol.Entity = null;
-						previousValue.TrnStockEarnings.Remove(this);
-					}
-					this._MstSymbol.Entity = value;
-					if ((value != null))
-					{
-						value.TrnStockEarnings.Add(this);
-						this._SymbolId = value.Id;
-					}
-					else
-					{
-						this._SymbolId = default(int);
-					}
-					this.SendPropertyChanged("MstSymbol");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstUser")]
 	public partial class MstUser : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -2836,6 +2661,205 @@ namespace MagentaTrader.Data
 		{
 			this.SendPropertyChanging();
 			entity.AspNetUser = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TrnStockEarning")]
+	public partial class TrnStockEarning : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private int _SymbolId;
+		
+		private string _Symbol;
+		
+		private System.DateTime _EarningDate;
+		
+		private string _EarningTime;
+		
+		private EntityRef<MstSymbol> _MstSymbol;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnSymbolIdChanging(int value);
+    partial void OnSymbolIdChanged();
+    partial void OnSymbolChanging(string value);
+    partial void OnSymbolChanged();
+    partial void OnEarningDateChanging(System.DateTime value);
+    partial void OnEarningDateChanged();
+    partial void OnEarningTimeChanging(string value);
+    partial void OnEarningTimeChanged();
+    #endregion
+		
+		public TrnStockEarning()
+		{
+			this._MstSymbol = default(EntityRef<MstSymbol>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SymbolId", DbType="Int NOT NULL")]
+		public int SymbolId
+		{
+			get
+			{
+				return this._SymbolId;
+			}
+			set
+			{
+				if ((this._SymbolId != value))
+				{
+					if (this._MstSymbol.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSymbolIdChanging(value);
+					this.SendPropertyChanging();
+					this._SymbolId = value;
+					this.SendPropertyChanged("SymbolId");
+					this.OnSymbolIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Symbol", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Symbol
+		{
+			get
+			{
+				return this._Symbol;
+			}
+			set
+			{
+				if ((this._Symbol != value))
+				{
+					this.OnSymbolChanging(value);
+					this.SendPropertyChanging();
+					this._Symbol = value;
+					this.SendPropertyChanged("Symbol");
+					this.OnSymbolChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EarningDate", DbType="DateTime NOT NULL")]
+		public System.DateTime EarningDate
+		{
+			get
+			{
+				return this._EarningDate;
+			}
+			set
+			{
+				if ((this._EarningDate != value))
+				{
+					this.OnEarningDateChanging(value);
+					this.SendPropertyChanging();
+					this._EarningDate = value;
+					this.SendPropertyChanged("EarningDate");
+					this.OnEarningDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EarningTime", DbType="NVarChar(100)")]
+		public string EarningTime
+		{
+			get
+			{
+				return this._EarningTime;
+			}
+			set
+			{
+				if ((this._EarningTime != value))
+				{
+					this.OnEarningTimeChanging(value);
+					this.SendPropertyChanging();
+					this._EarningTime = value;
+					this.SendPropertyChanged("EarningTime");
+					this.OnEarningTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstSymbol_TrnStockEarning", Storage="_MstSymbol", ThisKey="SymbolId", OtherKey="Id", IsForeignKey=true)]
+		public MstSymbol MstSymbol
+		{
+			get
+			{
+				return this._MstSymbol.Entity;
+			}
+			set
+			{
+				MstSymbol previousValue = this._MstSymbol.Entity;
+				if (((previousValue != value) 
+							|| (this._MstSymbol.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MstSymbol.Entity = null;
+						previousValue.TrnStockEarnings.Remove(this);
+					}
+					this._MstSymbol.Entity = value;
+					if ((value != null))
+					{
+						value.TrnStockEarnings.Add(this);
+						this._SymbolId = value.Id;
+					}
+					else
+					{
+						this._SymbolId = default(int);
+					}
+					this.SendPropertyChanged("MstSymbol");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 }

@@ -43,12 +43,14 @@
                         </a>
                     </li>
                     <li>
+                        <hr style="margin: 10px 0 10px 0;" />
                         <a href="/Screener">
                             <div><strong>Screener</strong></div>
                             <div>Symbol Screener and Filter</div>
                         </a>
                     </li>
                     <li>
+                        <hr style="margin: 10px 0 10px 0;" />
                         <a href="#" onclick="openEarnings()">
                             <div><strong>Earnings</strong></div>
                             <div>Price movements on earnings.</div>
@@ -63,20 +65,15 @@
                 </a>
                 <ul class="dropdown-menu dropdown-messages">
 
-                    @using Microsoft.AspNet.Identity
-                    @{
-                        if (User.Identity.GetUserName().ToUpper() == "DPILGER" || User.Identity.GetUserName().ToUpper() == "MORTON")
-                        {
-                        <li>
-                            <a href="/Admin">
-                                <div><strong>Admin</strong></div>
-                                <div>Administration modules for Magenta Trader.</div>
-                            </a>
-                        </li>                            
-                        }
-                    }
+                    <li>
+                        <a href="/Account">
+                            <div><strong>Account</strong></div>
+                            <div>Your account profile page.</div>
+                        </a>
+                    </li>
 
                     <li >
+                        <hr style="margin: 10px 0 10px 0;" />
                         <a href="#">
                             <div><strong>Log Off @User.Identity.Name</strong></div>
                             <div>
@@ -88,6 +85,20 @@
                             </div>
                         </a>
                     </li>
+
+                    @using Microsoft.AspNet.Identity
+                    @{
+                        if (User.Identity.GetUserName().ToUpper() == "DPILGER" || User.Identity.GetUserName().ToUpper() == "MORTON")
+                        {
+                            <li>
+                                <hr style="margin: 10px 0 10px 0;" />
+                                <a href="/Admin">
+                                    <div><strong>Admin</strong></div>
+                                    <div>Administration modules for Magenta Trader.</div>
+                                </a>
+                            </li>
+                        }
+                    }
 
                 </ul>
                 <!-- /.dropdown-messages -->
@@ -185,6 +196,7 @@
                 <h4 id="EarningsTitle" class="modal-title"></h4>
             </div>
             <div class="modal-body">
+                <div id="DateButtons"class="row"></div>
                 <div id="earningChartdiv" style="width: 100%; height: 400px; padding: 20px 10px 10px 10px; "></div>
             </div>
             <div class="modal-footer">
@@ -272,52 +284,110 @@
     // Earnings
 
     function openEarnings() {
-        var GreenColor = "#0FB203";
-        var RedColor = "#A80008";
-
         $("#EarningsTitle").text(dataSymbol + " Earnings");
         $('#Earnings').modal('show');
 
-        var earningDatesPlotted = [];
+        $("#DateButtons").empty();
         for (var i = 0; i < earningDates.length; i++) {
-
-            earningDatesPlotted.push({
-                date: earningDates[i],
-                start: 0,
-                value: i % 2 == 0 ? 100 : -100,
-                color: i % 2 == 0 ? GreenColor : RedColor
-            })
+            $("#DateButtons").append("<div class='col-lg-3'><button type='submit' class='btn btn-primary btn-block' onclick='createEarningChart(this)'>" + earningDates[i] + "</button></div>");
         }
-        debugger;
-        var earningChart = new AmCharts.AmSerialChart();
-        earningChart.theme = "none";
-        earningChart.dataProvider = earningDatesPlotted;
-        earningChart.categoryField = "date";
-        earningChart.rotate = true;
-        earningChart.columnWidth = 1;
-        earningChart.categoryAxis = {
-            "gridPosition": "start",
-            "axisAlpha": 0,
-            "gridAlpha": 0.1,
-            "position": "left"
-        };
-        earningChart.valueAxes = [{
-            "unit": ":00",
-            "axisAlpha": 0,
-            "gridAlpha": 0.1
-        }];
-        earningChart.startDuration = 1;
+        $("#earningChartdiv").empty();
+    }
+    function createEarningChart(button) {
+        var GreenColor = "#0FB203";
+        var RedColor = "#A80008";
 
-        var graphEarnings = new AmCharts.AmGraph();
-        graphEarnings.valueField = "value";
-        graphEarnings.type = "column";
-        graphEarnings.colorField = "color";
-        graphEarnings.fillAlphas = 0.8;
-        graphEarnings.lineAlpha = 0;
-        graphEarnings.openField = "start";
+        $.ajax({
+            url: '/api/StockEarningHistory/' + dataSymbol + '/' + button.textContent,
+            cache: false,
+            type: 'GET',
+            contentType: 'application/json; charset=utf-8',
+            data: {},
+            success: function (result) {
+                if (result.length > 0) {
 
-        earningChart.addGraph(graphEarnings);
-        earningChart.write('earningChartdiv');
+                    var earningDatesPlotted = [];
+                    var y = 0;
+                    for (var i = 0; i < result.length; i++) {
+                        var value = earningPercentage(result[i].EarningDate, result[i].EarningTime);
+                        earningDatesPlotted.push({
+                            date: result[i].EarningDate + " " + result[i].EarningTime,
+                            start: 0,
+                            value: value,
+                            color: value >= 0 ? GreenColor : RedColor
+                        })
+                        y++;
+                        if(y>9) break;
+                    }
+
+                    var earningChart = new AmCharts.AmSerialChart();
+                    earningChart.theme = "none";
+                    earningChart.dataProvider = earningDatesPlotted;
+                    earningChart.categoryField = "date";
+                    earningChart.rotate = true;
+                    earningChart.columnWidth = 1;
+                    earningChart.categoryAxis = {
+                        "gridPosition": "start",
+                        "axisAlpha": 0,
+                        "gridAlpha": 0.1,
+                        "position": "left"
+                    };
+                    earningChart.valueAxes = [{
+                        "unit": ":00",
+                        "axisAlpha": 0,
+                        "gridAlpha": 0.1
+                    }];
+                    earningChart.startDuration = 1;
+
+                    var graphEarnings = new AmCharts.AmGraph();
+                    graphEarnings.valueField = "value";
+                    graphEarnings.type = "column";
+                    graphEarnings.colorField = "color";
+                    graphEarnings.fillAlphas = 0.8;
+                    graphEarnings.lineAlpha = 0;
+                    graphEarnings.openField = "start";
+                    graphEarnings.labelText = "[[value]]";
+
+                    earningChart.addGraph(graphEarnings);
+                    earningChart.write('earningChartdiv');
+                }
+            }
+        });
+    }
+    function earningPercentage(earningDate, earningTime) {
+        var startPrice = 0;
+        var endPrice = 0;
+        var percentage = 0;
+        if (earningTime == "After Market Close") {
+            for (var i = 0; i < chartData.length; i++) {
+                var chartDate = new Date(chartData[i]["date"]);
+                if (parseDate(earningDate).equals(chartDate) == true) {
+                    startPrice = chartData[i].close;
+                    endPrice = chartData[i-1].close;
+                    if (startPrice > 0) {
+                        percentage = ((endPrice - startPrice) / startPrice) * 100;
+                    } else {
+                        percentage = 0;;
+                    }
+                    break;
+                } 
+            }
+        } else {
+            for (var i = 0; i < chartData.length; i++) {
+                var chartDate = new Date(chartData[i]["date"]);
+                if (parseDate(earningDate).equals(chartDate) == true) {
+                    startPrice = chartData[i+1].close;
+                    endPrice = chartData[i].close;
+                    if (startPrice > 0) {
+                        percentage = ((endPrice - startPrice) / startPrice) * 100;
+                    } else {
+                        percentage = 0;;
+                    }
+                    break;
+                } 
+            }
+        }
+        return AmCharts.roundTo(percentage,2);
     }
 
     // Stock Chart
@@ -328,7 +398,6 @@
             chartSymbol = $('#searchSymbol').val().toUpperCase();
             getEarningsSchedule(symbol);
             getData(symbol);
-            
         } 
     }
     function getData(symbol) {
@@ -1586,6 +1655,7 @@
         if (symbol != "") {
             chartSymbol = symbol.toUpperCase();
             $('#searchSymbol').val(symbol);
+            getEarningsSchedule(symbol);
             getData(symbol);
         }
 

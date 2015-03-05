@@ -9,5 +9,6 @@ namespace MagentaTrader.Models
     {
         public string Symbol { get; set; }
         public string EarningDate { get; set; }
+        public string EarningTime { get; set; }
     }
 }
