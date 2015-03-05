@@ -64,5 +64,6 @@ namespace MagentaTrader.Controllers
         {
             return View();
         }
+
     }
 }

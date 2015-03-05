@@ -777,6 +777,7 @@
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\landing-page.css" />
     <Content Include="css\site.css" />
+    <Content Include="css\styles.css" />
     <Content Include="dist\css\sb-admin-2.css" />
     <Content Include="dist\css\timeline.css" />
     <Content Include="dist\js\sb-admin-2.js" />

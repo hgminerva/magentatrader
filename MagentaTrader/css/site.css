@@ -61,3 +61,9 @@ textarea {
     background-color: #8B4513;
     color: #ffffff;
 }
+@media screen and (min-width: 991px){
+    .marginCenter{
+        margin-left: 100px;
+        margin-right: 100px;
+    }
+}
