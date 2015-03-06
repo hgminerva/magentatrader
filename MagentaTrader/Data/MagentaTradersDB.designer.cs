@@ -39,9 +39,6 @@ namespace MagentaTrader.Data
     partial void InsertMstProduct(MstProduct instance);
     partial void UpdateMstProduct(MstProduct instance);
     partial void DeleteMstProduct(MstProduct instance);
-    partial void InsertMstProductPackage(MstProductPackage instance);
-    partial void UpdateMstProductPackage(MstProductPackage instance);
-    partial void DeleteMstProductPackage(MstProductPackage instance);
     partial void InsertTrnSale(TrnSale instance);
     partial void UpdateTrnSale(TrnSale instance);
     partial void DeleteTrnSale(TrnSale instance);
@@ -60,6 +57,9 @@ namespace MagentaTrader.Data
     partial void InsertTrnStockEarning(TrnStockEarning instance);
     partial void UpdateTrnStockEarning(TrnStockEarning instance);
     partial void DeleteTrnStockEarning(TrnStockEarning instance);
+    partial void InsertMstProductPackage(MstProductPackage instance);
+    partial void UpdateMstProductPackage(MstProductPackage instance);
+    partial void DeleteMstProductPackage(MstProductPackage instance);
     #endregion
 		
 		public MagentaTradersDBDataContext() : 
@@ -116,14 +116,6 @@ namespace MagentaTrader.Data
 			}
 		}
 		
-		public System.Data.Linq.Table<MstProductPackage> MstProductPackages
-		{
-			get
-			{
-				return this.GetTable<MstProductPackage>();
-			}
-		}
-		
 		public System.Data.Linq.Table<TrnSale> TrnSales
 		{
 			get
@@ -169,6 +161,14 @@ namespace MagentaTrader.Data
 			get
 			{
 				return this.GetTable<TrnStockEarning>();
+			}
+		}
+		
+		public System.Data.Linq.Table<MstProductPackage> MstProductPackages
+		{
+			get
+			{
+				return this.GetTable<MstProductPackage>();
 			}
 		}
 	}
@@ -836,353 +836,6 @@ namespace MagentaTrader.Data
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstProductPackage")]
-	public partial class MstProductPackage : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _Id;
-		
-		private string _ProductPackage;
-		
-		private string _SKU;
-		
-		private decimal _Price;
-		
-		private int _ProductId;
-		
-		private bool _IsAvailable;
-		
-		private bool _WithCoupon;
-		
-		private bool _WithSoftware;
-		
-		private bool _IsReoccuring;
-		
-		private string _Particulars;
-		
-		private EntitySet<TrnSale> _TrnSales;
-		
-		private EntityRef<MstProduct> _MstProduct;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnIdChanging(int value);
-    partial void OnIdChanged();
-    partial void OnProductPackageChanging(string value);
-    partial void OnProductPackageChanged();
-    partial void OnSKUChanging(string value);
-    partial void OnSKUChanged();
-    partial void OnPriceChanging(decimal value);
-    partial void OnPriceChanged();
-    partial void OnProductIdChanging(int value);
-    partial void OnProductIdChanged();
-    partial void OnIsAvailableChanging(bool value);
-    partial void OnIsAvailableChanged();
-    partial void OnWithCouponChanging(bool value);
-    partial void OnWithCouponChanged();
-    partial void OnWithSoftwareChanging(bool value);
-    partial void OnWithSoftwareChanged();
-    partial void OnIsReoccuringChanging(bool value);
-    partial void OnIsReoccuringChanged();
-    partial void OnParticularsChanging(string value);
-    partial void OnParticularsChanged();
-    #endregion
-		
-		public MstProductPackage()
-		{
-			this._TrnSales = new EntitySet<TrnSale>(new Action<TrnSale>(this.attach_TrnSales), new Action<TrnSale>(this.detach_TrnSales));
-			this._MstProduct = default(EntityRef<MstProduct>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int Id
-		{
-			get
-			{
-				return this._Id;
-			}
-			set
-			{
-				if ((this._Id != value))
-				{
-					this.OnIdChanging(value);
-					this.SendPropertyChanging();
-					this._Id = value;
-					this.SendPropertyChanged("Id");
-					this.OnIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProductPackage", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string ProductPackage
-		{
-			get
-			{
-				return this._ProductPackage;
-			}
-			set
-			{
-				if ((this._ProductPackage != value))
-				{
-					this.OnProductPackageChanging(value);
-					this.SendPropertyChanging();
-					this._ProductPackage = value;
-					this.SendPropertyChanged("ProductPackage");
-					this.OnProductPackageChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SKU", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		public string SKU
-		{
-			get
-			{
-				return this._SKU;
-			}
-			set
-			{
-				if ((this._SKU != value))
-				{
-					this.OnSKUChanging(value);
-					this.SendPropertyChanging();
-					this._SKU = value;
-					this.SendPropertyChanged("SKU");
-					this.OnSKUChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Price", DbType="Decimal(18,5) NOT NULL")]
-		public decimal Price
-		{
-			get
-			{
-				return this._Price;
-			}
-			set
-			{
-				if ((this._Price != value))
-				{
-					this.OnPriceChanging(value);
-					this.SendPropertyChanging();
-					this._Price = value;
-					this.SendPropertyChanged("Price");
-					this.OnPriceChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProductId", DbType="Int NOT NULL")]
-		public int ProductId
-		{
-			get
-			{
-				return this._ProductId;
-			}
-			set
-			{
-				if ((this._ProductId != value))
-				{
-					if (this._MstProduct.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnProductIdChanging(value);
-					this.SendPropertyChanging();
-					this._ProductId = value;
-					this.SendPropertyChanged("ProductId");
-					this.OnProductIdChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsAvailable", DbType="Bit NOT NULL")]
-		public bool IsAvailable
-		{
-			get
-			{
-				return this._IsAvailable;
-			}
-			set
-			{
-				if ((this._IsAvailable != value))
-				{
-					this.OnIsAvailableChanging(value);
-					this.SendPropertyChanging();
-					this._IsAvailable = value;
-					this.SendPropertyChanged("IsAvailable");
-					this.OnIsAvailableChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WithCoupon", DbType="Bit NOT NULL")]
-		public bool WithCoupon
-		{
-			get
-			{
-				return this._WithCoupon;
-			}
-			set
-			{
-				if ((this._WithCoupon != value))
-				{
-					this.OnWithCouponChanging(value);
-					this.SendPropertyChanging();
-					this._WithCoupon = value;
-					this.SendPropertyChanged("WithCoupon");
-					this.OnWithCouponChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WithSoftware", DbType="Bit NOT NULL")]
-		public bool WithSoftware
-		{
-			get
-			{
-				return this._WithSoftware;
-			}
-			set
-			{
-				if ((this._WithSoftware != value))
-				{
-					this.OnWithSoftwareChanging(value);
-					this.SendPropertyChanging();
-					this._WithSoftware = value;
-					this.SendPropertyChanged("WithSoftware");
-					this.OnWithSoftwareChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsReoccuring", DbType="Bit NOT NULL")]
-		public bool IsReoccuring
-		{
-			get
-			{
-				return this._IsReoccuring;
-			}
-			set
-			{
-				if ((this._IsReoccuring != value))
-				{
-					this.OnIsReoccuringChanging(value);
-					this.SendPropertyChanging();
-					this._IsReoccuring = value;
-					this.SendPropertyChanged("IsReoccuring");
-					this.OnIsReoccuringChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Particulars", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
-		public string Particulars
-		{
-			get
-			{
-				return this._Particulars;
-			}
-			set
-			{
-				if ((this._Particulars != value))
-				{
-					this.OnParticularsChanging(value);
-					this.SendPropertyChanging();
-					this._Particulars = value;
-					this.SendPropertyChanged("Particulars");
-					this.OnParticularsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstProductPackage_TrnSale", Storage="_TrnSales", ThisKey="Id", OtherKey="ProductPackageId")]
-		public EntitySet<TrnSale> TrnSales
-		{
-			get
-			{
-				return this._TrnSales;
-			}
-			set
-			{
-				this._TrnSales.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstProduct_MstProductPackage", Storage="_MstProduct", ThisKey="ProductId", OtherKey="Id", IsForeignKey=true)]
-		public MstProduct MstProduct
-		{
-			get
-			{
-				return this._MstProduct.Entity;
-			}
-			set
-			{
-				MstProduct previousValue = this._MstProduct.Entity;
-				if (((previousValue != value) 
-							|| (this._MstProduct.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._MstProduct.Entity = null;
-						previousValue.MstProductPackages.Remove(this);
-					}
-					this._MstProduct.Entity = value;
-					if ((value != null))
-					{
-						value.MstProductPackages.Add(this);
-						this._ProductId = value.Id;
-					}
-					else
-					{
-						this._ProductId = default(int);
-					}
-					this.SendPropertyChanged("MstProduct");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_TrnSales(TrnSale entity)
-		{
-			this.SendPropertyChanging();
-			entity.MstProductPackage = this;
-		}
-		
-		private void detach_TrnSales(TrnSale entity)
-		{
-			this.SendPropertyChanging();
-			entity.MstProductPackage = null;
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TrnSales")]
 	public partial class TrnSale : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -1215,9 +868,9 @@ namespace MagentaTrader.Data
 		
 		private bool _IsRefunded;
 		
-		private EntityRef<MstProductPackage> _MstProductPackage;
-		
 		private EntityRef<MstUser> _MstUser;
+		
+		private EntityRef<MstProductPackage> _MstProductPackage;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -1253,8 +906,8 @@ namespace MagentaTrader.Data
 		
 		public TrnSale()
 		{
-			this._MstProductPackage = default(EntityRef<MstProductPackage>);
 			this._MstUser = default(EntityRef<MstUser>);
+			this._MstProductPackage = default(EntityRef<MstProductPackage>);
 			OnCreated();
 		}
 		
@@ -1526,40 +1179,6 @@ namespace MagentaTrader.Data
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstProductPackage_TrnSale", Storage="_MstProductPackage", ThisKey="ProductPackageId", OtherKey="Id", IsForeignKey=true)]
-		public MstProductPackage MstProductPackage
-		{
-			get
-			{
-				return this._MstProductPackage.Entity;
-			}
-			set
-			{
-				MstProductPackage previousValue = this._MstProductPackage.Entity;
-				if (((previousValue != value) 
-							|| (this._MstProductPackage.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._MstProductPackage.Entity = null;
-						previousValue.TrnSales.Remove(this);
-					}
-					this._MstProductPackage.Entity = value;
-					if ((value != null))
-					{
-						value.TrnSales.Add(this);
-						this._ProductPackageId = value.Id;
-					}
-					else
-					{
-						this._ProductPackageId = default(int);
-					}
-					this.SendPropertyChanged("MstProductPackage");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstUser_TrnSale", Storage="_MstUser", ThisKey="UserId", OtherKey="Id", IsForeignKey=true)]
 		public MstUser MstUser
 		{
@@ -1590,6 +1209,40 @@ namespace MagentaTrader.Data
 						this._UserId = default(int);
 					}
 					this.SendPropertyChanged("MstUser");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstProductPackage_TrnSale", Storage="_MstProductPackage", ThisKey="ProductPackageId", OtherKey="Id", IsForeignKey=true)]
+		public MstProductPackage MstProductPackage
+		{
+			get
+			{
+				return this._MstProductPackage.Entity;
+			}
+			set
+			{
+				MstProductPackage previousValue = this._MstProductPackage.Entity;
+				if (((previousValue != value) 
+							|| (this._MstProductPackage.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MstProductPackage.Entity = null;
+						previousValue.TrnSales.Remove(this);
+					}
+					this._MstProductPackage.Entity = value;
+					if ((value != null))
+					{
+						value.TrnSales.Add(this);
+						this._ProductPackageId = value.Id;
+					}
+					else
+					{
+						this._ProductPackageId = default(int);
+					}
+					this.SendPropertyChanged("MstProductPackage");
 				}
 			}
 		}
@@ -2860,6 +2513,377 @@ namespace MagentaTrader.Data
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MstProductPackage")]
+	public partial class MstProductPackage : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private string _ProductPackage;
+		
+		private string _SKU;
+		
+		private decimal _Price;
+		
+		private int _ProductId;
+		
+		private bool _IsAvailable;
+		
+		private bool _WithCoupon;
+		
+		private bool _WithSoftware;
+		
+		private bool _IsReoccuring;
+		
+		private string _Particulars;
+		
+		private string _PackageURL;
+		
+		private EntitySet<TrnSale> _TrnSales;
+		
+		private EntityRef<MstProduct> _MstProduct;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnProductPackageChanging(string value);
+    partial void OnProductPackageChanged();
+    partial void OnSKUChanging(string value);
+    partial void OnSKUChanged();
+    partial void OnPriceChanging(decimal value);
+    partial void OnPriceChanged();
+    partial void OnProductIdChanging(int value);
+    partial void OnProductIdChanged();
+    partial void OnIsAvailableChanging(bool value);
+    partial void OnIsAvailableChanged();
+    partial void OnWithCouponChanging(bool value);
+    partial void OnWithCouponChanged();
+    partial void OnWithSoftwareChanging(bool value);
+    partial void OnWithSoftwareChanged();
+    partial void OnIsReoccuringChanging(bool value);
+    partial void OnIsReoccuringChanged();
+    partial void OnParticularsChanging(string value);
+    partial void OnParticularsChanged();
+    partial void OnPackageURLChanging(string value);
+    partial void OnPackageURLChanged();
+    #endregion
+		
+		public MstProductPackage()
+		{
+			this._TrnSales = new EntitySet<TrnSale>(new Action<TrnSale>(this.attach_TrnSales), new Action<TrnSale>(this.detach_TrnSales));
+			this._MstProduct = default(EntityRef<MstProduct>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProductPackage", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string ProductPackage
+		{
+			get
+			{
+				return this._ProductPackage;
+			}
+			set
+			{
+				if ((this._ProductPackage != value))
+				{
+					this.OnProductPackageChanging(value);
+					this.SendPropertyChanging();
+					this._ProductPackage = value;
+					this.SendPropertyChanged("ProductPackage");
+					this.OnProductPackageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SKU", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string SKU
+		{
+			get
+			{
+				return this._SKU;
+			}
+			set
+			{
+				if ((this._SKU != value))
+				{
+					this.OnSKUChanging(value);
+					this.SendPropertyChanging();
+					this._SKU = value;
+					this.SendPropertyChanged("SKU");
+					this.OnSKUChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Price", DbType="Decimal(18,5) NOT NULL")]
+		public decimal Price
+		{
+			get
+			{
+				return this._Price;
+			}
+			set
+			{
+				if ((this._Price != value))
+				{
+					this.OnPriceChanging(value);
+					this.SendPropertyChanging();
+					this._Price = value;
+					this.SendPropertyChanged("Price");
+					this.OnPriceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProductId", DbType="Int NOT NULL")]
+		public int ProductId
+		{
+			get
+			{
+				return this._ProductId;
+			}
+			set
+			{
+				if ((this._ProductId != value))
+				{
+					if (this._MstProduct.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnProductIdChanging(value);
+					this.SendPropertyChanging();
+					this._ProductId = value;
+					this.SendPropertyChanged("ProductId");
+					this.OnProductIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsAvailable", DbType="Bit NOT NULL")]
+		public bool IsAvailable
+		{
+			get
+			{
+				return this._IsAvailable;
+			}
+			set
+			{
+				if ((this._IsAvailable != value))
+				{
+					this.OnIsAvailableChanging(value);
+					this.SendPropertyChanging();
+					this._IsAvailable = value;
+					this.SendPropertyChanged("IsAvailable");
+					this.OnIsAvailableChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WithCoupon", DbType="Bit NOT NULL")]
+		public bool WithCoupon
+		{
+			get
+			{
+				return this._WithCoupon;
+			}
+			set
+			{
+				if ((this._WithCoupon != value))
+				{
+					this.OnWithCouponChanging(value);
+					this.SendPropertyChanging();
+					this._WithCoupon = value;
+					this.SendPropertyChanged("WithCoupon");
+					this.OnWithCouponChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WithSoftware", DbType="Bit NOT NULL")]
+		public bool WithSoftware
+		{
+			get
+			{
+				return this._WithSoftware;
+			}
+			set
+			{
+				if ((this._WithSoftware != value))
+				{
+					this.OnWithSoftwareChanging(value);
+					this.SendPropertyChanging();
+					this._WithSoftware = value;
+					this.SendPropertyChanged("WithSoftware");
+					this.OnWithSoftwareChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsReoccuring", DbType="Bit NOT NULL")]
+		public bool IsReoccuring
+		{
+			get
+			{
+				return this._IsReoccuring;
+			}
+			set
+			{
+				if ((this._IsReoccuring != value))
+				{
+					this.OnIsReoccuringChanging(value);
+					this.SendPropertyChanging();
+					this._IsReoccuring = value;
+					this.SendPropertyChanged("IsReoccuring");
+					this.OnIsReoccuringChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Particulars", DbType="NVarChar(255) NOT NULL", CanBeNull=false)]
+		public string Particulars
+		{
+			get
+			{
+				return this._Particulars;
+			}
+			set
+			{
+				if ((this._Particulars != value))
+				{
+					this.OnParticularsChanging(value);
+					this.SendPropertyChanging();
+					this._Particulars = value;
+					this.SendPropertyChanged("Particulars");
+					this.OnParticularsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PackageURL", DbType="NVarChar(MAX)")]
+		public string PackageURL
+		{
+			get
+			{
+				return this._PackageURL;
+			}
+			set
+			{
+				if ((this._PackageURL != value))
+				{
+					this.OnPackageURLChanging(value);
+					this.SendPropertyChanging();
+					this._PackageURL = value;
+					this.SendPropertyChanged("PackageURL");
+					this.OnPackageURLChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstProductPackage_TrnSale", Storage="_TrnSales", ThisKey="Id", OtherKey="ProductPackageId")]
+		public EntitySet<TrnSale> TrnSales
+		{
+			get
+			{
+				return this._TrnSales;
+			}
+			set
+			{
+				this._TrnSales.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="MstProduct_MstProductPackage", Storage="_MstProduct", ThisKey="ProductId", OtherKey="Id", IsForeignKey=true)]
+		public MstProduct MstProduct
+		{
+			get
+			{
+				return this._MstProduct.Entity;
+			}
+			set
+			{
+				MstProduct previousValue = this._MstProduct.Entity;
+				if (((previousValue != value) 
+							|| (this._MstProduct.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._MstProduct.Entity = null;
+						previousValue.MstProductPackages.Remove(this);
+					}
+					this._MstProduct.Entity = value;
+					if ((value != null))
+					{
+						value.MstProductPackages.Add(this);
+						this._ProductId = value.Id;
+					}
+					else
+					{
+						this._ProductId = default(int);
+					}
+					this.SendPropertyChanged("MstProduct");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_TrnSales(TrnSale entity)
+		{
+			this.SendPropertyChanging();
+			entity.MstProductPackage = this;
+		}
+		
+		private void detach_TrnSales(TrnSale entity)
+		{
+			this.SendPropertyChanging();
+			entity.MstProductPackage = null;
 		}
 	}
 }
